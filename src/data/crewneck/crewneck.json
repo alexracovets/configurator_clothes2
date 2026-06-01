@@ -7,6 +7,7 @@
       "price": 100,
       "bonus_count": 10,
       "bonus_discount": 20,
+      "minimum_count": 6,
       "path": "/models/crewneck/crewneck/",
       "parts": [
         {
@@ -33,103 +34,136 @@
       "patterns": [
         {
           "name": "Design 1",
-          "path_name": "crewneck_design_1.svg",
-          "id": 0
+          "parts": [
+            {
+              "path_name": "crewneck_design_1.svg",
+              "id": 0
+            }
+          ]
         },
         {
           "name": "Design 2",
-          "path_name": "crewneck_design_2_color_1.svg",
-          "id": 1
+          "parts": [
+            {
+              "path_name": "crewneck_design_2_color_1.svg",
+              "id": 2
+            },
+            {
+              "path_name": "crewneck_design_2_color_2.svg",
+              "id": 3
+            }
+          ]
         },
         {
           "name": "Design 3",
-          "path_name": "crewneck_design_2_color_2.svg",
-          "id": 2
+          "parts": [
+            {
+              "path_name": "crewneck_design_3_color_1.svg",
+              "id": 4
+            },
+            {
+              "path_name": "crewneck_design_3_color_2.svg",
+              "id": 5
+            }
+          ]
         },
         {
           "name": "Design 4",
-          "path_name": "crewneck_design_3_color_1.svg",
-          "id": 3
+          "parts": [
+            {
+              "path_name": "crewneck_design_4_color_1.svg",
+              "id": 6
+            },
+            {
+              "path_name": "crewneck_design_4_color_2.svg",
+              "id": 7
+            }
+          ]
         },
         {
           "name": "Design 5",
-          "path_name": "crewneck_design_3_color_2.svg",
-          "id": 4
+          "parts": [
+            {
+              "path_name": "crewneck_design_5_color_1.svg",
+              "id": 6
+            },
+            {
+              "path_name": "crewneck_design_5_color_2.svg",
+              "id": 7
+            }
+          ]
         },
         {
           "name": "Design 6",
-          "path_name": "crewneck_design_4_color_1.svg",
-          "id": 5
+          "parts": [
+            {
+              "path_name": "crewneck_design_6_color_1.svg",
+              "id": 8
+            },
+            {
+              "path_name": "crewneck_design_6_color_2.svg",
+              "id": 9
+            }
+          ]
         },
         {
           "name": "Design 7",
-          "path_name": "crewneck_design_4_color_2.svg",
-          "id": 6
+          "parts": [
+            {
+              "path_name": "crewneck_design_7.svg",
+              "id": 10
+            }
+          ]
         },
         {
           "name": "Design 8",
-          "path_name": "crewneck_design_5_color_1.svg",
-          "id": 7
+          "parts": [
+            {
+              "path_name": "crewneck_design_8_color_1.svg",
+              "id": 11
+            },
+            {
+              "path_name": "crewneck_design_8_color_2.svg",
+              "id": 12
+            }
+          ]
         },
         {
           "name": "Design 9",
-          "path_name": "crewneck_design_5_color_2.svg",
-          "id": 8
+          "parts": [
+            {
+              "path_name": "crewneck_design_9_color_1.svg",
+              "id": 13
+            },
+            {
+              "path_name": "crewneck_design_9_color_2.svg",
+              "id": 14
+            }
+          ]
         },
         {
           "name": "Design 10",
-          "path_name": "crewneck_design_6_color_1.svg",
-          "id": 9
-        },
+          "parts": [
+            {
+              "path_name": "crewneck_design_10_color_1.svg",
+              "id": 15
+            },
+            {
+              "path_name": "crewneck_design_10_color_2.svg",
+              "id": 16
+            }
+          ]
+        }
+      ],
+      "default_pattern": [
         {
-          "name": "Design 11",
-          "path_name": "crewneck_design_6_color_2.svg",
-          "id": 10
-        },
-        {
-          "name": "Design 12",
-          "path_name": "crewneck_design_7.svg",
-          "id": 11
-        },
-        {
-          "name": "Design 13",
-          "path_name": "crewneck_design_8_color_1.svg",
-          "id": 12
-        },
-        {
-          "name": "Design 14",
-          "path_name": "crewneck_design_8_color_2.svg",
-          "id": 13
-        },
-        {
-          "name": "Design 16",
-          "path_name": "crewneck_design_9_color_1.svg",
-          "id": 14
-        },
-        {
-          "name": "Design 17",
-          "path_name": "crewneck_design_9_color_2.svg",
-          "id": 15
-        },
-        {
-          "name": "Design 18",
-          "path_name": "crewneck_design_10_color_1.svg",
-          "id": 16
-        },
-        {
-          "name": "Design 19",
-          "path_name": "crewneck_design_10_color_2.svg",
-          "id": 17
-        },
-        {
-          "name": "Design 20",
-          "path_name": "crewneck_logos.svg",
-          "id": 18
-        },
-        {
-          "name": "Design 21",
-          "path_name": "crewneck_raw_pattern.svg",
-          "id": 19
+          "name": "default_0",
+          "parts": [
+            {
+              "path_name": "crewneck_logos.svg",
+              "id": 0
+            }
+          ]
         }
       ],
       "namePositions": [

@@ -2,9 +2,9 @@
 
 import { useCallback, useState } from 'react';
 
-import { LogoFileError, logoFileToDisplayUrl, preloadLogoDisplayUrl, yieldToMain } from '@utils';
 import { useStepLogo } from '@store';
 import type { StepLogoPositionState } from '@store';
+import { LogoFileError, logoFileToDisplayUrl, preloadLogoDisplayUrl, yieldToMain } from '@utils';
 
 const useLogoFileHandler = () => {
   const assignLogoToPosition = useStepLogo((state) => state.assignLogoToPosition);

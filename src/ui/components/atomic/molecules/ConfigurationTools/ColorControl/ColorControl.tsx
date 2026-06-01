@@ -3,8 +3,8 @@
 import { memo, useCallback } from 'react';
 
 import { AtomInputHex, Button, ColorPicker, Flex, Grid, SvgIcon, Text } from '@atoms';
-import { PALETTE_COLORS } from '@constants';
 import { useStepColor } from '@store';
+import { PALETTE_COLORS } from '@constants';
 
 interface ColorControlProps {
   color: string;

@@ -12,6 +12,7 @@ interface ConfigurationControlStore {
   count_to_bonus: number;
   bonus_discount: number;
   minimum_count: number;
+  productType: string;
   numberProduct: number;
   setName: (name: string) => void;
   setCount: (count: number) => void;
@@ -19,6 +20,7 @@ interface ConfigurationControlStore {
   setPrice: (price: number) => void;
   setBonusDiscount: (bonus_discount: number) => void;
   setMinimumCount: (minimum_count: number) => void;
+  setProductType: (productType: string) => void;
   setActiveStep: (step: number) => void;
   goToPreviousStep: () => void;
   goToNextStep: () => void;
@@ -34,6 +36,7 @@ const useConfigurationControl = create<ConfigurationControlStore>((set, get) => 
   count_to_bonus: 5,
   bonus_discount: 0,
   minimum_count: 5,
+  productType: 'shirt',
   setName: (name) => {
     set({ name });
   },
@@ -51,6 +54,9 @@ const useConfigurationControl = create<ConfigurationControlStore>((set, get) => 
   },
   setMinimumCount: (minimum_count) => {
     set({ minimum_count });
+  },
+  setProductType: (productType) => {
+    set({ productType });
   },
   setActiveStep: (step) => {
     if (step < 1 || step > STEPS_CONFIGURATION.length) return;

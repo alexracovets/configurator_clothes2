@@ -10,7 +10,8 @@
     "lint:fix": "eslint src scripts --fix --no-warn-ignored",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "validate": "pnpm format:check && pnpm lint",
+    "validate": "pnpm format:check && pnpm lint && pnpm verify:design-assets",
+    "verify:design-assets": "node scripts/verify-design-assets.mjs",
     "prepare": "husky",
     "postinstall": "pnpm copy:logo-assets",
     "copy:logo-assets": "node scripts/copy-logo-assets.mjs"

@@ -17,6 +17,7 @@ const ConfiguratorProduct = memo(() => {
       count_to_bonus: state.count_to_bonus,
       bonus_discount: state.bonus_discount,
       minimum_count: state.minimum_count,
+      productType: state.productType,
     })),
   );
 

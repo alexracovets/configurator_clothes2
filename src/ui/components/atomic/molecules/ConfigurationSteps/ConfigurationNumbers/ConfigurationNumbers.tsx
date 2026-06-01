@@ -4,9 +4,9 @@ import { useMemo, useRef, useState } from 'react';
 
 import { AccordionAtom, AtomPopover, AtomPopoverContent, AtomPopoverTrigger, Button, Flex, SvgIcon, Text } from '@atoms';
 import { ColorTabControl, FontSelectRow, PartColorSwitch, RangeControl } from '@molecules';
-import { DEFAULT_TEXT_CONFIGURATION, FONTS_CONFIGURATION } from '@constants';
 import { useStepNumber } from '@store';
 import { cn } from '@utils';
+import { DEFAULT_TEXT_CONFIGURATION, FONTS_CONFIGURATION } from '@constants';
 
 const DEFAULT_NUMBER_TEXT = '9';
 
@@ -22,7 +22,7 @@ const ConfigurationNumbers = () => {
 
   const availablePositions = useMemo(() => {
     const used = new Set(parts.map((part) => part.positionKey));
-    return positions.filter((position) => !used.has(position.key));
+    return positions.filter((position) => position.interactive && !used.has(position.key));
   }, [positions, parts]);
 
   const resolvedOpenItems = useMemo(() => {
@@ -33,6 +33,8 @@ const ConfigurationNumbers = () => {
   }, [openItems, parts]);
 
   const createPartForPosition = (position: (typeof positions)[number]) => {
+    if (!position.interactive) return;
+
     nextPartIdRef.current += 1;
     const font = FONTS_CONFIGURATION[0]?.name ?? 'Oswald';
     addPart({
@@ -48,6 +50,7 @@ const ConfigurationNumbers = () => {
       textColor: DEFAULT_TEXT_CONFIGURATION.text,
       strokeColor: DEFAULT_TEXT_CONFIGURATION.stroke,
       strokeWidth: DEFAULT_TEXT_CONFIGURATION.strokeWidth,
+      isDefault: false,
     });
     setIsLocationPickerOpen(false);
   };
@@ -90,10 +93,12 @@ const ConfigurationNumbers = () => {
           unit="px"
         />
 
-        <Button variant="delete" size="delete" onClick={() => removePart(inst.id)}>
-          <SvgIcon name="delete" className="w-[14px] h-[15.75px]" />
-          Eliminare
-        </Button>
+        {!inst.isDefault && (
+          <Button variant="delete" size="delete" onClick={() => removePart(inst.id)}>
+            <SvgIcon name="delete" className="w-[14px] h-[15.75px]" />
+            Eliminare
+          </Button>
+        )}
       </Flex>
     ),
   }));

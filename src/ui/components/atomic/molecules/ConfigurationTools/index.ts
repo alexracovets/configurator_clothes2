@@ -1,4 +1,5 @@
 export { ColorTabControl } from './ColorTabControl';
+export { PatternLayerColorControl } from './PatternLayerColorControl';
 export { PartColorSwitch } from './PartColorSwitch';
 export { ShedingControl } from './ShedingControl';
 export { ToggleControl } from './ToggleControl';

@@ -47,7 +47,7 @@ const AtomImage = ({
   const hasDimensions = width != null && height != null;
   const useFill = !hasDimensions;
   const resolvedLoading = loading ?? (priority ? 'eager' : 'lazy');
-  const resolvedStyle = hasDimensions ? { width: 'auto', height: 'auto', maxWidth: width, maxHeight: height, ...style } : style;
+  const resolvedStyle = hasDimensions ? { width, height, ...style } : style;
 
   const imageElement = (
     <Image

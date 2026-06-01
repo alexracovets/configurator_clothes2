@@ -1,12 +1,12 @@
 'use client';
 
-import { memo, useEffect, useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 import { AccordionAtom, Flex } from '@atoms';
 import { PartColorSwitch, ShedingControl } from '@molecules';
 
-import { useStepColor, useStepShading } from '@store';
+import { useStepShading } from '@store';
 
 interface ShadingItemProps {
   partId: string;
@@ -25,13 +25,7 @@ const ShadingContent = memo(({ partId }: ShadingItemProps) => <ShedingControl pa
 ShadingContent.displayName = 'ShadingContent';
 
 const ConfigurationShading = () => {
-  const colorParts = useStepColor((state) => state.parts);
   const partIds = useStepShading(useShallow((state) => state.parts.map((part) => part.id)));
-  const syncFromColorParts = useStepShading((state) => state.syncFromColorParts);
-
-  useEffect(() => {
-    syncFromColorParts(colorParts);
-  }, [colorParts, syncFromColorParts]);
 
   const items = useMemo(() => {
     return partIds.map((partId) => ({

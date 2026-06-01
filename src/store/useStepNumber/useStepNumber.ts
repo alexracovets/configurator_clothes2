@@ -20,6 +20,7 @@ interface StepNumberPartState {
   textColor: string;
   strokeColor: string;
   strokeWidth: number;
+  isDefault: boolean;
 }
 
 interface StepNumberPositionState {
@@ -52,8 +53,15 @@ const useStepNumber = create<StepNumberState>((set) => ({
       positions,
       parts: state.parts.filter((part) => positions.some((position) => position.key === part.positionKey)),
     })),
-  removePart: (id) => set((state) => ({ parts: state.parts.filter((part) => part.id !== id) })),
+  removePart: (id) =>
+    set((state) => {
+      const target = state.parts.find((part) => part.id === id);
+      if (!target || target.isDefault) return state;
+
+      return { parts: state.parts.filter((part) => part.id !== id) };
+    }),
   updatePart: (id, patch) => set((state) => ({ parts: state.parts.map((p) => (p.id === id ? { ...p, ...patch } : p)) })),
 }));
 
 export { useStepNumber };
+export type { StepNumberPartState, StepNumberPositionState, StepNumberUv };
