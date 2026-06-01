@@ -1,0 +1,43 @@
+{
+  "compilerOptions": {
+    "target": "ES2017",
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "react-jsx",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "paths": {
+      "@/*": ["./*"],
+      "@styles/*": ["./src/ui/styles/*"],
+      "@types": ["./src/ui/types"],
+      "@atoms": ["./src/ui/components/atomic/atoms"],
+      "@molecules": ["./src/ui/components/atomic/molecules"],
+      "@organisms": ["./src/ui/components/atomic/organisms"],
+      "@templates": ["./src/ui/components/atomic/templates"],
+      "@pages": ["./src/ui/components/atomic/pages"],
+      "@shared": ["./src/ui/components/shared"],
+      "@store": ["./src/store"],
+      "@utils": ["./src/utils"],
+      "@fonts": ["./src/fonts"],
+      "@hooks": ["./src/hooks"],
+      "@providers": ["./src/providers"],
+      "@shaders": ["./src/shaders"],
+      "@constants": ["./src/constants"],
+      "@data": ["./src/data"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next/dev/types/**/*.ts", "**/*.mts"],
+  "exclude": ["node_modules"]
+}

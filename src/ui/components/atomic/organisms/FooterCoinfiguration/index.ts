@@ -1,0 +1,1 @@
+export { FooterCoinfiguration } from './FooterCoinfiguration';

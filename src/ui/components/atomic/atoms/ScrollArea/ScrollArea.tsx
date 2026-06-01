@@ -1,0 +1,90 @@
+﻿'use client';
+
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+import 'overlayscrollbars/overlayscrollbars.css';
+import { OverlayScrollbars } from 'overlayscrollbars';
+
+import { cn } from '@utils';
+
+interface ScrollAreaProps {
+  children: React.ReactNode;
+  className?: string;
+}
+
+const ScrollArea = ({ children, className }: ScrollAreaProps) => {
+  const targetRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const instanceRef = useRef<OverlayScrollbars | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const frameIdRef = useRef<number | null>(null);
+  const [hasVerticalScroll, setHasVerticalScroll] = useState(false);
+
+  const refresh = useCallback(() => {
+    if (frameIdRef.current !== null) cancelAnimationFrame(frameIdRef.current);
+
+    frameIdRef.current = requestAnimationFrame(() => {
+      frameIdRef.current = null;
+      if (timerRef.current) clearTimeout(timerRef.current);
+
+      timerRef.current = setTimeout(() => {
+        if (!instanceRef.current) return;
+        instanceRef.current.update(true);
+        const hasScroll = instanceRef.current.state().overflowAmount.y > 0;
+        setHasVerticalScroll(hasScroll);
+      }, 150);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!targetRef.current || !viewportRef.current || !contentRef.current) return;
+
+    const instance = OverlayScrollbars(
+      {
+        target: targetRef.current,
+        elements: {
+          viewport: viewportRef.current,
+          content: contentRef.current,
+        },
+      },
+      {
+        scrollbars: {
+          theme: 'os-theme-custom',
+          visibility: 'auto',
+        },
+      },
+    );
+
+    instanceRef.current = instance;
+
+    const ro = new ResizeObserver(refresh);
+    ro.observe(contentRef.current);
+
+    refresh();
+
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      ro.disconnect();
+      instance.destroy();
+      instanceRef.current = null;
+    };
+  }, [refresh]);
+
+  return (
+    <div
+      ref={targetRef}
+      className={cn('h-full w-full', className)}
+      style={{
+        paddingRight: hasVerticalScroll ? 8 : 0,
+        transition: 'padding-right 0.1s ease-in-out',
+      }}
+    >
+      <div ref={viewportRef} className="h-full w-full overflow-y-scroll overflow-x-hidden scrollbar-none">
+        <div ref={contentRef}>{children}</div>
+      </div>
+    </div>
+  );
+};
+
+export { ScrollArea };

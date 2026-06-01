@@ -1,0 +1,230 @@
+'use client';
+
+import { createContext, memo, useContext } from 'react';
+
+import { cva, type VariantProps } from 'class-variance-authority';
+
+import { Text } from '@atoms';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared';
+import { useSlidingIndicator } from '@hooks';
+import type { HeaderConfigItemType } from '@types';
+import { cn } from '@utils';
+
+import { AtomTabsSeparator } from './AtomTabsSeparator';
+
+type AtomTabsVariant = NonNullable<VariantProps<typeof atomTabsListVariants>['variant']>;
+type SharedTabsListVariant = 'default' | 'line';
+
+const AtomTabsVariantContext = createContext<AtomTabsVariant>('default');
+
+const useAtomTabsVariant = () => useContext(AtomTabsVariantContext);
+
+const atomTabsRootVariants = cva('', {
+  variants: {
+    variant: {
+      default: '',
+      line: '',
+      configurator: 'gap-0',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
+
+const atomTabsListVariants = cva('', {
+  variants: {
+    variant: {
+      default: '',
+      line: '',
+      configurator: cn('inline-flex h-auto w-fit items-center rounded-none bg-transparent p-0', 'group-data-horizontal/tabs:h-auto'),
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
+
+const atomTabsTriggerVariants = cva('', {
+  variants: {
+    variant: {
+      default: '',
+      line: '',
+      configurator: cn(
+        'h-auto flex-none rounded-none border-transparent bg-transparent p-0 shadow-none',
+        'hover:bg-transparent data-active:bg-transparent',
+        'after:hidden',
+        'focus-visible:ring-0 focus-visible:outline-none',
+      ),
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
+
+const atomTabsContentVariants = cva('', {
+  variants: {
+    variant: {
+      default: '',
+      line: '',
+      configurator: 'pt-4',
+    },
+  },
+  defaultVariants: {
+    variant: 'default',
+  },
+});
+
+const sharedTabsListVariantMap: Record<AtomTabsVariant, SharedTabsListVariant> = {
+  default: 'default',
+  line: 'line',
+  configurator: 'line',
+};
+
+type AtomTabsListProps = React.ComponentProps<typeof TabsList> & VariantProps<typeof atomTabsListVariants>;
+
+const AtomTabsList = ({ className, variant: variantProp, ...props }: AtomTabsListProps) => {
+  const contextVariant = useAtomTabsVariant();
+  const variant = variantProp ?? contextVariant;
+  const sharedVariant = sharedTabsListVariantMap[variant ?? 'default'];
+
+  return <TabsList variant={sharedVariant} className={cn(atomTabsListVariants({ variant }), className)} {...props} />;
+};
+
+type AtomTabsTriggerProps = React.ComponentProps<typeof TabsTrigger> & VariantProps<typeof atomTabsTriggerVariants>;
+
+const AtomTabsTrigger = ({ className, variant: variantProp, ...props }: AtomTabsTriggerProps) => {
+  const contextVariant = useAtomTabsVariant();
+  const variant = variantProp ?? contextVariant;
+
+  return <TabsTrigger className={cn(atomTabsTriggerVariants({ variant }), className)} {...props} />;
+};
+
+type AtomTabsContentProps = React.ComponentProps<typeof TabsContent> & VariantProps<typeof atomTabsContentVariants>;
+
+const AtomTabsContent = ({ className, variant: variantProp, ...props }: AtomTabsContentProps) => {
+  const contextVariant = useAtomTabsVariant();
+  const variant = variantProp ?? contextVariant;
+
+  return <TabsContent className={cn(atomTabsContentVariants({ variant }), className)} {...props} />;
+};
+
+interface ConfiguratorTabsListProps {
+  items: HeaderConfigItemType[];
+  activeIndex: number;
+  listClassName?: string;
+}
+
+interface ConfiguratorTabItemProps {
+  item: HeaderConfigItemType;
+  index: number;
+  activeIndex: number;
+  getItemRef: (index: number) => (el: HTMLElement | null) => void;
+}
+
+const ConfiguratorTabItem = memo(({ item, index, activeIndex, getItemRef }: ConfiguratorTabItemProps) => {
+  const isReached = index <= activeIndex;
+
+  return (
+    <>
+      {index > 0 && <AtomTabsSeparator isActive={isReached} />}
+      <span ref={getItemRef(index)} className="inline-flex">
+        <AtomTabsTrigger value={item.value} disabled={item.disabled} data-progress-active={isReached || undefined}>
+          <Text variant="menu_step_buy" data-active={isReached} asChild>
+            <span>{item.label}</span>
+          </Text>
+        </AtomTabsTrigger>
+      </span>
+    </>
+  );
+});
+
+ConfiguratorTabItem.displayName = 'ConfiguratorTabItem';
+
+const ConfiguratorTabsList = ({ items, activeIndex, listClassName }: ConfiguratorTabsListProps) => {
+  const { wrapperRef, getItemRef, indicatorRef } = useSlidingIndicator(activeIndex);
+
+  return (
+    <div ref={wrapperRef} className="relative w-fit pt-2">
+      <AtomTabsList className={cn('gap-3', listClassName)}>
+        {items.map((item, index) => (
+          <ConfiguratorTabItem key={item.value} item={item} index={index} activeIndex={activeIndex} getItemRef={getItemRef} />
+        ))}
+      </AtomTabsList>
+
+      <Text variant="menu_step_buy_line" asChild aria-hidden>
+        <span ref={indicatorRef} />
+      </Text>
+    </div>
+  );
+};
+
+type AtomTabsRootProps = React.ComponentProps<typeof Tabs> &
+  VariantProps<typeof atomTabsRootVariants> & {
+    items?: HeaderConfigItemType[];
+    listClassName?: string;
+    contentClassName?: string;
+    hideList?: boolean;
+    hideContent?: boolean;
+  };
+
+const AtomTabs = ({
+  className,
+  variant = 'default',
+  items,
+  listClassName,
+  contentClassName,
+  hideList,
+  hideContent,
+  children,
+  value,
+  ...props
+}: AtomTabsRootProps) => {
+  const activeIndex = items?.findIndex((item) => item.value === value) ?? 0;
+  const isConfiguratorList = variant === 'configurator' && items && !hideList;
+
+  return (
+    <AtomTabsVariantContext.Provider value={variant ?? 'default'}>
+      <Tabs className={cn(atomTabsRootVariants({ variant }), className)} value={value} {...props}>
+        {items ? (
+          <>
+            {!hideList &&
+              (isConfiguratorList ? (
+                <ConfiguratorTabsList items={items} activeIndex={activeIndex} listClassName={listClassName} />
+              ) : (
+                <AtomTabsList className={listClassName}>
+                  {items.map(({ value: itemValue, label, disabled }) => (
+                    <AtomTabsTrigger key={itemValue} value={itemValue} disabled={disabled}>
+                      {label}
+                    </AtomTabsTrigger>
+                  ))}
+                </AtomTabsList>
+              ))}
+            {!hideContent &&
+              items.map(({ value: itemValue, content: Content }) => (
+                <AtomTabsContent key={itemValue} value={itemValue} className={contentClassName}>
+                  <Content />
+                </AtomTabsContent>
+              ))}
+          </>
+        ) : (
+          children
+        )}
+      </Tabs>
+    </AtomTabsVariantContext.Provider>
+  );
+};
+
+export {
+  AtomTabs,
+  AtomTabsList,
+  AtomTabsTrigger,
+  AtomTabsContent,
+  atomTabsRootVariants,
+  atomTabsListVariants,
+  atomTabsTriggerVariants,
+  atomTabsContentVariants,
+};
+
+export type { AtomTabsRootProps, AtomTabsListProps, AtomTabsTriggerProps, AtomTabsContentProps, AtomTabsVariant };
