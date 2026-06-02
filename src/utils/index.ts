@@ -11,3 +11,5 @@ export {
   warmupGhostscriptWorker,
   yieldToMain,
 } from './logoFile';
+
+export * from './orbitFlag';

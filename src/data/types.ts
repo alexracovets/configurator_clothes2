@@ -41,6 +41,13 @@ interface LogoPositionConfig {
   interactive: boolean;
 }
 
+interface GarmentPbrTexturesConfig {
+  bakeNormal: string;
+  bakeAoRoughness: string;
+  fabricNormal: string;
+  fabricRoughness: string;
+}
+
 interface GarmentConfig {
   name: string;
   type: string;
@@ -49,6 +56,8 @@ interface GarmentConfig {
   bonus_discount: number;
   minimum_count?: number;
   path: string;
+  modelFile?: string;
+  pbrTextures?: GarmentPbrTexturesConfig;
   parts: GarmentPartConfig[];
   patterns: PatternConfig[];
   default_pattern?: PatternConfig[];
@@ -66,6 +75,7 @@ type StyleId = 'crewneck';
 
 export type {
   GarmentConfig,
+  GarmentPbrTexturesConfig,
   GarmentPartConfig,
   LogoPositionConfig,
   NumberPositionConfig,

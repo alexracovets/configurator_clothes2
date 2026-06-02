@@ -4,7 +4,7 @@ import { useLayoutEffect, useMemo } from 'react';
 
 import { getProduct } from '@data';
 import type { GarmentConfig } from '@data';
-import { useConfigurationControl, useStepColor, useStepDesign, useStepLogo, useStepName, useStepNumber } from '@store';
+import { deriveModelFileName, useConfigurationControl, useStepColor, useStepDesign, useStepLogo, useStepName, useStepNumber, useSwitchModel } from '@store';
 import type { DesignPatternState, StepLogoPartState, StepLogoPositionState } from '@store';
 import { DEFAULT_TEXT_CONFIGURATION, FONTS_CONFIGURATION } from '@constants';
 
@@ -180,11 +180,13 @@ const useSyncConfiguratorProduct = () => {
   const setNumberParts = useStepNumber((state) => state.setParts);
   const setLogoPositions = useStepLogo((state) => state.setPositions);
   const setLogoParts = useStepLogo((state) => state.setParts);
+  const setModelSource = useSwitchModel((state) => state.setModelSource);
 
   useLayoutEffect(() => {
     if (!product) return;
 
     const logoPositions = mapProductLogoPositions(product);
+    const modelFileName = product.modelFile ?? deriveModelFileName(product.path);
 
     setName(product.name);
     setPrice(product.price);
@@ -201,6 +203,7 @@ const useSyncConfiguratorProduct = () => {
     setNumberParts(mapDefaultNumberParts(product));
     setLogoPositions(logoPositions);
     setLogoParts(mapDefaultLogoParts(product, logoPositions));
+    setModelSource(product.path, modelFileName);
   }, [
     product,
     setBonusDiscount,
@@ -208,6 +211,7 @@ const useSyncConfiguratorProduct = () => {
     setLogoParts,
     setLogoPositions,
     setMinimumCount,
+    setModelSource,
     setName,
     setNameParts,
     setNamePositions,

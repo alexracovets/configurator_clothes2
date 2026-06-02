@@ -1,0 +1,3 @@
+const PART_TEXTURE_SIZE = 2048;
+
+export { PART_TEXTURE_SIZE };

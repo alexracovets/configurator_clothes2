@@ -1,5 +1,7 @@
 'use client';
 
+import { resolvePartGradientDefaults, resolvePartGradientRotation } from '@constants';
+
 import { create } from 'zustand';
 import type { StepColorPart } from '../useStepColor/useStepColor';
 
@@ -27,7 +29,7 @@ interface StepShadingState {
 const clamp = (value: number, min: number, max: number) => Math.min(Math.max(value, min), max);
 const withOpacity = (color: string, opacity: number) => `color-mix(in srgb, ${color} ${clamp(opacity, 0, 100)}%, transparent)`;
 
-const buildShadingColor = (part: Pick<StepShadingPart, 'color' | 'colorPicked' | 'enabled' | 'rotation' | 'position' | 'softness' | 'opacity'>) => {
+const buildShadingColor = (part: Pick<StepShadingPart, 'id' | 'color' | 'colorPicked' | 'enabled' | 'rotation' | 'position' | 'softness' | 'opacity'>) => {
   if (!part.enabled) return part.color;
 
   const position = clamp(part.position, 0, 100);
@@ -38,22 +40,21 @@ const buildShadingColor = (part: Pick<StepShadingPart, 'color' | 'colorPicked' |
   const color1 = withOpacity(part.color, part.opacity);
   const color2 = withOpacity(part.colorPicked, part.opacity);
 
-  // 0deg = direction to top: bottom uses `color`, top uses `colorPicked`.
-  return `linear-gradient(${part.rotation}deg, ${color1} 0%, ${color1} ${edgeStart}%, ${color2} ${edgeEnd}%, ${color2} 100%)`;
+  const rotation = resolvePartGradientRotation(part.id, part.rotation);
+  return `linear-gradient(${rotation}deg, ${color1} 0%, ${color1} ${edgeStart}%, ${color2} ${edgeEnd}%, ${color2} 100%)`;
 };
 
 const createPart = (part: StepColorPart): StepShadingPart => {
+  const gradientDefaults = resolvePartGradientDefaults(part.id);
+
   const basePart: StepShadingPart = {
     id: part.id,
     name: part.name,
     label: part.label,
     color: part.color,
     colorPicked: part.color,
-    enabled: true,
-    rotation: 0,
-    position: 50,
-    softness: 35,
-    opacity: 100,
+    enabled: false,
+    ...gradientDefaults,
     shadingColor: part.color,
   };
 

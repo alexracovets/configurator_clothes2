@@ -9,6 +9,13 @@
       "bonus_discount": 20,
       "minimum_count": 6,
       "path": "/models/crewneck/crewneck/",
+      "modelFile": "crewneck.gltf",
+      "pbrTextures": {
+        "bakeNormal": "bake_normal.jpg",
+        "bakeAoRoughness": "bake_ao-bake_roughness.jpg",
+        "fabricNormal": "cotton_jersey_nor_gl.jpg",
+        "fabricRoughness": "cotton_jersey_rough.jpg"
+      },
       "parts": [
         {
           "name": "Davanti",
@@ -221,7 +228,52 @@
         {
           "label": "Logo Back",
           "uv": { "x": 0.16, "y": 0.35 },
-          "src": "/logo/logo.png",
+          "src": "/logo/logo_vertical.png",
+          "rotation": 0,
+          "scale": 1,
+          "default": true,
+          "interactive": false
+        }
+      ]
+    },
+    {
+      "name": "Shorts Classic",
+      "type": "shorts",
+      "price": 80,
+      "bonus_count": 10,
+      "bonus_discount": 15,
+      "minimum_count": 6,
+      "path": "/models/crewneck/mans_shorts/",
+      "modelFile": "mans_shorts.gltf",
+      "parts": [
+        {
+          "name": "Davanti",
+          "label": "Front",
+          "id": "front_shorts"
+        },
+        {
+          "name": "Retro",
+          "label": "Back",
+          "id": "back_shorts"
+        }
+      ],
+      "patterns": [],
+      "default_pattern": [
+        {
+          "name": "default_0",
+          "parts": [
+            {
+              "path_name": "mans_shorts_logo.svg",
+              "id": 0
+            }
+          ]
+        }
+      ],
+      "logoPositions": [
+        {
+          "label": "Logo Front",
+          "uv": { "x": 0.5, "y": 0.5 },
+          "src": "/logo/logo_short.png",
           "rotation": 0,
           "scale": 1,
           "default": true,
