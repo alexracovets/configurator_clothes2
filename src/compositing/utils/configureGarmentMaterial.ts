@@ -6,11 +6,10 @@ import {
   shirtVertexUvParsVertex,
   shirtVertexUvVertex,
 } from '@shaders';
-import type { Uv0PartKey , UvBounds } from '@constants';
+import type { Uv0PartKey, UvBounds } from '@constants';
 import type { PbrMaps } from '../types/pbrMaps';
 import type { MeshStandardMaterial, Texture } from 'three';
 import { Vector4 } from 'three';
-
 
 const PART_MAP_UNIFORMS = /* glsl */ `
 uniform vec4 uPartUvBounds;
