@@ -178,14 +178,14 @@
           "label": "Top Back",
           "uv": { "x": 0.76, "y": 0.5 },
           "rotation": 90,
-          "fontSize": 120,
+          "fontSize": 200,
           "interactive": true
         },
         {
           "label": "Bottom Back",
           "uv": { "x": 0.2, "y": 0.5 },
           "rotation": 90,
-          "fontSize": 92,
+          "fontSize": 200,
           "interactive": true
         }
       ],
