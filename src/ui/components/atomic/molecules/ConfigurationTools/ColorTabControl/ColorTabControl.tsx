@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-import { Flex, SvgIcon, Text } from '@atoms';
+import { Flex, Text } from '@atoms';
 import { ColorControl } from '@molecules';
 
 import { cn } from '@utils';
@@ -19,9 +19,9 @@ interface ColorTabControlProps {
 
 type ColorTab = 'colori' | 'contorno';
 
-export const COLOR_TABS: { id: ColorTab; label: string }[] = [
-  { id: 'colori', label: 'Colori' },
-  { id: 'contorno', label: 'Contorno' },
+const COLOR_TABS: { id: ColorTab; label: string }[] = [
+  { id: 'colori', label: 'Colore 1' },
+  { id: 'contorno', label: 'Colore 2' },
 ];
 
 const ColorTabControl = ({
@@ -35,6 +35,8 @@ const ColorTabControl = ({
 }: ColorTabControlProps) => {
   const [colorTab, setColorTab] = useState<ColorTab>('colori');
 
+  const colors: Record<ColorTab, string> = { colori: textColor, contorno: strokeColor };
+
   return (
     <Flex variant="configurator_part">
       <Text variant="configurator_part_label">{label}</Text>
@@ -44,12 +46,12 @@ const ColorTabControl = ({
             key={id}
             onClick={() => setColorTab(id)}
             className={cn(
-              'flex-1 flex items-center justify-center gap-1.5 py-2.5 text-sm font-inter font-medium',
+              'flex-1 flex items-center justify-center gap-2 py-2.5 text-sm font-inter font-medium',
               'border-b-2 -mb-px transition-colors duration-200 cursor-pointer',
               colorTab === id ? 'border-default text-default' : 'border-transparent text-gray hover:text-default',
             )}
           >
-            <SvgIcon name={id} />
+            <div className="w-5 h-5 rounded-[3px] shrink-0 border-[.3px] border-gray-30 transition-colors duration-150" style={{ background: colors[id] }} />
             {tabLabel}
           </button>
         ))}

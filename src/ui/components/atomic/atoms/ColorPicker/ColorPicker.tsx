@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { AtomPopover, AtomPopoverContent, AtomPopoverTrigger } from '@atoms';
 
@@ -17,9 +17,18 @@ const isValidHex = (hex: string) => /^#?[0-9a-fA-F]{3,8}$/.test(hex);
 
 const ColorPicker = ({ color, onChange, onPreviewChange, trigger }: ColorPickerProps) => {
   const safeColor = isValidHex(color) ? color : '#000000';
-  const [wheelHsva, setWheelHsva] = useState({ ...hexToHsva(safeColor), v: 100 });
-  const [brightness, setBrightness] = useState(hexToHsva(safeColor).v);
+  const [wheelHsva, setWheelHsva] = useState(() => ({ ...hexToHsva(safeColor), v: 100 }));
+  const [brightness, setBrightness] = useState(() => hexToHsva(safeColor).v);
   const latestHexRef = useRef(safeColor);
+  const isDraggingRef = useRef(false);
+
+  useEffect(() => {
+    if (isDraggingRef.current) return;
+    const hsva = hexToHsva(safeColor);
+    setWheelHsva({ ...hsva, v: 100 });
+    setBrightness(hsva.v);
+    latestHexRef.current = safeColor;
+  }, [safeColor]);
 
   const emitPreview = (hex: string) => {
     latestHexRef.current = hex;
@@ -32,17 +41,20 @@ const ColorPicker = ({ color, onChange, onPreviewChange, trigger }: ColorPickerP
   };
 
   const handleWheelChange = (newColor: { hsva: { h: number; s: number; v: number; a: number } }) => {
+    isDraggingRef.current = true;
     const next = { ...newColor.hsva, v: 100 };
     setWheelHsva(next);
     emitPreview(hsvaToHex({ ...next, v: brightness }));
   };
 
   const handleShadeChange = (newShade: { v: number }) => {
+    isDraggingRef.current = true;
     setBrightness(newShade.v);
     emitPreview(hsvaToHex({ ...wheelHsva, v: newShade.v }));
   };
 
   const handlePointerUp = () => {
+    isDraggingRef.current = false;
     emitCommit(latestHexRef.current);
   };
 
