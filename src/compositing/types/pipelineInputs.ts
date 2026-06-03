@@ -1,11 +1,12 @@
-import type { DesignPatternState, PatternCustomization, StepColorPart, StepLogoPartState } from '@store';
+import type { DesignPatternState, PatternCustomization, StepColorPart, StepLogoPartState, StepNamePartState } from '@store';
 
 import type { CompositingShadingPart } from '../types';
 
-/** Pipeline 1–2: base color + SFUMATURA (per part canvas). */
+/** Pipeline 1–2: base color + SFUMATURA + name text (per part canvas). */
 interface FabricCompositingInput {
   colorParts: StepColorPart[];
   shadingParts: CompositingShadingPart[];
+  nameParts: StepNamePartState[];
 }
 
 /** Pipeline 4–7: global print atlas. */

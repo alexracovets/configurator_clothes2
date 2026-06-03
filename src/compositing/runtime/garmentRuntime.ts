@@ -3,6 +3,7 @@ import type { CanvasTexture, Object3D } from 'three';
 interface FabricPartCache {
   key: string;
   canvas: HTMLCanvasElement;
+  baseCanvas: HTMLCanvasElement; // canvas without text — for fast name preview
 }
 
 interface GarmentRuntime {

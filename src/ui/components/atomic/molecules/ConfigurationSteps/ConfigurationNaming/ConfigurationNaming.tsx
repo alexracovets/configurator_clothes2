@@ -1,21 +1,103 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { AccordionAtom, AtomPopover, AtomPopoverContent, AtomPopoverTrigger, Button, Flex, SvgIcon, Text } from '@atoms';
 import { ColorTabControl, FontSelectRow, PartColorSwitch, RangeControl } from '@molecules';
-import { useStepName } from '@store';
+import { useGarmentNamePreview, useStepName } from '@store';
 import { cn } from '@utils';
 import { DEFAULT_TEXT_CONFIGURATION, FONTS_CONFIGURATION } from '@constants';
 
 const DEFAULT_NAME_TEXT = 'PLAYER NAME';
 
+interface NamePartFormProps {
+  instId: string;
+}
+
+const NamePartForm = ({ instId }: NamePartFormProps) => {
+  const inst = useStepName((state) => state.parts.find((p) => p.id === instId));
+  const updatePart = useStepName((state) => state.updatePart);
+  const removePart = useStepName((state) => state.removePart);
+  const setNamePreview = useGarmentNamePreview((state) => state.setNamePreview);
+  const clearNamePreview = useGarmentNamePreview((state) => state.clearNamePreview);
+
+  const commit = useCallback(
+    (patch: Parameters<typeof updatePart>[1]) => {
+      clearNamePreview();
+      updatePart(instId, patch);
+    },
+    [clearNamePreview, instId, updatePart],
+  );
+
+  const commitFromPreview = useCallback(() => {
+    const preview = useGarmentNamePreview.getState().preview;
+    if (preview?.partId === instId) {
+      updatePart(instId, preview.patch);
+    }
+    clearNamePreview();
+  }, [clearNamePreview, instId, updatePart]);
+
+  if (!inst) return null;
+
+  return (
+    <Flex variant="configurator_part" className="gap-4 pt-2">
+      <FontSelectRow font={inst.font} onChange={(font) => commit({ font })} />
+
+      <Flex variant="configurator_part">
+        <Text variant="configurator_part_label">Testo</Text>
+        <input
+          type="text"
+          value={inst.text}
+          maxLength={20}
+          onChange={(e) => commit({ text: e.target.value })}
+          className="w-full h-10 bg-white border border-input-border rounded-[8px] px-3 text-sm font-inter text-default outline-none focus:border-active transition-colors"
+          placeholder="PLAYER NAME"
+        />
+      </Flex>
+
+      <ColorTabControl
+        textColor={inst.textColor}
+        strokeColor={inst.strokeColor}
+        onTextColor={(textColor) => commit({ textColor })}
+        onStrokeColor={(strokeColor) => commit({ strokeColor })}
+        onPreviewTextColor={(textColor) => setNamePreview(instId, { textColor })}
+        onPreviewStrokeColor={(strokeColor) => setNamePreview(instId, { strokeColor })}
+      />
+
+      <RangeControl
+        label="Dimensione testo"
+        value={inst.fontSize}
+        onChange={(fontSize) => setNamePreview(instId, { fontSize })}
+        onCommit={commitFromPreview}
+        min={10}
+        max={120}
+        unit="px"
+      />
+
+      <RangeControl
+        label="Spessore contorno"
+        value={inst.strokeWidth}
+        onChange={(strokeWidth) => setNamePreview(instId, { strokeWidth })}
+        onCommit={commitFromPreview}
+        min={0}
+        max={20}
+        unit="px"
+      />
+
+      {!inst.isDefault && (
+        <Button variant="delete" size="delete" onClick={() => removePart(instId)}>
+          <SvgIcon name="delete" className="w-[14px] h-[15.75px]" />
+          Eliminare
+        </Button>
+      )}
+    </Flex>
+  );
+};
+
 const ConfigurationNaming = () => {
   const parts = useStepName((state) => state.parts);
   const positions = useStepName((state) => state.positions);
   const addPart = useStepName((state) => state.addPart);
-  const removePart = useStepName((state) => state.removePart);
-  const updatePart = useStepName((state) => state.updatePart);
   const [isLocationPickerOpen, setIsLocationPickerOpen] = useState(false);
   const [openItems, setOpenItems] = useState<string[]>([]);
   const nextPartIdRef = useRef(0);
@@ -57,48 +139,7 @@ const ConfigurationNaming = () => {
   const items = parts.map((inst) => ({
     value: inst.id,
     trigger: <PartColorSwitch color={inst.textColor} label={inst.label} />,
-    content: (
-      <Flex variant="configurator_part" className="gap-4 pt-2">
-        <FontSelectRow font={inst.font} onChange={(font) => updatePart(inst.id, { font })} />
-
-        <Flex variant="configurator_part">
-          <Text variant="configurator_part_label">Testo</Text>
-          <input
-            type="text"
-            value={inst.text}
-            maxLength={20}
-            onChange={(e) => updatePart(inst.id, { text: e.target.value })}
-            className="w-full h-10 bg-white border border-input-border rounded-[8px] px-3 text-sm font-inter text-default outline-none focus:border-active transition-colors"
-            placeholder="PLAYER NAME"
-          />
-        </Flex>
-
-        <ColorTabControl
-          textColor={inst.textColor}
-          strokeColor={inst.strokeColor}
-          onTextColor={(textColor) => updatePart(inst.id, { textColor })}
-          onStrokeColor={(strokeColor) => updatePart(inst.id, { strokeColor })}
-        />
-
-        <RangeControl label="Dimensione testo" value={inst.fontSize} onChange={(fontSize) => updatePart(inst.id, { fontSize })} min={10} max={120} unit="px" />
-
-        <RangeControl
-          label="Spessore contorno"
-          value={inst.strokeWidth}
-          onChange={(strokeWidth) => updatePart(inst.id, { strokeWidth })}
-          min={0}
-          max={20}
-          unit="px"
-        />
-
-        {!inst.isDefault && (
-          <Button variant="delete" size="delete" onClick={() => removePart(inst.id)}>
-            <SvgIcon name="delete" className="w-[14px] h-[15.75px]" />
-            Eliminare
-          </Button>
-        )}
-      </Flex>
-    ),
+    content: <NamePartForm instId={inst.id} />,
   }));
 
   return (

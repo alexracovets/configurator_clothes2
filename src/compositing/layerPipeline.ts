@@ -1,4 +1,5 @@
 import { applyBaseColorLayer } from './layers/01-baseColorLayer';
+import { applyNameLayer } from './layers/06-nameLayer';
 import { applyPatternLayer } from './layers/04-patternLayer';
 import { applyLogoLayer } from './layers/05-logoLayer';
 import { applyDefaultPatternLayer } from './layers/07-defaultPatternLayer';
@@ -7,7 +8,7 @@ import type { LayerContext, PrintLayerContext } from './types';
 type FabricLayerStep = (context: LayerContext) => void;
 type PrintLayerStep = (context: PrintLayerContext) => Promise<void>;
 
-const FABRIC_LAYER_STEPS: FabricLayerStep[] = [applyBaseColorLayer];
+const FABRIC_LAYER_STEPS: FabricLayerStep[] = [applyBaseColorLayer, applyNameLayer];
 
 const PRINT_LAYER_STEPS: PrintLayerStep[] = [applyPatternLayer, applyLogoLayer, applyDefaultPatternLayer];
 

@@ -5,6 +5,7 @@ import type { FabricCompositingInput, PrintCompositingInput } from '../types/pip
 const toStoreInput = (fabric: FabricCompositingInput, print: PrintCompositingInput): CompositingStoreInput => ({
   colorParts: fabric.colorParts,
   shadingParts: fabric.shadingParts,
+  nameParts: fabric.nameParts,
   activePattern: print.activePattern,
   activePatternCustomization: print.activePatternCustomization,
   defaultPattern: print.defaultPattern,

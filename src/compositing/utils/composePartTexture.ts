@@ -12,6 +12,7 @@ const composePartTexture = (input: CompositingInput, partId: string | null, prin
   const fabric = {
     colorParts: input.colorParts,
     shadingParts: input.shadingParts,
+    nameParts: input.nameParts,
   };
 
   const fabricCanvas = composeFabricPart(fabric, partId);

@@ -43,10 +43,11 @@ const syncFabricPipeline = async (root: Object3D, fabric: FabricCompositingInput
     const cached = runtime.fabricByPartId.get(partId);
     if (cached?.key === fabricKey) continue;
 
-    runtime.fabricByPartId.set(partId, {
-      key: fabricKey,
-      canvas: composeFabricPart(fabric, partId, PART_TEXTURE_SIZE),
-    });
+    const fabricWithoutNames: typeof fabric = { ...fabric, nameParts: [] };
+    const baseCanvas = composeFabricPart(fabricWithoutNames, partId, PART_TEXTURE_SIZE);
+    const canvas = composeFabricPart(fabric, partId, PART_TEXTURE_SIZE);
+
+    runtime.fabricByPartId.set(partId, { key: fabricKey, canvas, baseCanvas });
   }
 
   forEachFabricMesh(root, (mesh) => {

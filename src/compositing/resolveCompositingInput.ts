@@ -4,7 +4,7 @@ import type { CompositingStoreInput } from './types';
 import type { FabricCompositingInput, PrintCompositingInput } from './types/pipelineInputs';
 
 import type { DesignPatternState, PatternCustomization } from '@store';
-import { useStepColor, useStepDesign, useStepLogo, useStepShading } from '@store';
+import { useStepColor, useStepDesign, useStepLogo, useStepName, useStepShading } from '@store';
 import { useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -22,8 +22,9 @@ const resolveActivePattern = (patterns: DesignPatternState[], activePatternKey: 
 const useFabricCompositingInput = (): FabricCompositingInput => {
   const colorParts = useStepColor((state) => state.parts);
   const shadingParts = useStepShading((state) => state.parts);
+  const nameParts = useStepName((state) => state.parts);
 
-  return useMemo(() => ({ colorParts, shadingParts }), [colorParts, shadingParts]);
+  return useMemo(() => ({ colorParts, shadingParts, nameParts }), [colorParts, shadingParts, nameParts]);
 };
 
 const usePrintCompositingInput = (): PrintCompositingInput => {

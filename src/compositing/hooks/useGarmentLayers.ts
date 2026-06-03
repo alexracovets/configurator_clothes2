@@ -5,10 +5,11 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 import { PART_TEXTURE_SIZE } from '@constants';
 import { resolvePbrTexturePaths, useConfiguratorProduct, useGarmentPbrMaps } from '@hooks';
-import { useGarmentColorPreview, useGarmentDesignPreview, useGarmentShadingPreview, useStepColor, useStepShading } from '@store';
+import { useGarmentColorPreview, useGarmentDesignPreview, useGarmentNamePreview, useGarmentShadingPreview, useStepColor, useStepShading } from '@store';
 import type { Object3D } from 'three';
 
 import { applyDesignPreview, clearDesignColorPreview } from '../apply/applyDesignColorPreview';
+import { applyNamePreview, clearNamePreview } from '../apply/applyNamePreview';
 import { applyGarmentShading } from '../apply/applyGarmentShading';
 import { applyPartColorPreview, clearAllColorPreviews } from '../apply/applyPartColorPreview';
 import { applyPbrToGarment } from '../apply/applyPbrToGarment';
@@ -26,6 +27,7 @@ const useGarmentLayers = (root: Object3D | null) => {
   const shadingPreview = useGarmentShadingPreview((state) => state.preview);
   const designPreview = useGarmentDesignPreview((state) => state.preview);
   const opacityPreview = useGarmentDesignPreview((state) => state.opacityPreview);
+  const namePreview = useGarmentNamePreview((state) => state.preview);
   const { product } = useConfiguratorProduct();
   const pbrPaths = useMemo(() => (product ? resolvePbrTexturePaths(product) : null), [product]);
   const pbrMaps = useGarmentPbrMaps(
@@ -115,6 +117,38 @@ const useGarmentLayers = (root: Object3D | null) => {
       invalidate();
     });
   }, [designPreview, opacityPreview, invalidate, root]);
+
+  const namePreviewRafRef = useRef<number | null>(null);
+
+  // NAME preview — throttled via rAF so rapid drag events collapse into one redraw per frame
+  useEffect(() => {
+    if (!root) return;
+
+    if (namePreviewRafRef.current !== null) {
+      cancelAnimationFrame(namePreviewRafRef.current);
+      namePreviewRafRef.current = null;
+    }
+
+    if (!namePreview) {
+      clearNamePreview(root, fabricRef.current);
+      invalidate();
+      return;
+    }
+
+    const capturedPreview = namePreview;
+    namePreviewRafRef.current = requestAnimationFrame(() => {
+      namePreviewRafRef.current = null;
+      applyNamePreview(root, fabricRef.current, capturedPreview.partId, capturedPreview.patch);
+      invalidate();
+    });
+
+    return () => {
+      if (namePreviewRafRef.current !== null) {
+        cancelAnimationFrame(namePreviewRafRef.current);
+        namePreviewRafRef.current = null;
+      }
+    };
+  }, [namePreview, invalidate, root]);
 
   // Pipeline 4–7 — print / design only
   useEffect(() => {

@@ -25,6 +25,17 @@ const buildFabricCacheKey = (input: FabricCompositingInput | CompositingStoreInp
     partTextureSize,
     partId,
     color: partId ? input.colorParts.find((part) => part.id === partId)?.color : null,
+    nameParts: input.nameParts.map((part) => ({
+      id: part.id,
+      text: part.text,
+      font: part.font,
+      fontSize: part.fontSize,
+      textColor: part.textColor,
+      strokeColor: part.strokeColor,
+      strokeWidth: part.strokeWidth,
+      uv: part.uv,
+      rotation: part.rotation,
+    })),
   });
 
 export { buildFabricCacheKey, buildPrintAtlasCacheKey };

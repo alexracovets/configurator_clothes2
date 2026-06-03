@@ -177,16 +177,16 @@
         {
           "label": "Top Back",
           "uv": { "x": 0.76, "y": 0.5 },
-          "rotation": 0,
+          "rotation": 90,
           "fontSize": 92,
-          "interactive": false
+          "interactive": true
         },
         {
           "label": "Bottom Back",
           "uv": { "x": 0.2, "y": 0.5 },
-          "rotation": 0,
+          "rotation": 90,
           "fontSize": 92,
-          "interactive": false
+          "interactive": true
         }
       ],
       "numberPositions": [
