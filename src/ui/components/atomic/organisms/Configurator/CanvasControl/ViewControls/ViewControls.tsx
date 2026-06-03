@@ -6,6 +6,7 @@ import { OrbitControls } from '@react-three/drei';
 import { useFrame, useThree } from '@react-three/fiber';
 import type { OrbitControls as OrbitControlsImpl } from 'three-stdlib';
 
+import { useConfigurationControl } from '@store';
 import { isOrbitControlsEnabled, orbitControlsRef } from '@utils';
 
 const MIN_DISTANCE = 0.5;
@@ -175,6 +176,32 @@ const ViewControls = () => {
       handlersRef.current = noopHandlers;
     };
   }, [invalidate]);
+
+  useEffect(() => {
+    const kick = () => {
+      if (document.visibilityState !== 'visible') return;
+      invalidate();
+      const t1 = setTimeout(() => invalidate(), 32);
+      const t2 = setTimeout(() => invalidate(), 64);
+      return () => {
+        clearTimeout(t1);
+        clearTimeout(t2);
+      };
+    };
+    document.addEventListener('visibilitychange', kick);
+    return () => document.removeEventListener('visibilitychange', kick);
+  }, [invalidate]);
+
+  const activeStep = useConfigurationControl((state) => state.activeStep);
+  useEffect(() => {
+    invalidate();
+    const t1 = setTimeout(() => invalidate(), 32);
+    const t2 = setTimeout(() => invalidate(), 64);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [activeStep, invalidate]);
 
   return (
     <OrbitControls

@@ -23,8 +23,6 @@ const DEFAULT_OPACITY = 1;
 const DEFAULT_COLOR_FIRST = '#000000';
 const DEFAULT_COLOR_SECOND = '#000000';
 
-// Build customization for a pattern by mapping its parts to the global color slots.
-// Part index 0 → colorFirst, index 1 → colorSecond, rest → colorFirst.
 const buildCustomization = (pattern: DesignPatternState, colorFirst: string, colorSecond: string, opacity: number): PatternCustomization => ({
   colors: Object.fromEntries(pattern.parts.map((part, index) => [part.key, index === 1 ? colorSecond : colorFirst])),
   opacity,
