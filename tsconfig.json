@@ -37,7 +37,8 @@
       "@constants": ["./src/constants"],
       "@constants/*": ["./src/constants/*"],
       "@data": ["./src/data"],
-      "@compositing": ["./src/compositing"]
+      "@compositing": ["./src/compositing"],
+      "@compositing/*": ["./src/compositing/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", ".next/dev/types/**/*.ts", "**/*.mts"],

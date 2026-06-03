@@ -2,6 +2,7 @@
 
 import { Environment } from '@react-three/drei';
 
+import { NameGizmoHandler } from '../../../molecules/NameGizmoHandler';
 import { ViewControls } from './ViewControls';
 
 const CanvasControl = () => {
@@ -14,6 +15,7 @@ const CanvasControl = () => {
       <directionalLight position={[-3, 3, 5]} intensity={0.32} />
       <Environment preset="warehouse" background={false} environmentIntensity={0.19} />
       <ViewControls />
+      <NameGizmoHandler />
     </>
   );
 };

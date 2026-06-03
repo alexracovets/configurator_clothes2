@@ -2,11 +2,14 @@ import type { Object3D } from 'three';
 import { CanvasTexture, ClampToEdgeWrapping, SRGBColorSpace } from 'three';
 
 import type { NamePreviewPatch } from '@store';
+import { useStepNameSelection } from '@store';
 import type { FabricCompositingInput } from '../types/pipelineInputs';
 import { getGarmentRuntime } from '../runtime/garmentRuntime';
 import { resolveMeshPartId } from '../meshPartMapping';
 import { forEachFabricMesh, forEachStandardMaterial } from '../utils/mesh';
 import { drawNameOnPart } from '../utils/drawNameOnPart';
+import { buildGizmoLayout, drawGizmoFrame, drawGizmoHandle, GIZMO_HANDLES } from '../utils/gizmoLayout';
+import { namePartToGizmoItem } from '../utils/nameGizmoLayout';
 import { PART_TEXTURE_SIZE } from '@constants';
 
 // Single reusable preview canvas + texture — never recreated, just repainted.
@@ -29,6 +32,7 @@ const getPreviewTarget = (size: number): { canvas: HTMLCanvasElement; texture: C
 
 const applyNamePreview = (root: Object3D, fabric: FabricCompositingInput, partId: string, patch: NamePreviewPatch): void => {
   const runtime = getGarmentRuntime(root);
+  const selectedPartId = useStepNameSelection.getState().selectedPartId;
 
   const affectedColorPartIds = fabric.colorParts.filter((p) => p.id.toLowerCase().includes('back')).map((p) => p.id);
 
@@ -49,6 +53,15 @@ const applyNamePreview = (root: Object3D, fabric: FabricCompositingInput, partId
       const zone = resolvedPart.positionKey.toLowerCase().includes('back') ? 'back' : null;
       if (!zone || !colorPartId.toLowerCase().includes(zone)) continue;
       drawNameOnPart(ctx, resolvedPart, size);
+
+      if (resolvedPart.id === selectedPartId) {
+        const item = namePartToGizmoItem(resolvedPart);
+        const layout = buildGizmoLayout(item, size);
+        drawGizmoFrame(ctx, layout.textBox, size, resolvedPart.rotation);
+        for (const handle of GIZMO_HANDLES) {
+          drawGizmoHandle(ctx, layout.handles[handle], handle, size);
+        }
+      }
     }
 
     texture.needsUpdate = true;

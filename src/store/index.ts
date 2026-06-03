@@ -17,3 +17,5 @@ export { useStepName } from './useStepName';
 export type { StepNamePartState, StepNamePositionState, StepNameUv } from './useStepName';
 export { useStepLogo } from './useStepLogo';
 export type { StepLogoPartState, StepLogoPositionState, StepLogoUv } from './useStepLogo';
+export { useStepNameSelection } from './useStepNameSelection';
+export type { StepNameSelectionStore } from './useStepNameSelection';

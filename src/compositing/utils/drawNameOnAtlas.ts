@@ -2,17 +2,7 @@ import type { StepNamePartState } from '@store';
 import { UV0_BOUNDS } from '@constants';
 
 import { uvToCanvas } from './uvCanvas';
-
-const FONT_SCALE = 2.0;
-
-// Measure context for text metrics — created once, server-safe.
-let _measureCtx: CanvasRenderingContext2D | null | undefined;
-const measureCtx = (): CanvasRenderingContext2D | null => {
-  if (_measureCtx === undefined) {
-    _measureCtx = typeof document !== 'undefined' ? document.createElement('canvas').getContext('2d') : null;
-  }
-  return _measureCtx;
-};
+import { drawNameGlyph, measureNameGlyph, NAME_FONT_SCALE } from './nameTextMetrics';
 
 // Map part-local UV (0–1) to print atlas UV using the part's UV0 bounds.
 // "back" position key maps to back bounds etc.
@@ -38,49 +28,23 @@ const resolveAtlasUv = (partLocalUv: { x: number; y: number }, positionKey: stri
 
 /** Render text to an offscreen canvas at 2× scale for sharpness, then composite onto atlas. */
 const drawNameOnAtlas = (ctx: CanvasRenderingContext2D, part: StepNamePartState, atlasWidth: number, atlasHeight: number): void => {
-  const mc = measureCtx();
-  if (!mc) return;
-
   const text = part.text || 'PLAYER NAME';
-  const fontFamily = part.font;
-  const fontSize = Math.round(part.fontSize * FONT_SCALE);
-  const strokeWidth = part.strokeWidth * FONT_SCALE;
-
-  mc.font = `bold ${fontSize}px "${fontFamily}"`;
-  const metrics = mc.measureText(text);
-  const textW = metrics.width;
-  const textH = fontSize * 1.1;
-  const pad = strokeWidth + 4;
-
-  const glyphW = Math.max(2, Math.ceil(textW + pad * 2));
-  const glyphH = Math.max(2, Math.ceil(textH + pad * 2));
+  const layout = measureNameGlyph(text, part.font, part.fontSize, part.strokeWidth);
+  if (!layout) return;
 
   const offscreen = document.createElement('canvas');
-  offscreen.width = glyphW;
-  offscreen.height = glyphH;
+  offscreen.width = layout.glyphW;
+  offscreen.height = layout.glyphH;
   const octx = offscreen.getContext('2d')!;
+  drawNameGlyph(octx, text, layout, part.font, part.textColor, part.strokeColor, part.strokeWidth);
 
-  octx.font = `bold ${fontSize}px "${fontFamily}"`;
-  octx.textAlign = 'center';
-  octx.textBaseline = 'middle';
-
-  if (strokeWidth > 0) {
-    octx.strokeStyle = part.strokeColor;
-    octx.lineWidth = strokeWidth * 2;
-    octx.lineJoin = 'round';
-    octx.strokeText(text, glyphW / 2, glyphH / 2);
-  }
-  octx.fillStyle = part.textColor;
-  octx.fillText(text, glyphW / 2, glyphH / 2);
-
-  // Convert part-local UV to atlas UV, then to canvas pixel coords.
   const atlasUv = resolveAtlasUv(part.uv, part.positionKey);
   const { x, y } = uvToCanvas(atlasUv, atlasWidth, atlasHeight);
 
   ctx.save();
   ctx.translate(x, y);
   ctx.rotate((part.rotation * Math.PI) / 180);
-  ctx.drawImage(offscreen, -glyphW / (2 * FONT_SCALE), -glyphH / (2 * FONT_SCALE), glyphW / FONT_SCALE, glyphH / FONT_SCALE);
+  ctx.drawImage(offscreen, -layout.displayHalfW, -layout.displayHalfH, layout.glyphW / NAME_FONT_SCALE, layout.glyphH / NAME_FONT_SCALE);
   ctx.restore();
 };
 

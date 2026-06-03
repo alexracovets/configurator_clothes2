@@ -1,5 +1,8 @@
 import type { LayerContext } from '../types';
 import { drawNameOnPart } from '../utils/drawNameOnPart';
+import { buildGizmoLayout, drawGizmoFrame, drawGizmoHandle, GIZMO_HANDLES } from '../utils/gizmoLayout';
+import { namePartToGizmoItem } from '../utils/nameGizmoLayout';
+import { useStepNameSelection } from '@store';
 
 const resolvePartZone = (positionKey: string): string => {
   const key = positionKey.toLowerCase();
@@ -26,9 +29,20 @@ const applyNameLayer = ({ ctx, width, input, partId }: LayerContext): void => {
 
   if (!partZone) return;
 
+  const selectedPartId = useStepNameSelection.getState().selectedPartId;
+
   for (const part of input.nameParts) {
     if (resolvePartZone(part.positionKey) !== partZone) continue;
     drawNameOnPart(ctx, part, width);
+
+    if (part.id === selectedPartId) {
+      const item = namePartToGizmoItem(part);
+      const layout = buildGizmoLayout(item, width);
+      drawGizmoFrame(ctx, layout.textBox, width, part.rotation);
+      for (const handle of GIZMO_HANDLES) {
+        drawGizmoHandle(ctx, layout.handles[handle], handle, width);
+      }
+    }
   }
 };
 

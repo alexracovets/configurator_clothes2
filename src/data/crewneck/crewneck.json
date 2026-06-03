@@ -178,7 +178,7 @@
           "label": "Top Back",
           "uv": { "x": 0.76, "y": 0.5 },
           "rotation": 90,
-          "fontSize": 92,
+          "fontSize": 120,
           "interactive": true
         },
         {

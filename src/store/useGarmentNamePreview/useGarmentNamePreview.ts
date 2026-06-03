@@ -9,6 +9,8 @@ interface NamePreviewPatch {
   textColor?: string;
   strokeColor?: string;
   strokeWidth?: number;
+  uv?: { x: number; y: number };
+  rotation?: number;
 }
 
 interface GarmentNamePreviewState {
