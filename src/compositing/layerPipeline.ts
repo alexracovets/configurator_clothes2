@@ -7,19 +7,9 @@ import type { LayerContext, PrintLayerContext } from './types';
 type FabricLayerStep = (context: LayerContext) => void;
 type PrintLayerStep = (context: PrintLayerContext) => Promise<void>;
 
-/** Layer 1: per-part base color. Layer 2 (SFUMATURA) + 4–7 (print) composite in GPU shader — gradient before print. */
 const FABRIC_LAYER_STEPS: FabricLayerStep[] = [applyBaseColorLayer];
 
-/**
- * Layers 4–7 on print atlas (lowest first).
- * Slot 5: Logo — reserved
- * Slot 6: Name / Number — reserved
- */
-const PRINT_LAYER_STEPS: PrintLayerStep[] = [
-  applyPatternLayer, // 4
-  applyLogoLayer, // 5 — user-uploaded logos only (defaults come from default_pattern SVG)
-  applyDefaultPatternLayer, // 7 — crewneck_logos.svg etc. (6: name/number — reserved)
-];
+const PRINT_LAYER_STEPS: PrintLayerStep[] = [applyPatternLayer, applyLogoLayer, applyDefaultPatternLayer];
 
 const runFabricLayers = (context: LayerContext) => {
   for (const step of FABRIC_LAYER_STEPS) {

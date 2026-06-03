@@ -30,7 +30,6 @@ const ensurePrintAtlas = async (root: Object3D, fabric: FabricCompositingInput, 
   return { runtime, printKey };
 };
 
-/** Pipeline 1–2: recompose fabric for given part ids only; merge with current print atlas. */
 const syncFabricPipeline = async (root: Object3D, fabric: FabricCompositingInput, print: PrintCompositingInput, pbrMaps: PbrMaps, partIds: string[]) => {
   if (partIds.length === 0) return;
 

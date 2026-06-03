@@ -16,7 +16,6 @@ const buildMergedAlbedoKey = (fabricKey: string, printKey: string, meshName: str
   return `m:${fabricKey}|p:${printKey}|${bounds.minX},${bounds.minY},${bounds.maxX},${bounds.maxY}`;
 };
 
-/** Pipeline 4–7: rebuild print atlas only; re-merge albedo using cached fabric canvases. */
 const syncPrintPipeline = async (root: Object3D, fabric: FabricCompositingInput, print: PrintCompositingInput, pbrMaps: PbrMaps) => {
   const runtime = getGarmentRuntime(root);
   const printKey = buildPrintAtlasCacheKey(print);

@@ -41,7 +41,6 @@ const syncPrintAtlasTexture = (runtime: GarmentRuntime, printCanvas: HTMLCanvasE
   return runtime.printAtlasTexture;
 };
 
-/** Layers 1–2 fabric + layers 4–7 print (composited in shader: gradient before print). */
 const assignPartTexturesToMesh = (
   mesh: Mesh,
   fabricCanvas: HTMLCanvasElement,
