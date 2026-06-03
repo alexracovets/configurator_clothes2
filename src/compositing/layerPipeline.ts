@@ -1,5 +1,4 @@
 import { applyBaseColorLayer } from './layers/01-baseColorLayer';
-import { applyGradientLayer } from './layers/02-gradientLayer';
 import { applyPatternLayer } from './layers/04-patternLayer';
 import { applyLogoLayer } from './layers/05-logoLayer';
 import { applyDefaultPatternLayer } from './layers/07-defaultPatternLayer';
@@ -8,8 +7,8 @@ import type { LayerContext, PrintLayerContext } from './types';
 type FabricLayerStep = (context: LayerContext) => void;
 type PrintLayerStep = (context: PrintLayerContext) => Promise<void>;
 
-/** Layers 1–2: per-mesh fabric (lowest first). */
-const FABRIC_LAYER_STEPS: FabricLayerStep[] = [applyBaseColorLayer, applyGradientLayer];
+/** Layer 1: per-part base color. Layer 2 (SFUMATURA) + 4–7 (print) composite in GPU shader — gradient before print. */
+const FABRIC_LAYER_STEPS: FabricLayerStep[] = [applyBaseColorLayer];
 
 /**
  * Layers 4–7 on print atlas (lowest first).

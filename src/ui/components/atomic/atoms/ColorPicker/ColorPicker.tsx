@@ -9,36 +9,41 @@ import { hexToHsva, hsvaToHex, ShadeSlider, Wheel } from '@uiw/react-color';
 interface ColorPickerProps {
   color: string;
   onChange: (color: string) => void;
+  onPreviewChange?: (color: string) => void;
   trigger: React.ReactElement;
 }
 
 const isValidHex = (hex: string) => /^#?[0-9a-fA-F]{3,8}$/.test(hex);
 
-const ColorPicker = ({ color, onChange, trigger }: ColorPickerProps) => {
+const ColorPicker = ({ color, onChange, onPreviewChange, trigger }: ColorPickerProps) => {
   const safeColor = isValidHex(color) ? color : '#000000';
   const [wheelHsva, setWheelHsva] = useState({ ...hexToHsva(safeColor), v: 100 });
   const [brightness, setBrightness] = useState(hexToHsva(safeColor).v);
-  const rafRef = useRef<number | null>(null);
-  const pendingRef = useRef<string | null>(null);
+  const latestHexRef = useRef(safeColor);
 
-  const flushColor = (hex: string) => {
-    pendingRef.current = hex;
-    if (rafRef.current !== null) return;
-    rafRef.current = requestAnimationFrame(() => {
-      rafRef.current = null;
-      if (pendingRef.current !== null) onChange(pendingRef.current);
-    });
+  const emitPreview = (hex: string) => {
+    latestHexRef.current = hex;
+    onPreviewChange?.(hex);
+  };
+
+  const emitCommit = (hex: string) => {
+    latestHexRef.current = hex;
+    onChange(hex);
   };
 
   const handleWheelChange = (newColor: { hsva: { h: number; s: number; v: number; a: number } }) => {
     const next = { ...newColor.hsva, v: 100 };
     setWheelHsva(next);
-    flushColor(hsvaToHex({ ...next, v: brightness }));
+    emitPreview(hsvaToHex({ ...next, v: brightness }));
   };
 
   const handleShadeChange = (newShade: { v: number }) => {
     setBrightness(newShade.v);
-    flushColor(hsvaToHex({ ...wheelHsva, v: newShade.v }));
+    emitPreview(hsvaToHex({ ...wheelHsva, v: newShade.v }));
+  };
+
+  const handlePointerUp = () => {
+    emitCommit(latestHexRef.current);
   };
 
   const liveHsva = { ...wheelHsva, v: brightness };
@@ -46,7 +51,7 @@ const ColorPicker = ({ color, onChange, trigger }: ColorPickerProps) => {
   return (
     <AtomPopover>
       <AtomPopoverTrigger asChild>{trigger}</AtomPopoverTrigger>
-      <AtomPopoverContent variant="color_picker">
+      <AtomPopoverContent variant="color_picker" onPointerUp={handlePointerUp} onPointerLeave={handlePointerUp}>
         <style>
           {`
             .w-color-wheel-fill { width: 25px!important; height: 25px!important; border: 2px solid #fff!important;}

@@ -55,6 +55,8 @@ const ModelScene = ({ url, phase, onComplete }: ModelSceneProps) => {
 
     if (!groupRef.current) return;
 
+    groupRef.current.position.set(0, 0, 0);
+
     if (phase === 'enter') {
       groupRef.current.position.x = SLIDE_DISTANCE;
       setGroupOpacity(groupRef.current, 0.35);
@@ -62,12 +64,10 @@ const ModelScene = ({ url, phase, onComplete }: ModelSceneProps) => {
     }
 
     if (phase === 'exit') {
-      groupRef.current.position.x = 0;
       setGroupOpacity(groupRef.current, 1);
       return;
     }
 
-    groupRef.current.position.x = 0;
     setGroupOpacity(groupRef.current, 1);
   }, [phase, url]);
 

@@ -1,6 +1,9 @@
-import type { CompositingStoreInput } from '../types';
+import { PART_TEXTURE_SIZE } from '@constants';
 
-const buildPrintAtlasCacheKey = (input: CompositingStoreInput) =>
+import type { CompositingStoreInput } from '../types';
+import type { FabricCompositingInput, PrintCompositingInput } from '../types/pipelineInputs';
+
+const buildPrintAtlasCacheKey = (input: PrintCompositingInput | CompositingStoreInput) =>
   JSON.stringify({
     activePatternKey: input.activePattern?.key ?? null,
     activeOpacity: input.activePatternCustomization?.opacity ?? null,
@@ -17,23 +20,11 @@ const buildPrintAtlasCacheKey = (input: CompositingStoreInput) =>
     })),
   });
 
-const buildFabricCacheKey = (input: CompositingStoreInput, partId: string | null) => {
-  const shading = partId ? input.shadingParts.find((part) => part.id === partId) : null;
-
-  return JSON.stringify({
+const buildFabricCacheKey = (input: FabricCompositingInput | CompositingStoreInput, partId: string | null, partTextureSize = PART_TEXTURE_SIZE) =>
+  JSON.stringify({
+    partTextureSize,
     partId,
     color: partId ? input.colorParts.find((part) => part.id === partId)?.color : null,
-    shading: shading
-      ? {
-          enabled: shading.enabled,
-          colorPicked: shading.colorPicked,
-          rotation: shading.rotation,
-          position: shading.position,
-          softness: shading.softness,
-          opacity: shading.opacity,
-        }
-      : null,
   });
-};
 
 export { buildFabricCacheKey, buildPrintAtlasCacheKey };

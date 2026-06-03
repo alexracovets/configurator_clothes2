@@ -1,5 +1,4 @@
 import { UV0_BOUNDS, type Uv0PartKey, type UvBounds } from '@constants';
-import type { StepColorPart } from '@store';
 
 const MESH_PART_MATCHERS = [
   { meshToken: 'sleeve_left', partToken: 'sleeve_left' },
@@ -16,7 +15,7 @@ const isFabricMeshName = (meshName: string) => {
   return MESH_PART_MATCHERS.some(({ meshToken }) => normalized.includes(meshToken));
 };
 
-const resolveMeshPartId = (meshName: string, parts: StepColorPart[]) => {
+const resolveMeshPartId = (meshName: string, parts: { id: string }[]) => {
   const normalizedMesh = meshName.toLowerCase();
 
   for (const { meshToken, partToken } of MESH_PART_MATCHERS) {

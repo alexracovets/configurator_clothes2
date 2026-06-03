@@ -3,13 +3,9 @@
 import { create } from 'zustand';
 
 import { syncShadingFromColorParts } from '../syncShadingFromColorParts';
+import { useStepShading } from '../useStepShading/useStepShading';
 
-interface StepColorPart {
-  id: string;
-  name: string;
-  label: string;
-  color: string;
-}
+import type { StepColorPart } from './stepColorTypes';
 
 interface StepColorStore {
   parts: StepColorPart[];
@@ -26,9 +22,8 @@ const useStepColor = create<StepColorStore>((set, get) => ({
   setPartColor: (partId, color) => {
     const parts = get().parts.map((part) => (part.id === partId ? { ...part, color } : part));
     set({ parts });
-    syncShadingFromColorParts(parts);
+    useStepShading.getState().setPartBaseColor(partId, color);
   },
 }));
 
 export { useStepColor };
-export type { StepColorPart };

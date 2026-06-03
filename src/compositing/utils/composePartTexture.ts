@@ -1,21 +1,21 @@
 import type { UvBounds } from '@constants';
 
-import { runFabricLayers } from '../layerPipeline';
+import { composeFabricPart } from '../pipeline/composeFabricPart';
+import { mergePartAlbedo } from '../pipeline/mergePartAlbedo';
 import type { CompositingInput } from '../types';
-import { createFabricLayerContext } from './canvas';
-import { drawPrintOnPart } from './drawPrintOnPart';
 
 const composePartTexture = (input: CompositingInput, partId: string | null, printCanvas: HTMLCanvasElement, bounds: UvBounds) => {
-  const context = createFabricLayerContext(input, partId);
-  if (!context) {
+  if (!partId) {
     return document.createElement('canvas');
   }
 
-  runFabricLayers(context);
+  const fabric = {
+    colorParts: input.colorParts,
+    shadingParts: input.shadingParts,
+  };
 
-  drawPrintOnPart(context.ctx, context.width, printCanvas, bounds);
-
-  return context.canvas;
+  const fabricCanvas = composeFabricPart(fabric, partId);
+  return mergePartAlbedo(fabricCanvas, printCanvas, bounds);
 };
 
 export { composePartTexture };

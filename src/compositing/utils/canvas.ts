@@ -3,8 +3,8 @@ import type { CompositingStoreInput, LayerContext } from '../types';
 
 const getCanvas2dContext = (canvas: HTMLCanvasElement) => canvas.getContext('2d');
 
-const createFabricLayerContext = (input: CompositingStoreInput, partId: string | null): LayerContext | null => {
-  const canvas = createPartLayerCanvas();
+const createFabricLayerContext = (input: CompositingStoreInput, partId: string | null, partTextureSize?: number): LayerContext | null => {
+  const canvas = createPartLayerCanvas(partTextureSize);
   const ctx = getCanvas2dContext(canvas);
   if (!ctx) return null;
 

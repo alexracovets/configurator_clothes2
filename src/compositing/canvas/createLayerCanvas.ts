@@ -11,6 +11,6 @@ const createLayerCanvas = (width: number, height: number) => {
 
 const createMeshLayerCanvas = () => createLayerCanvas(MESH_TEXTURE_SIZE, MESH_TEXTURE_SIZE);
 const createPrintAtlasCanvas = () => createLayerCanvas(PRINT_ATLAS_WIDTH, PRINT_ATLAS_HEIGHT);
-const createPartLayerCanvas = () => createLayerCanvas(PART_TEXTURE_SIZE, PART_TEXTURE_SIZE);
+const createPartLayerCanvas = (size = PART_TEXTURE_SIZE) => createLayerCanvas(size, size);
 
 export { createLayerCanvas, createPartLayerCanvas, createMeshLayerCanvas, createPrintAtlasCanvas };

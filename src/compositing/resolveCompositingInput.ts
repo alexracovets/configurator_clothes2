@@ -1,6 +1,7 @@
 'use client';
 
 import type { CompositingStoreInput } from './types';
+import type { FabricCompositingInput, PrintCompositingInput } from './types/pipelineInputs';
 
 import type { DesignPatternState, PatternCustomization } from '@store';
 import { useStepColor, useStepDesign, useStepLogo, useStepShading } from '@store';
@@ -18,9 +19,14 @@ const resolveActivePattern = (patterns: DesignPatternState[], activePatternKey: 
   return { pattern, customization };
 };
 
-const useCompositingInput = (): CompositingStoreInput => {
+const useFabricCompositingInput = (): FabricCompositingInput => {
   const colorParts = useStepColor((state) => state.parts);
   const shadingParts = useStepShading((state) => state.parts);
+
+  return useMemo(() => ({ colorParts, shadingParts }), [colorParts, shadingParts]);
+};
+
+const usePrintCompositingInput = (): PrintCompositingInput => {
   const { patterns, activePatternKey, customizations, defaultPattern, defaultPatternCustomization } = useStepDesign(
     useShallow((state) => ({
       patterns: state.patterns,
@@ -36,15 +42,20 @@ const useCompositingInput = (): CompositingStoreInput => {
     const { pattern, customization } = resolveActivePattern(patterns, activePatternKey, customizations);
 
     return {
-      colorParts,
-      shadingParts,
       activePattern: pattern,
       activePatternCustomization: customization,
       defaultPattern,
       defaultPatternCustomization,
       logoParts: logoParts.filter((part) => part.visible && !part.isDefault),
     };
-  }, [activePatternKey, colorParts, customizations, defaultPattern, defaultPatternCustomization, logoParts, patterns, shadingParts]);
+  }, [activePatternKey, customizations, defaultPattern, defaultPatternCustomization, logoParts, patterns]);
 };
 
-export { useCompositingInput };
+const useCompositingInput = (): CompositingStoreInput => {
+  const fabric = useFabricCompositingInput();
+  const print = usePrintCompositingInput();
+
+  return useMemo(() => ({ ...fabric, ...print }), [fabric, print]);
+};
+
+export { useCompositingInput, useFabricCompositingInput, usePrintCompositingInput };

@@ -3,7 +3,7 @@
 import { resolvePartGradientDefaults, resolvePartGradientRotation } from '@constants';
 
 import { create } from 'zustand';
-import type { StepColorPart } from '../useStepColor/useStepColor';
+import type { StepColorPart } from '../useStepColor/stepColorTypes';
 
 interface StepShadingPart {
   id: string;
@@ -22,6 +22,8 @@ interface StepShadingPart {
 interface StepShadingState {
   parts: StepShadingPart[];
   syncFromColorParts: (parts: StepColorPart[]) => void;
+  /** Updates base color for one part (COLOR tab) without rebuilding all shading parts. */
+  setPartBaseColor: (partId: string, color: string) => void;
   setPartColorPicked: (partId: string, colorPicked: string) => void;
   setPartGradient: (partId: string, patch: Partial<Pick<StepShadingPart, 'enabled' | 'rotation' | 'position' | 'softness' | 'opacity'>>) => void;
 }
@@ -69,6 +71,14 @@ const useStepShading = create<StepShadingState>((set) => ({
         const current = state.parts.find((currentPart) => currentPart.id === part.id);
         const nextPart: StepShadingPart = current ? { ...current, name: part.name, label: part.label, color: part.color } : createPart(part);
 
+        return { ...nextPart, shadingColor: buildShadingColor(nextPart) };
+      }),
+    })),
+  setPartBaseColor: (partId, color) =>
+    set((state) => ({
+      parts: state.parts.map((part) => {
+        if (part.id !== partId) return part;
+        const nextPart = { ...part, color };
         return { ...nextPart, shadingColor: buildShadingColor(nextPart) };
       }),
     })),

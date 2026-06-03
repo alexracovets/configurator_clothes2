@@ -1,6 +1,5 @@
 'use client';
 
-import { Center } from '@react-three/drei';
 import { Canvas } from '@react-three/fiber';
 import * as THREE from 'three';
 
@@ -23,9 +22,7 @@ const Configurator = () => {
       dpr={[1, 1.5]}
     >
       <CanvasControl />
-      <Center position={[0, 0, 0]}>
-        <LoadModel />
-      </Center>
+      <LoadModel />
     </Canvas>
   );
 };

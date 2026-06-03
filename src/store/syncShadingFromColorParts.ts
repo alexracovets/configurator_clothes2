@@ -1,4 +1,4 @@
-import type { StepColorPart } from './useStepColor/useStepColor';
+import type { StepColorPart } from './useStepColor/stepColorTypes';
 import { useStepShading } from './useStepShading/useStepShading';
 
 const syncShadingFromColorParts = (parts: StepColorPart[]) => {
