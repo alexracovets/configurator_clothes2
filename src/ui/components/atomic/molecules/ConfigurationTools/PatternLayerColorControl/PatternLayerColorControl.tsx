@@ -16,10 +16,11 @@ interface PatternLayerColorControlProps {
   layers: PatternLayer[];
   colors: Record<string, string>;
   onColorChange: (layerKey: string, color: string) => void;
+  onPreviewColorChange?: (layerKey: string, color: string) => void;
   label?: string;
 }
 
-const PatternLayerColorControl = ({ layers, colors, onColorChange, label = 'Colore design' }: PatternLayerColorControlProps) => {
+const PatternLayerColorControl = ({ layers, colors, onColorChange, onPreviewColorChange, label = 'Colore design' }: PatternLayerColorControlProps) => {
   const [activeLayerKey, setActiveLayerKey] = useState(layers[0]?.key ?? '');
 
   const activeLayer = layers.find((layer) => layer.key === activeLayerKey) ?? layers[0];
@@ -45,7 +46,13 @@ const PatternLayerColorControl = ({ layers, colors, onColorChange, label = 'Colo
           </button>
         ))}
       </div>
-      {activeLayer && <ColorControl color={colors[activeLayer.key] ?? '#000000'} onSelect={(color) => onColorChange(activeLayer.key, color)} />}
+      {activeLayer && (
+        <ColorControl
+          color={colors[activeLayer.key] ?? '#000000'}
+          onSelect={(color) => onColorChange(activeLayer.key, color)}
+          onPreviewSelect={onPreviewColorChange ? (color) => onPreviewColorChange(activeLayer.key, color) : undefined}
+        />
+      )}
     </Flex>
   );
 };

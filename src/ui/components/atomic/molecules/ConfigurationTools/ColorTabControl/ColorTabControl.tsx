@@ -12,6 +12,8 @@ interface ColorTabControlProps {
   strokeColor: string;
   onTextColor: (color: string) => void;
   onStrokeColor: (color: string) => void;
+  onPreviewTextColor?: (color: string) => void;
+  onPreviewStrokeColor?: (color: string) => void;
   label?: string;
 }
 
@@ -22,7 +24,15 @@ export const COLOR_TABS: { id: ColorTab; label: string }[] = [
   { id: 'contorno', label: 'Contorno' },
 ];
 
-const ColorTabControl = ({ textColor, strokeColor, onTextColor, onStrokeColor, label = 'Colore' }: ColorTabControlProps) => {
+const ColorTabControl = ({
+  textColor,
+  strokeColor,
+  onTextColor,
+  onStrokeColor,
+  onPreviewTextColor,
+  onPreviewStrokeColor,
+  label = 'Colore',
+}: ColorTabControlProps) => {
   const [colorTab, setColorTab] = useState<ColorTab>('colori');
 
   return (
@@ -44,8 +54,8 @@ const ColorTabControl = ({ textColor, strokeColor, onTextColor, onStrokeColor, l
           </button>
         ))}
       </div>
-      {colorTab === 'colori' && <ColorControl color={textColor} onSelect={onTextColor} />}
-      {colorTab === 'contorno' && <ColorControl color={strokeColor} onSelect={onStrokeColor} />}
+      {colorTab === 'colori' && <ColorControl color={textColor} onSelect={onTextColor} onPreviewSelect={onPreviewTextColor} />}
+      {colorTab === 'contorno' && <ColorControl color={strokeColor} onSelect={onStrokeColor} onPreviewSelect={onPreviewStrokeColor} />}
     </Flex>
   );
 };

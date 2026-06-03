@@ -1,11 +1,11 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { AtomImage, Button, Flex, Grid, SvgIcon } from '@atoms';
 import { ColorControl, ColorTabControl, PatternLayerColorControl, RangeControl } from '@molecules';
 import type { DesignPatternPartState, DesignPatternState } from '@store';
-import { useStepDesign } from '@store';
+import { useGarmentDesignPreview, useStepDesign } from '@store';
 import { cn } from '@utils';
 
 const DEFAULT_PART_COLOR = '#000000';
@@ -35,12 +35,31 @@ const ConfigurationDesign = () => {
   const setActivePattern = useStepDesign((state) => state.setActivePattern);
   const setPartColor = useStepDesign((state) => state.setPartColor);
   const setPatternOpacity = useStepDesign((state) => state.setPatternOpacity);
+  const setDesignPreview = useGarmentDesignPreview((state) => state.setDesignPreview);
+  const clearDesignPreview = useGarmentDesignPreview((state) => state.clearDesignPreview);
+  const setOpacityPreview = useGarmentDesignPreview((state) => state.setOpacityPreview);
+  const clearOpacityPreview = useGarmentDesignPreview((state) => state.clearOpacityPreview);
 
   const activePattern = useMemo(() => patterns.find((pattern) => pattern.key === activePatternKey), [activePatternKey, patterns]);
-
   const activeCustomization = activePatternKey ? customizations[activePatternKey] : undefined;
 
   const getPartColor = (partKey: string) => activeCustomization?.colors[partKey] ?? DEFAULT_PART_COLOR;
+
+  const handleCommit = useCallback(
+    (partKey: string, color: string) => {
+      clearDesignPreview();
+      setPartColor(partKey, color);
+    },
+    [clearDesignPreview, setPartColor],
+  );
+
+  const handlePreview = useCallback(
+    (partKey: string, color: string) => {
+      if (!activePatternKey) return;
+      setDesignPreview(activePatternKey, partKey, color);
+    },
+    [activePatternKey, setDesignPreview],
+  );
 
   if (patterns.length === 0) return null;
 
@@ -68,7 +87,8 @@ const ConfigurationDesign = () => {
       {activePattern && activePattern.parts.length === 1 && (
         <ColorControl
           color={getPartColor(activePattern.parts[0].key)}
-          onSelect={(color) => setPartColor(activePattern.parts[0].key, color)}
+          onSelect={(color) => handleCommit(activePattern.parts[0].key, color)}
+          onPreviewSelect={(color) => handlePreview(activePattern.parts[0].key, color)}
           label="Colore design"
         />
       )}
@@ -76,8 +96,10 @@ const ConfigurationDesign = () => {
         <ColorTabControl
           textColor={getPartColor(activePattern.parts[0].key)}
           strokeColor={getPartColor(activePattern.parts[1].key)}
-          onTextColor={(color) => setPartColor(activePattern.parts[0].key, color)}
-          onStrokeColor={(color) => setPartColor(activePattern.parts[1].key, color)}
+          onTextColor={(color) => handleCommit(activePattern.parts[0].key, color)}
+          onStrokeColor={(color) => handleCommit(activePattern.parts[1].key, color)}
+          onPreviewTextColor={(color) => handlePreview(activePattern.parts[0].key, color)}
+          onPreviewStrokeColor={(color) => handlePreview(activePattern.parts[1].key, color)}
           label="Colore design"
         />
       )}
@@ -88,14 +110,20 @@ const ConfigurationDesign = () => {
             label: `Colore ${index + 1}`,
           }))}
           colors={Object.fromEntries(activePattern.parts.map((part) => [part.key, getPartColor(part.key)]))}
-          onColorChange={setPartColor}
+          onColorChange={(partKey, color) => handleCommit(partKey, color)}
+          onPreviewColorChange={(partKey, color) => handlePreview(partKey, color)}
           label="Colore design"
         />
       )}
       {activePattern && (
         <RangeControl
           value={Math.round((activeCustomization?.opacity ?? 1) * 100)}
-          onChange={(value) => setPatternOpacity(value / 100)}
+          onChange={(value) => setOpacityPreview(value / 100)}
+          onCommit={() => {
+            const opacity = useGarmentDesignPreview.getState().opacityPreview;
+            clearOpacityPreview();
+            if (opacity !== null) setPatternOpacity(opacity);
+          }}
           min={0}
           max={100}
           unit="%"

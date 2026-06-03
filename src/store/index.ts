@@ -5,6 +5,8 @@ export { useStepDesign } from './useStepDesign';
 export type { DesignPatternPartState, DesignPatternState, PatternCustomization } from './useStepDesign';
 export { useStepNumber } from './useStepNumber';
 export { useGarmentColorPreview } from './useGarmentColorPreview';
+export { useGarmentDesignPreview } from './useGarmentDesignPreview';
+export type { DesignColorPreview } from './useGarmentDesignPreview';
 export { useGarmentShadingPreview } from './useGarmentShadingPreview';
 export type { ShadingPreviewPatch } from './useGarmentShadingPreview';
 export { useStepColor } from './useStepColor';

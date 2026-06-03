@@ -5,9 +5,10 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 import { PART_TEXTURE_SIZE } from '@constants';
 import { resolvePbrTexturePaths, useConfiguratorProduct, useGarmentPbrMaps } from '@hooks';
-import { useGarmentColorPreview, useGarmentShadingPreview, useStepColor, useStepShading } from '@store';
+import { useGarmentColorPreview, useGarmentDesignPreview, useGarmentShadingPreview, useStepColor, useStepShading } from '@store';
 import type { Object3D } from 'three';
 
+import { applyDesignPreview, clearDesignColorPreview } from '../apply/applyDesignColorPreview';
 import { applyGarmentShading } from '../apply/applyGarmentShading';
 import { applyPartColorPreview, clearAllColorPreviews } from '../apply/applyPartColorPreview';
 import { applyPbrToGarment } from '../apply/applyPbrToGarment';
@@ -23,6 +24,8 @@ const useGarmentLayers = (root: Object3D | null) => {
   const shadingParts = useStepShading((state) => state.parts);
   const colorPreview = useGarmentColorPreview((state) => state.preview);
   const shadingPreview = useGarmentShadingPreview((state) => state.preview);
+  const designPreview = useGarmentDesignPreview((state) => state.preview);
+  const opacityPreview = useGarmentDesignPreview((state) => state.opacityPreview);
   const { product } = useConfiguratorProduct();
   const pbrPaths = useMemo(() => (product ? resolvePbrTexturePaths(product) : null), [product]);
   const pbrMaps = useGarmentPbrMaps(
@@ -44,6 +47,7 @@ const useGarmentLayers = (root: Object3D | null) => {
 
   const fabricRef = useRef(fabric);
   const printRef = useRef(print);
+  const designPreviewRequestIdRef = useRef(0);
 
   useEffect(() => {
     fabricRef.current = fabric;
@@ -89,6 +93,28 @@ const useGarmentLayers = (root: Object3D | null) => {
     applyGarmentShading(root, colorParts, shadingParts, shadingPreview);
     invalidate();
   }, [colorParts, invalidate, root, shadingParts, shadingPreview]);
+
+  // DESIGN preview — rebuild print atlas with color/opacity override, no cache write
+  useEffect(() => {
+    if (!root) return;
+
+    if (!designPreview && opacityPreview === null) {
+      clearDesignColorPreview(root);
+      invalidate();
+      return;
+    }
+
+    const requestId = designPreviewRequestIdRef.current + 1;
+    designPreviewRequestIdRef.current = requestId;
+
+    void applyDesignPreview(root, fabricRef.current, printRef.current, {
+      colorPreview: designPreview ?? undefined,
+      opacityPreview: opacityPreview ?? undefined,
+    }).then(() => {
+      if (designPreviewRequestIdRef.current !== requestId) return;
+      invalidate();
+    });
+  }, [designPreview, opacityPreview, invalidate, root]);
 
   // Pipeline 4–7 — print / design only
   useEffect(() => {

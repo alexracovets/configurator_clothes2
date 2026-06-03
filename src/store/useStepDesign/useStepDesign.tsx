@@ -2,8 +2,6 @@
 
 import { create } from 'zustand';
 
-const DEFAULT_PART_COLOR = '#000000';
-
 interface DesignPatternPartState {
   key: string;
   materialId: number;
@@ -21,119 +19,99 @@ interface PatternCustomization {
   opacity: number;
 }
 
+const DEFAULT_OPACITY = 1;
+const DEFAULT_PART_COLOR = '#000000';
+
+const buildDefaultCustomization = (pattern: DesignPatternState): PatternCustomization => ({
+  colors: Object.fromEntries(pattern.parts.map((part) => [part.key, DEFAULT_PART_COLOR])),
+  opacity: DEFAULT_OPACITY,
+});
+
 interface StepDesignStore {
   patterns: DesignPatternState[];
-  defaultPattern: DesignPatternState | null;
   activePatternKey: string | null;
   customizations: Record<string, PatternCustomization>;
+  defaultPattern: DesignPatternState | null;
   defaultPatternCustomization: PatternCustomization | null;
   setPatterns: (patterns: DesignPatternState[]) => void;
   setDefaultPattern: (pattern: DesignPatternState | null) => void;
-  setActivePattern: (patternKey: string | null) => void;
+  setActivePattern: (key: string | null) => void;
   setPartColor: (partKey: string, color: string) => void;
-  setDefaultPartColor: (partKey: string, color: string) => void;
   setPatternOpacity: (opacity: number) => void;
-  setDefaultPatternOpacity: (opacity: number) => void;
 }
-
-const createDefaultCustomization = (parts: DesignPatternPartState[]): PatternCustomization => ({
-  colors: Object.fromEntries(parts.map((part) => [part.key, DEFAULT_PART_COLOR])),
-  opacity: 1,
-});
 
 const useStepDesign = create<StepDesignStore>((set, get) => ({
   patterns: [],
-  defaultPattern: null,
   activePatternKey: null,
   customizations: {},
+  defaultPattern: null,
   defaultPatternCustomization: null,
-  setPatterns: (patterns) => set({ patterns, activePatternKey: null, customizations: {} }),
-  setDefaultPattern: (pattern) =>
-    set({
-      defaultPattern: pattern,
-      defaultPatternCustomization: pattern ? createDefaultCustomization(pattern.parts) : null,
-    }),
-  setActivePattern: (patternKey) => {
-    if (patternKey === null) {
+
+  setPatterns: (patterns) => {
+    const customizations: Record<string, PatternCustomization> = {};
+    for (const pattern of patterns) {
+      customizations[pattern.key] = buildDefaultCustomization(pattern);
+    }
+    set({ patterns, customizations });
+  },
+
+  setDefaultPattern: (pattern) => {
+    const customization = pattern ? buildDefaultCustomization(pattern) : null;
+    set({ defaultPattern: pattern, defaultPatternCustomization: customization });
+  },
+
+  setActivePattern: (key) => {
+    if (key === null) {
       set({ activePatternKey: null });
       return;
     }
 
-    const pattern = get().patterns.find((item) => item.key === patternKey);
-    if (!pattern) {
-      set({ activePatternKey: patternKey });
-      return;
+    const { patterns, customizations } = get();
+    const pattern = patterns.find((p) => p.key === key);
+    if (!pattern) return;
+
+    const nextCustomizations = { ...customizations };
+    if (!nextCustomizations[key]) {
+      nextCustomizations[key] = buildDefaultCustomization(pattern);
     }
 
-    set((state) => {
-      const customizations = { ...state.customizations };
-      if (!customizations[patternKey]) {
-        customizations[patternKey] = createDefaultCustomization(pattern.parts);
-      }
-
-      return { activePatternKey: patternKey, customizations };
-    });
+    set({ activePatternKey: key, customizations: nextCustomizations });
   },
-  setPartColor: (partKey, color) =>
-    set((state) => {
-      const patternKey = state.activePatternKey;
-      if (!patternKey) return state;
 
-      const current = state.customizations[patternKey];
-      if (!current) return state;
+  setPartColor: (partKey, color) => {
+    const { activePatternKey, customizations, patterns } = get();
+    if (!activePatternKey) return;
 
-      return {
-        customizations: {
-          ...state.customizations,
-          [patternKey]: {
-            ...current,
-            colors: { ...current.colors, [partKey]: color },
-          },
-        },
-      };
-    }),
-  setDefaultPartColor: (partKey, color) =>
-    set((state) => {
-      const current = state.defaultPatternCustomization;
-      if (!current) return state;
+    const pattern = patterns.find((p) => p.key === activePatternKey);
+    if (!pattern) return;
 
-      return {
-        defaultPatternCustomization: {
+    const current = customizations[activePatternKey] ?? buildDefaultCustomization(pattern);
+    set({
+      customizations: {
+        ...customizations,
+        [activePatternKey]: {
           ...current,
           colors: { ...current.colors, [partKey]: color },
         },
-      };
-    }),
-  setPatternOpacity: (opacity) =>
-    set((state) => {
-      const patternKey = state.activePatternKey;
-      if (!patternKey) return state;
+      },
+    });
+  },
 
-      const current = state.customizations[patternKey];
-      if (!current) return state;
+  setPatternOpacity: (opacity) => {
+    const { activePatternKey, customizations, patterns } = get();
+    if (!activePatternKey) return;
 
-      return {
-        customizations: {
-          ...state.customizations,
-          [patternKey]: {
-            ...current,
-            opacity,
-          },
-        },
-      };
-    }),
-  setDefaultPatternOpacity: (opacity) =>
-    set((state) => {
-      const current = state.defaultPatternCustomization;
-      if (!current) return state;
+    const pattern = patterns.find((p) => p.key === activePatternKey);
+    if (!pattern) return;
 
-      return {
-        defaultPatternCustomization: {
-          ...current,
-          opacity,
-        },
-      };
-    }),
+    const current = customizations[activePatternKey] ?? buildDefaultCustomization(pattern);
+    set({
+      customizations: {
+        ...customizations,
+        [activePatternKey]: { ...current, opacity },
+      },
+    });
+  },
 }));
 
 export { useStepDesign };
