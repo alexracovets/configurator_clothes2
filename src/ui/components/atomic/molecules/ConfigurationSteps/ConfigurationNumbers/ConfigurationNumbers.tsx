@@ -1,21 +1,104 @@
 'use client';
 
-import { useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { AccordionAtom, AtomPopover, AtomPopoverContent, AtomPopoverTrigger, Button, Flex, SvgIcon, Text } from '@atoms';
 import { ColorTabControl, FontSelectRow, PartColorSwitch, RangeControl } from '@molecules';
-import { useStepNumber } from '@store';
+import { useGarmentNumberPreview, useStepNumber } from '@store';
 import { cn } from '@utils';
 import { DEFAULT_TEXT_CONFIGURATION, FONTS_CONFIGURATION } from '@constants';
 
 const DEFAULT_NUMBER_TEXT = '9';
 
+interface NumberPartFormProps {
+  instId: string;
+}
+
+const NumberPartForm = ({ instId }: NumberPartFormProps) => {
+  const inst = useStepNumber((state) => state.parts.find((p) => p.id === instId));
+  const updatePart = useStepNumber((state) => state.updatePart);
+  const removePart = useStepNumber((state) => state.removePart);
+  const setNumberPreview = useGarmentNumberPreview((state) => state.setNumberPreview);
+  const clearNumberPreview = useGarmentNumberPreview((state) => state.clearNumberPreview);
+
+  const commit = useCallback(
+    (patch: Parameters<typeof updatePart>[1]) => {
+      clearNumberPreview();
+      updatePart(instId, patch);
+    },
+    [clearNumberPreview, instId, updatePart],
+  );
+
+  const commitFromPreview = useCallback(() => {
+    const preview = useGarmentNumberPreview.getState().preview;
+    if (preview?.partId === instId) {
+      updatePart(instId, preview.patch);
+    }
+    clearNumberPreview();
+  }, [clearNumberPreview, instId, updatePart]);
+
+  if (!inst) return null;
+
+  return (
+    <Flex variant="configurator_part" className="gap-4 pt-2">
+      <FontSelectRow font={inst.font} onChange={(font) => commit({ font })} />
+
+      <Flex variant="configurator_part">
+        <Text variant="configurator_part_label">Numero</Text>
+        <input
+          type="text"
+          inputMode="numeric"
+          value={inst.text}
+          maxLength={3}
+          onChange={(e) => commit({ text: e.target.value.replace(/\D/g, '') })}
+          className="w-full h-10 bg-white border border-input-border rounded-[8px] px-3 text-sm font-inter text-default outline-none focus:border-active transition-colors"
+          placeholder="9"
+        />
+      </Flex>
+
+      <ColorTabControl
+        textColor={inst.textColor}
+        strokeColor={inst.strokeColor}
+        onTextColor={(textColor) => commit({ textColor })}
+        onStrokeColor={(strokeColor) => commit({ strokeColor })}
+        onPreviewTextColor={(textColor) => setNumberPreview(instId, { textColor })}
+        onPreviewStrokeColor={(strokeColor) => setNumberPreview(instId, { strokeColor })}
+      />
+
+      <RangeControl
+        label="Dimensione testo"
+        value={inst.fontSize}
+        onChange={(fontSize) => setNumberPreview(instId, { fontSize })}
+        onCommit={commitFromPreview}
+        min={10}
+        max={500}
+        unit="px"
+      />
+
+      <RangeControl
+        label="Spessore contorno"
+        value={inst.strokeWidth}
+        onChange={(strokeWidth) => setNumberPreview(instId, { strokeWidth })}
+        onCommit={commitFromPreview}
+        min={0}
+        max={20}
+        unit="px"
+      />
+
+      {!inst.isDefault && (
+        <Button variant="delete" size="delete" onClick={() => removePart(instId)}>
+          <SvgIcon name="delete" className="w-[14px] h-[15.75px]" />
+          Eliminare
+        </Button>
+      )}
+    </Flex>
+  );
+};
+
 const ConfigurationNumbers = () => {
   const parts = useStepNumber((state) => state.parts);
   const positions = useStepNumber((state) => state.positions);
   const addPart = useStepNumber((state) => state.addPart);
-  const removePart = useStepNumber((state) => state.removePart);
-  const updatePart = useStepNumber((state) => state.updatePart);
   const [isLocationPickerOpen, setIsLocationPickerOpen] = useState(false);
   const [openItems, setOpenItems] = useState<string[]>([]);
   const [hasInitialized, setHasInitialized] = useState(false);
@@ -67,49 +150,7 @@ const ConfigurationNumbers = () => {
   const items = parts.map((inst) => ({
     value: inst.id,
     trigger: <PartColorSwitch color={inst.textColor} label={inst.label} />,
-    content: (
-      <Flex variant="configurator_part" className="gap-4 pt-2">
-        <FontSelectRow font={inst.font} onChange={(font) => updatePart(inst.id, { font })} />
-
-        <Flex variant="configurator_part">
-          <Text variant="configurator_part_label">Numero</Text>
-          <input
-            type="text"
-            inputMode="numeric"
-            value={inst.text}
-            maxLength={3}
-            onChange={(e) => updatePart(inst.id, { text: e.target.value.replace(/\D/g, '') })}
-            className="w-full h-10 bg-white border border-input-border rounded-[8px] px-3 text-sm font-inter text-default outline-none focus:border-active transition-colors"
-            placeholder="9"
-          />
-        </Flex>
-
-        <ColorTabControl
-          textColor={inst.textColor}
-          strokeColor={inst.strokeColor}
-          onTextColor={(textColor) => updatePart(inst.id, { textColor })}
-          onStrokeColor={(strokeColor) => updatePart(inst.id, { strokeColor })}
-        />
-
-        <RangeControl label="Dimensione testo" value={inst.fontSize} onChange={(fontSize) => updatePart(inst.id, { fontSize })} min={10} max={500} unit="px" />
-
-        <RangeControl
-          label="Spessore contorno"
-          value={inst.strokeWidth}
-          onChange={(strokeWidth) => updatePart(inst.id, { strokeWidth })}
-          min={0}
-          max={20}
-          unit="px"
-        />
-
-        {!inst.isDefault && (
-          <Button variant="delete" size="delete" onClick={() => removePart(inst.id)}>
-            <SvgIcon name="delete" className="w-[14px] h-[15.75px]" />
-            Eliminare
-          </Button>
-        )}
-      </Flex>
-    ),
+    content: <NumberPartForm instId={inst.id} />,
   }));
 
   return (

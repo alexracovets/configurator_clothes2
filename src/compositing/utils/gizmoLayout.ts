@@ -174,4 +174,4 @@ const drawGizmoHandle = (ctx: CanvasRenderingContext2D, pos: { x: number; y: num
   ctx.restore();
 };
 
-export { buildGizmoLayout, hitTestGizmoLayout, getGlyphHalfExtents, drawGizmoFrame, drawGizmoHandle, GIZMO_HANDLES };
+export { buildGizmoLayout, hitTestGizmoLayout, getGlyphHalfExtents, drawGizmoFrame, drawGizmoHandle, GIZMO_HANDLES, HANDLE_RADIUS_UV };

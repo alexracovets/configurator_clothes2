@@ -1,4 +1,4 @@
-import type { DesignPatternState, PatternCustomization, StepColorPart, StepLogoPartState, StepNamePartState } from '@store';
+import type { DesignPatternState, PatternCustomization, StepColorPart, StepLogoPartState, StepNamePartState, StepNumberPartState } from '@store';
 
 import type { PbrMaps } from './types/pbrMaps';
 
@@ -17,6 +17,7 @@ interface CompositingStoreInput {
   colorParts: StepColorPart[];
   shadingParts: CompositingShadingPart[];
   nameParts: StepNamePartState[];
+  numberParts: StepNumberPartState[];
   activePattern: DesignPatternState | null;
   activePatternCustomization: PatternCustomization | null;
   defaultPattern: DesignPatternState | null;

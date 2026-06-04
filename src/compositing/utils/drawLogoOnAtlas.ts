@@ -4,6 +4,7 @@ import { loadImage } from '../canvas/loadImage';
 import type { StepLogoPartState } from '@store';
 
 import { uvToCanvas } from './uvCanvas';
+import { setCachedNaturalSize } from './logoNaturalSize';
 
 const LOGO_MARK_REF_WIDTH = 283;
 const LOGO_MARK_BASE_WIDTH = Math.round((LOGO_MARK_REF_WIDTH / 9331) * PRINT_ATLAS_WIDTH);
@@ -13,9 +14,11 @@ const LOGO_VERTICAL_BASE_HEIGHT = Math.round((LOGO_VERTICAL_REF_HEIGHT / 4900) *
 
 const isBackLogoPart = (part: StepLogoPartState) => part.positionKey.toLowerCase().includes('back') || part.label.toLowerCase().includes('back');
 
-const resolveLogoDrawSize = (part: StepLogoPartState, image: HTMLImageElement) => {
+/** Logo draw size (in atlas pixels) from the image's natural aspect — used for both
+ * compositing and the gizmo box. */
+const resolveLogoDrawSizeFromNatural = (part: StepLogoPartState, naturalWidth: number, naturalHeight: number) => {
   const scale = part.baseScale * part.scale;
-  const aspect = image.naturalWidth / image.naturalHeight || 1;
+  const aspect = naturalWidth / naturalHeight || 1;
 
   if (isBackLogoPart(part)) {
     const drawHeight = LOGO_VERTICAL_BASE_HEIGHT * scale;
@@ -26,10 +29,13 @@ const resolveLogoDrawSize = (part: StepLogoPartState, image: HTMLImageElement) =
   return { drawWidth, drawHeight: drawWidth / aspect };
 };
 
+const resolveLogoDrawSize = (part: StepLogoPartState, image: HTMLImageElement) => resolveLogoDrawSizeFromNatural(part, image.naturalWidth, image.naturalHeight);
+
 const drawLogoOnAtlas = async (ctx: CanvasRenderingContext2D, part: StepLogoPartState, canvasWidth: number, canvasHeight: number) => {
   if (!part.visible) return;
 
   const image = await loadImage(part.src);
+  setCachedNaturalSize(part.src, image.naturalWidth, image.naturalHeight);
   const { drawWidth, drawHeight } = resolveLogoDrawSize(part, image);
   const { x, y } = uvToCanvas(part.uv, canvasWidth, canvasHeight);
 
@@ -41,4 +47,4 @@ const drawLogoOnAtlas = async (ctx: CanvasRenderingContext2D, part: StepLogoPart
   ctx.restore();
 };
 
-export { drawLogoOnAtlas };
+export { drawLogoOnAtlas, resolveLogoDrawSizeFromNatural, isBackLogoPart, LOGO_MARK_BASE_WIDTH, LOGO_VERTICAL_BASE_HEIGHT };

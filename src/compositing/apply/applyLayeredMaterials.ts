@@ -26,6 +26,7 @@ const applyLayeredMaterials = async (root: Object3D, input: CompositingInput) =>
     colorParts: input.colorParts,
     shadingParts: input.shadingParts,
     nameParts: input.nameParts,
+    numberParts: input.numberParts,
   };
   const print = {
     activePattern: input.activePattern,

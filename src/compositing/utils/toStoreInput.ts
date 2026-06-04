@@ -6,6 +6,7 @@ const toStoreInput = (fabric: FabricCompositingInput, print: PrintCompositingInp
   colorParts: fabric.colorParts,
   shadingParts: fabric.shadingParts,
   nameParts: fabric.nameParts,
+  numberParts: fabric.numberParts,
   activePattern: print.activePattern,
   activePatternCustomization: print.activePatternCustomization,
   defaultPattern: print.defaultPattern,

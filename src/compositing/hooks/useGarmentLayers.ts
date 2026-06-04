@@ -5,11 +5,21 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 import { PART_TEXTURE_SIZE } from '@constants';
 import { resolvePbrTexturePaths, useConfiguratorProduct, useGarmentPbrMaps } from '@hooks';
-import { useGarmentColorPreview, useGarmentDesignPreview, useGarmentNamePreview, useStepColor } from '@store';
+import {
+  useGarmentColorPreview,
+  useGarmentDesignPreview,
+  useGarmentLogoPreview,
+  useGarmentNamePreview,
+  useGarmentNumberPreview,
+  useStepColor,
+  useStepLogoSelection,
+} from '@store';
 import type { Object3D } from 'three';
 
 import { applyDesignPreview, clearDesignColorPreview } from '../apply/applyDesignColorPreview';
+import { applyLogoPreview, clearLogoPreview } from '../apply/applyLogoPreview';
 import { applyNamePreview, clearNamePreview } from '../apply/applyNamePreview';
+import { applyNumberPreview, clearNumberPreview } from '../apply/applyNumberPreview';
 import { applyPartColorPreview, clearAllColorPreviews } from '../apply/applyPartColorPreview';
 import { applyPbrToGarment } from '../apply/applyPbrToGarment';
 import { syncFabricPipeline } from '../apply/syncFabricPipeline';
@@ -25,6 +35,8 @@ const useGarmentLayers = (root: Object3D | null) => {
   const designPreview = useGarmentDesignPreview((state) => state.preview);
   const opacityPreview = useGarmentDesignPreview((state) => state.opacityPreview);
   const namePreview = useGarmentNamePreview((state) => state.preview);
+  const numberPreview = useGarmentNumberPreview((state) => state.preview);
+  const logoPreview = useGarmentLogoPreview((state) => state.preview);
   const { product } = useConfiguratorProduct();
   const pbrPaths = useMemo(() => (product ? resolvePbrTexturePaths(product) : null), [product]);
   const pbrMaps = useGarmentPbrMaps(
@@ -36,8 +48,11 @@ const useGarmentLayers = (root: Object3D | null) => {
     },
   );
   const invalidate = useThree((state) => state.invalidate);
+  const selectedLogoId = useStepLogoSelection((state) => state.selectedPartId);
 
-  const printKey = useMemo(() => buildPrintAtlasCacheKey(print), [print]);
+  // selectedLogoId participates so the print atlas rebuilds (and draws/clears the gizmo frame)
+  // when the logo selection changes — buildPrintAtlasCacheKey bakes it in.
+  const printKey = useMemo(() => buildPrintAtlasCacheKey(print, selectedLogoId), [print, selectedLogoId]);
 
   const fabricSnapshot = useMemo(
     () => fabric.colorParts.map((part) => ({ id: part.id, key: buildFabricCacheKey(fabric, part.id, PART_TEXTURE_SIZE) })),
@@ -141,6 +156,69 @@ const useGarmentLayers = (root: Object3D | null) => {
       }
     };
   }, [namePreview, invalidate, root]);
+
+  const numberPreviewRafRef = useRef<number | null>(null);
+
+  // NUMBER preview — throttled via rAF so rapid drag events collapse into one redraw per frame
+  useEffect(() => {
+    if (!root) return;
+
+    if (numberPreviewRafRef.current !== null) {
+      cancelAnimationFrame(numberPreviewRafRef.current);
+      numberPreviewRafRef.current = null;
+    }
+
+    if (!numberPreview) {
+      clearNumberPreview(root, fabricRef.current);
+      invalidate();
+      return;
+    }
+
+    const capturedPreview = numberPreview;
+    numberPreviewRafRef.current = requestAnimationFrame(() => {
+      numberPreviewRafRef.current = null;
+      applyNumberPreview(root, fabricRef.current, capturedPreview.partId, capturedPreview.patch);
+      invalidate();
+    });
+
+    return () => {
+      if (numberPreviewRafRef.current !== null) {
+        cancelAnimationFrame(numberPreviewRafRef.current);
+        numberPreviewRafRef.current = null;
+      }
+    };
+  }, [numberPreview, invalidate, root]);
+
+  const logoPreviewRafRef = useRef<number | null>(null);
+
+  // LOGO preview — throttled via rAF; rebuilds the print atlas with the dragged logo patched
+  useEffect(() => {
+    if (!root) return;
+
+    if (logoPreviewRafRef.current !== null) {
+      cancelAnimationFrame(logoPreviewRafRef.current);
+      logoPreviewRafRef.current = null;
+    }
+
+    if (!logoPreview) {
+      clearLogoPreview(root);
+      invalidate();
+      return;
+    }
+
+    const capturedPreview = logoPreview;
+    logoPreviewRafRef.current = requestAnimationFrame(() => {
+      logoPreviewRafRef.current = null;
+      void applyLogoPreview(root, fabricRef.current, printRef.current, capturedPreview.partId, capturedPreview.patch).then(() => invalidate());
+    });
+
+    return () => {
+      if (logoPreviewRafRef.current !== null) {
+        cancelAnimationFrame(logoPreviewRafRef.current);
+        logoPreviewRafRef.current = null;
+      }
+    };
+  }, [logoPreview, invalidate, root]);
 
   // Pipeline 4–7 — print / design only
   useEffect(() => {

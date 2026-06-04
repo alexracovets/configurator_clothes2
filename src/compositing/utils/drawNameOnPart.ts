@@ -1,12 +1,11 @@
-import type { StepNamePartState } from '@store';
-
 import { drawNameGlyph, measureNameGlyph, NAME_FONT_SCALE } from './nameTextMetrics';
+import type { TextPartLike } from './textPart';
 
 /**
- * Draw name text onto a per-part canvas using part-local UV coordinates (0–1).
+ * Draw text (name or number) onto a per-part canvas using part-local UV coordinates (0–1).
  * UV origin is bottom-left (same as UV unwrap), Y is flipped for canvas (top-left origin).
  */
-const drawNameOnPart = (ctx: CanvasRenderingContext2D, part: StepNamePartState, canvasSize: number): void => {
+const drawNameOnPart = (ctx: CanvasRenderingContext2D, part: TextPartLike, canvasSize: number): void => {
   const text = part.text || 'PLAYER NAME';
   const layout = measureNameGlyph(text, part.font, part.fontSize, part.strokeWidth);
   if (!layout) return;
