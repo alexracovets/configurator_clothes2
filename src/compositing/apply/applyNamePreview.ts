@@ -26,6 +26,7 @@ const getPreviewTarget = (size: number): { canvas: HTMLCanvasElement; texture: C
     _previewTexture.flipY = false;
     _previewTexture.wrapS = ClampToEdgeWrapping;
     _previewTexture.wrapT = ClampToEdgeWrapping;
+    _previewTexture.anisotropy = 16;
   }
   return { canvas: _previewCanvas, texture: _previewTexture! };
 };

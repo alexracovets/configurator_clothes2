@@ -18,6 +18,7 @@ const createPartAlbedoTexture = (canvas: HTMLCanvasElement) => {
   texture.flipY = false;
   texture.wrapS = ClampToEdgeWrapping;
   texture.wrapT = ClampToEdgeWrapping;
+  texture.anisotropy = 16;
   texture.needsUpdate = true;
   return texture;
 };
