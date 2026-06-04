@@ -26,7 +26,7 @@ const ConfigurationColorize = () => {
 
   return (
     <Flex variant="step_design">
-      <AccordionAtom items={items} defaultValue={[parts[0].id]} />
+      <AccordionAtom items={items} defaultValue={[parts[0].id]} multiple={true} />
     </Flex>
   );
 };

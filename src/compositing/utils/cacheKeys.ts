@@ -25,6 +25,12 @@ const buildFabricCacheKey = (input: FabricCompositingInput | CompositingStoreInp
     partTextureSize,
     partId,
     color: partId ? input.colorParts.find((part) => part.id === partId)?.color : null,
+    shading: partId
+      ? (() => {
+          const s = input.shadingParts?.find((p) => p.id === partId);
+          return s ? { enabled: s.enabled, color: s.colorPicked, position: s.position, softness: s.softness, opacity: s.opacity, rotation: s.rotation } : null;
+        })()
+      : null,
     nameParts: input.nameParts.map((part) => ({
       id: part.id,
       text: part.text,

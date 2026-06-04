@@ -5,12 +5,11 @@ import { useEffect, useMemo, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 import { PART_TEXTURE_SIZE } from '@constants';
 import { resolvePbrTexturePaths, useConfiguratorProduct, useGarmentPbrMaps } from '@hooks';
-import { useGarmentColorPreview, useGarmentDesignPreview, useGarmentNamePreview, useGarmentShadingPreview, useStepColor, useStepShading } from '@store';
+import { useGarmentColorPreview, useGarmentDesignPreview, useGarmentNamePreview, useStepColor } from '@store';
 import type { Object3D } from 'three';
 
 import { applyDesignPreview, clearDesignColorPreview } from '../apply/applyDesignColorPreview';
 import { applyNamePreview, clearNamePreview } from '../apply/applyNamePreview';
-import { applyGarmentShading } from '../apply/applyGarmentShading';
 import { applyPartColorPreview, clearAllColorPreviews } from '../apply/applyPartColorPreview';
 import { applyPbrToGarment } from '../apply/applyPbrToGarment';
 import { syncFabricPipeline } from '../apply/syncFabricPipeline';
@@ -22,9 +21,7 @@ const useGarmentLayers = (root: Object3D | null) => {
   const fabric = useFabricCompositingInput();
   const print = usePrintCompositingInput();
   const colorParts = useStepColor((state) => state.parts);
-  const shadingParts = useStepShading((state) => state.parts);
   const colorPreview = useGarmentColorPreview((state) => state.preview);
-  const shadingPreview = useGarmentShadingPreview((state) => state.preview);
   const designPreview = useGarmentDesignPreview((state) => state.preview);
   const opacityPreview = useGarmentDesignPreview((state) => state.opacityPreview);
   const namePreview = useGarmentNamePreview((state) => state.preview);
@@ -88,13 +85,8 @@ const useGarmentLayers = (root: Object3D | null) => {
     invalidate();
   }, [colorParts, colorPreview, invalidate, root]);
 
-  // SFUMATURA — GPU gradient uniforms (Colore 2, sliders) without canvas recomposite
-  useEffect(() => {
-    if (!root || colorParts.length === 0) return;
-
-    applyGarmentShading(root, colorParts, shadingParts, shadingPreview);
-    invalidate();
-  }, [colorParts, invalidate, root, shadingParts, shadingPreview]);
+  // SFUMATURA — gradient is now baked into the fabric canvas (applyGradientLayer in pipeline)
+  // GPU gradient removed; fabric pipeline re-runs when shadingParts change via fabricSnapshot cache key
 
   // DESIGN preview — rebuild print atlas with color/opacity override, no cache write
   useEffect(() => {
@@ -183,10 +175,9 @@ const useGarmentLayers = (root: Object3D | null) => {
 
     void syncFabricPipeline(root, fabricRef.current, printRef.current, pbrMaps, changedPartIds).then(() => {
       if (requestIdRef.current !== requestId) return;
-      applyGarmentShading(root, colorParts, shadingParts, shadingPreview);
       invalidate();
     });
-  }, [colorParts, fabric.colorParts.length, fabricSnapshot, invalidate, pbrMaps, root, shadingParts, shadingPreview]);
+  }, [colorParts, fabric.colorParts.length, fabricSnapshot, invalidate, pbrMaps, root]);
 };
 
 export { useGarmentLayers };

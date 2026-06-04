@@ -43,13 +43,6 @@ const configureGarmentMaterial = (material: MeshStandardMaterial, bounds: UvBoun
     material.onBeforeCompile = (shader) => {
       shader.defines = { ...shader.defines, USE_UV1: '' };
 
-      if (material.userData.shadingEnabled === true) {
-        shader.defines.USE_GRADIENT = '';
-        if (material.userData.shadingMirrorU === true) {
-          shader.defines.USE_GRADIENT_MIRROR_U = '';
-        }
-      }
-
       if (material.userData.hasPrintAtlas === true && material.userData.printTexture) {
         shader.defines.USE_PRINT = '';
         shader.uniforms.uPrintAtlas = { value: material.userData.printTexture };
@@ -57,15 +50,6 @@ const configureGarmentMaterial = (material: MeshStandardMaterial, bounds: UvBoun
 
       shader.uniforms.uBakeNormal = { value: bakeNormal };
       shader.uniforms.uPartUvBounds = { value: material.userData.uPartUvBounds };
-
-      const shadingUniforms = ensureShadingUniforms(material);
-      if (material.userData.shadingEnabled === true) {
-        shader.uniforms.uGradientColor2 = shadingUniforms.uGradientColor2;
-        shader.uniforms.uGradientRotation = shadingUniforms.uGradientRotation;
-        shader.uniforms.uGradientPosition = shadingUniforms.uGradientPosition;
-        shader.uniforms.uGradientSoftness = shadingUniforms.uGradientSoftness;
-        shader.uniforms.uGradientOpacity = shadingUniforms.uGradientOpacity;
-      }
 
       shader.vertexShader = shader.vertexShader
         .replace('#include <uv_pars_vertex>', shirtVertexUvParsVertex)

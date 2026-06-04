@@ -18,6 +18,7 @@ const ConfigurationNumbers = () => {
   const updatePart = useStepNumber((state) => state.updatePart);
   const [isLocationPickerOpen, setIsLocationPickerOpen] = useState(false);
   const [openItems, setOpenItems] = useState<string[]>([]);
+  const [hasInitialized, setHasInitialized] = useState(false);
   const nextPartIdRef = useRef(0);
 
   const availablePositions = useMemo(() => {
@@ -28,17 +29,23 @@ const ConfigurationNumbers = () => {
   const resolvedOpenItems = useMemo(() => {
     const validPartIds = new Set(parts.map((part) => part.id));
     const filtered = openItems.filter((id) => validPartIds.has(id));
-    if (filtered.length > 0) return filtered;
-    return parts.length > 0 ? [parts[0].id] : [];
-  }, [openItems, parts]);
+    if (!hasInitialized && parts.length > 0) return [parts[0].id];
+    return filtered;
+  }, [openItems, parts, hasInitialized]);
+
+  const handleAccordionChange = (value: string | string[]) => {
+    if (!hasInitialized) setHasInitialized(true);
+    setOpenItems(Array.isArray(value) ? value : value ? [value] : []);
+  };
 
   const createPartForPosition = (position: (typeof positions)[number]) => {
     if (!position.interactive) return;
 
     nextPartIdRef.current += 1;
     const font = FONTS_CONFIGURATION[0]?.name ?? 'Oswald';
+    const newId = `${position.key}_${nextPartIdRef.current}`;
     addPart({
-      id: `${position.key}_${nextPartIdRef.current}`,
+      id: newId,
       positionKey: position.key,
       label: position.label,
       zone: position.zone,
@@ -52,6 +59,8 @@ const ConfigurationNumbers = () => {
       strokeWidth: DEFAULT_TEXT_CONFIGURATION.strokeWidth,
       isDefault: false,
     });
+    setHasInitialized(true);
+    setOpenItems((prev) => [...prev, newId]);
     setIsLocationPickerOpen(false);
   };
 
@@ -127,14 +136,7 @@ const ConfigurationNumbers = () => {
         </AtomPopoverContent>
       </AtomPopover>
 
-      {parts.length > 0 && (
-        <AccordionAtom
-          items={items}
-          value={resolvedOpenItems}
-          onValueChange={(value) => setOpenItems(Array.isArray(value) ? value : value ? [value] : [])}
-          className="gap-2"
-        />
-      )}
+      {parts.length > 0 && <AccordionAtom items={items} value={resolvedOpenItems} onValueChange={handleAccordionChange} multiple={true} className="gap-2" />}
     </Flex>
   );
 };

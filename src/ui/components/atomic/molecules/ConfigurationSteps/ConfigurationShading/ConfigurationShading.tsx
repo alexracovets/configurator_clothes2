@@ -39,7 +39,7 @@ const ConfigurationShading = () => {
 
   return (
     <Flex variant="step_design">
-      <AccordionAtom items={items} defaultValue={[partIds[0]]} className="gap-3" />
+      <AccordionAtom items={items} defaultValue={[partIds[0]]} multiple={true} className="gap-3" />
     </Flex>
   );
 };
