@@ -14,10 +14,7 @@ interface GarmentColorState {
   getPartColor: (partId: string) => string;
 }
 
-const buildDefaultColors = (product: GarmentConfig): Record<string, string> => {
-  const fallback = product.defaultColor ?? DEFAULT_COLOR;
-  return Object.fromEntries(product.parts.map((part) => [part.id, fallback]));
-};
+const buildDefaultColors = (product: GarmentConfig): Record<string, string> => Object.fromEntries(product.parts.map((part) => [part.id, DEFAULT_COLOR]));
 
 const useGarmentColor = create<GarmentColorState>((set, get) => ({
   byPart: {},

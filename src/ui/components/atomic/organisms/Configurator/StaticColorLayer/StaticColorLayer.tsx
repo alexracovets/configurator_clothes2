@@ -5,22 +5,21 @@ import { memo, useEffect } from 'react';
 import { useThree } from '@react-three/fiber';
 
 import { useGarmentMaterialRegistry } from '@providers';
-import { DEFAULT_COLOR, useConfiguratorProduct } from '@store';
+import { DEFAULT_COLOR } from '@store';
 
 const STATIC_REGISTRY_KEY = 'static';
 
 const StaticColorLayer = memo(() => {
-  const defaultColor = useConfiguratorProduct((state) => state.product.defaultColor ?? DEFAULT_COLOR);
   const { getMaterials } = useGarmentMaterialRegistry();
   const { invalidate } = useThree();
 
   useEffect(() => {
     for (const material of getMaterials(STATIC_REGISTRY_KEY)) {
-      material.color.set(defaultColor);
+      material.color.set(DEFAULT_COLOR);
       material.needsUpdate = true;
     }
     invalidate();
-  }, [defaultColor, getMaterials, invalidate]);
+  }, [getMaterials, invalidate]);
 
   return null;
 });

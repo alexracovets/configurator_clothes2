@@ -10,7 +10,6 @@
       "minimum_count": 6,
       "path": "/models/crewneck/crewneck/",
       "modelFile": "crewneck.gltf",
-      "defaultColor": "#CCCCCC",
       "pbrTextures": {
         "bakeNormal": "bake_normal.jpg",
         "bakeAoRoughness": "bake_ao-bake_roughness.jpg",
@@ -261,7 +260,6 @@
       "minimum_count": 6,
       "path": "/models/crewneck/mans_shorts/",
       "modelFile": "mans_shorts.gltf",
-      "defaultColor": "#CCCCCC",
       "parts": [
         {
           "name": "Davanti",

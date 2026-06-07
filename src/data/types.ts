@@ -64,7 +64,6 @@ interface GarmentConfig {
   minimum_count?: number;
   path: string;
   modelFile?: string;
-  defaultColor?: string;
   pbrTextures?: GarmentPbrTexturesConfig;
   parts: GarmentPartConfig[];
   staticMeshes?: GarmentStaticMeshConfig[];
