@@ -1,1 +1,0 @@
-export { PartColorLayer } from './PartColorLayer';

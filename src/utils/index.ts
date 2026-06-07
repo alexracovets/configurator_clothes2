@@ -1,5 +1,17 @@
 export { cn } from './cn';
+export { composePartAlbedo } from './composePartAlbedo/composePartAlbedo';
+export { composePrintAtlas } from './composePrintAtlas/composePrintAtlas';
+export type { ComposePrintAtlasInput } from './composePrintAtlas/composePrintAtlas';
+export { composePrintAtlasFbo } from './composePrintAtlasFbo/composePrintAtlasFbo';
+export type { ComposePrintAtlasFboInput } from './composePrintAtlasFbo/PrintAtlasFbo';
+export { PrintAtlasFbo } from './composePrintAtlasFbo/PrintAtlasFbo';
 export { createGarmentMaterial } from './createGarmentMaterial';
+export { createPartAlbedoTexture } from './createPartAlbedoTexture/createPartAlbedoTexture';
+export { applyGarmentPrint } from './garmentPrint/applyGarmentPrint';
+export { clearImageTextureCache } from './garmentPrint/imageToTexture';
+export { loadCachedImage } from './loadCachedImage/loadCachedImage';
+export { loadImage } from './loadImage/loadImage';
+export { resolvePartTextureSize, resolvePartUvBounds, resolvePrintAtlasSize } from './resolveProductRenderConfig/resolveProductRenderConfig';
 export type { PbrMaps, PbrTexturePaths } from './pbrMaps';
 export { priceFormat } from './priceFormat';
 export { resolveModelUrl } from './resolveModelUrl';

@@ -10,42 +10,47 @@
       "minimum_count": 6,
       "path": "/models/crewneck/crewneck/",
       "modelFile": "crewneck.gltf",
-      "pbrTextures": {
-        "bakeNormal": "bake_normal.jpg",
-        "bakeAoRoughness": "bake_ao-bake_roughness.jpg",
-        "fabricNormal": "cotton_jersey_nor_gl.jpg",
-        "fabricRoughness": "cotton_jersey_rough.jpg"
-      },
+      "printAtlas": { "width": 2048, "height": 1074 },
       "parts": [
         {
           "name": "Davanti",
           "label": "Front",
           "id": "front_crewneck",
           "meshNames": ["crewneck_front"],
-          "renderOrder": 1
+          "renderOrder": 1,
+          "uvBounds": { "minX": 0.5028, "maxX": 0.9979, "minY": 0.0872, "maxY": 0.8119 }
         },
         {
           "name": "Retro",
           "label": "Back",
           "id": "back_crewneck",
           "meshNames": ["crewneck_back"],
-          "renderOrder": 1
+          "renderOrder": 1,
+          "uvBounds": { "minX": 0.0038, "maxX": 0.4985, "minY": 0.0013, "maxY": 0.7299 }
         },
         {
           "name": "Manica 1",
           "label": "Left Sleeve",
           "id": "sleeve_left_crewneck",
           "meshNames": ["crewneck_sleeve_left"],
-          "renderOrder": 1
+          "renderOrder": 1,
+          "uvBounds": { "minX": 0.0026, "maxX": 0.2625, "minY": 0.7191, "maxY": 0.9967 }
         },
         {
           "name": "Manica 2",
           "label": "Right Sleeve",
           "id": "sleeve_right_crewneck",
           "meshNames": ["crewneck_sleeve_right"],
-          "renderOrder": 1
+          "renderOrder": 1,
+          "uvBounds": { "minX": 0.3125, "maxX": 0.5711, "minY": 0.7182, "maxY": 0.998 }
         }
       ],
+      "pbrTextures": {
+        "bakeNormal": "bake_normal.jpg",
+        "bakeAoRoughness": "bake_ao-bake_roughness.jpg",
+        "fabricNormal": "cotton_jersey_nor_gl.jpg",
+        "fabricRoughness": "cotton_jersey_rough.jpg"
+      },
       "staticMeshes": [
         {
           "meshNames": ["crewneck_collar"],
@@ -260,20 +265,23 @@
       "minimum_count": 6,
       "path": "/models/crewneck/mans_shorts/",
       "modelFile": "mans_shorts.gltf",
+      "printAtlas": { "width": 2048, "height": 1074 },
       "parts": [
         {
           "name": "Davanti",
           "label": "Front",
           "id": "front_shorts",
           "meshNames": ["mans_shorts_left"],
-          "renderOrder": 1
+          "renderOrder": 1,
+          "uvBounds": { "minX": 0, "maxX": 0.5, "minY": 0, "maxY": 1 }
         },
         {
           "name": "Retro",
           "label": "Back",
           "id": "back_shorts",
           "meshNames": ["mans_shorts_right"],
-          "renderOrder": 1
+          "renderOrder": 1,
+          "uvBounds": { "minX": 0.5, "maxX": 1, "minY": 0, "maxY": 1 }
         }
       ],
       "staticMeshes": [

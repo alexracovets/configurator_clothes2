@@ -1,9 +1,58 @@
 'use client';
 
+import { useCallback, useEffect } from 'react';
+
+import { AtomImage, Button, Flex, Grid, SvgIcon } from '@atoms';
+import { ColorControl, ColorTabControl, PatternLayerColorControl, RangeControl } from '@molecules';
+import { PALETTE_COLORS } from '@constants';
+import { useConfiguratorProduct, useGarmentDesign } from '@store';
+import type { DesignPatternPart } from '@store';
+import { cn } from '@utils';
+
+const DEFAULT_PART_COLOR = PALETTE_COLORS[1];
+
+const PatternPreview = ({ parts, eager }: { parts: DesignPatternPart[]; eager?: boolean }) => (
+  <div className="relative w-full h-full">
+    {parts.map((part, index) => (
+      <AtomImage
+        key={part.key}
+        src={part.src}
+        alt=""
+        width={80}
+        height={80}
+        loading={eager ? 'eager' : 'lazy'}
+        fetchPriority={eager ? 'high' : 'low'}
+        className={cn('w-full h-full object-cover', index > 0 && 'absolute inset-0')}
+        draggable={false}
+      />
+    ))}
+  </div>
+);
+
 const ConfigurationDesign = () => {
+  const product = useConfiguratorProduct((state) => state.product);
+  const designProductPath = useGarmentDesign((state) => state.productPath);
+  const patterns = useGarmentDesign((state) => state.patterns);
+  const activePattern = useGarmentDesign((state) => state.activePattern);
+  const patternColors = useGarmentDesign((state) => state.patternColors);
+  const activeOpacity = useGarmentDesign((state) => state.activeOpacity);
+  const initForProduct = useGarmentDesign((state) => state.initForProduct);
+  const setActivePattern = useGarmentDesign((state) => state.setActivePattern);
+  const setPartColor = useGarmentDesign((state) => state.setPartColor);
+  const setActiveOpacity = useGarmentDesign((state) => state.setActiveOpacity);
+
+  useEffect(() => {
+    if (designProductPath !== product.path) {
+      initForProduct(product);
+    }
+  }, [designProductPath, initForProduct, product]);
+
+  const getPartColor = useCallback((partKey: string) => patternColors[partKey] ?? DEFAULT_PART_COLOR, [patternColors]);
+
+  if (patterns.length === 0) return null;
+
   return (
-    <>
-      {/* <Flex variant="step_design">
+    <Flex key={product.path} variant="step_design">
       <Grid variant="select_parts">
         <Button variant="select_none" title="Nessuno" data-active={activePattern === null} onClick={() => setActivePattern(null)}>
           <SvgIcon name="none" />
@@ -15,63 +64,60 @@ const ConfigurationDesign = () => {
             variant="select_part"
             className="transition-none will-change-auto"
             title={pattern.name}
-            data-active={pattern.key === activePatternKey}
-            onClick={() => setActivePattern(pattern.key)}
+            data-active={pattern.key === activePattern?.key}
+            onClick={() => setActivePattern(pattern)}
             style={{ contentVisibility: 'auto', contain: 'layout paint style' }}
           >
-            <>
-              {pattern.map((pattern.part, index) => (
-                <AtomImage
-                  key={part.key}
-                  src={part.src}
-                  alt=""
-                  width={80}
-                  height={80}
-                  loading={eager ? 'eager' : 'lazy'}
-                  fetchPriority={eager ? 'high' : 'low'}
-                  className={cn('w-full h-full object-cover', index > 0 && 'absolute inset-0')}
-                  draggable={false}
-                />
-              ))}
-            </>
+            <PatternPreview parts={pattern.parts} eager={index < 2} />
           </Button>
         ))}
       </Grid>
+
       {activePattern && activePattern.parts.length === 1 && (
         <ColorControl
           color={getPartColor(activePattern.parts[0].key)}
-          onSelect={(color) => handleCommit(activePattern.parts[0].key, color)}
-          onPreviewSelect={(color) => handlePreview(activePattern.parts[0].key, color)}
+          onSelect={(color) => setPartColor(activePattern.parts[0].key, color)}
+          onPreviewSelect={(color) => setPartColor(activePattern.parts[0].key, color)}
           label="Colore design"
         />
       )}
+
       {activePattern && activePattern.parts.length === 2 && (
         <ColorTabControl
           textColor={getPartColor(activePattern.parts[0].key)}
           strokeColor={getPartColor(activePattern.parts[1].key)}
-          onTextColor={(color) => handleCommit(activePattern.parts[0].key, color)}
-          onStrokeColor={(color) => handleCommit(activePattern.parts[1].key, color)}
-          onPreviewTextColor={(color) => handlePreview(activePattern.parts[0].key, color)}
-          onPreviewStrokeColor={(color) => handlePreview(activePattern.parts[1].key, color)}
+          onTextColor={(color) => setPartColor(activePattern.parts[0].key, color)}
+          onStrokeColor={(color) => setPartColor(activePattern.parts[1].key, color)}
+          onPreviewTextColor={(color) => setPartColor(activePattern.parts[0].key, color)}
+          onPreviewStrokeColor={(color) => setPartColor(activePattern.parts[1].key, color)}
           label="Colore design"
         />
-      )} 
+      )}
 
-e={Math.round((activeCustomization?.opacity ?? 1) * 100)}
-          onChange={(value) => setOpacityPreview(value / 100)}
-          onCommit={() => {
-            const opacity = useGarmentDesignPreview.getState().opacityPreview;
-            clearOpacityPreview();
-            if (opacity !== null) setPatternOpacity(opacity);
-          }}
+      {activePattern && activePattern.parts.length > 2 && (
+        <PatternLayerColorControl
+          layers={activePattern.parts.map((part, index) => ({
+            key: part.key,
+            label: `Colore ${index + 1}`,
+          }))}
+          colors={Object.fromEntries(activePattern.parts.map((part) => [part.key, getPartColor(part.key)]))}
+          onColorChange={(partKey, color) => setPartColor(partKey, color)}
+          onPreviewColorChange={(partKey, color) => setPartColor(partKey, color)}
+          label="Colore design"
+        />
+      )}
+
+      {activePattern && (
+        <RangeControl
+          value={Math.round(activeOpacity * 100)}
+          onChange={(value) => setActiveOpacity(value / 100)}
           min={0}
           max={100}
           unit="%"
           label="Trasparenza"
         />
       )}
-    </Flex> */}
-    </>
+    </Flex>
   );
 };
 

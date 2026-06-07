@@ -6,7 +6,7 @@ import { resolveModelUrl } from '@utils';
 import { useConfiguratorProduct } from '@store';
 
 import { GarmentPartMesh } from '../GarmentPartMesh';
-import { PartColorLayer } from '../PartColorLayer';
+import { GarmentTextureLayer } from '../GarmentTextureLayer';
 import { PreserveGltfMesh } from '../PreserveGltfMesh';
 import { STATIC_REGISTRY_KEY, StaticColorLayer } from '../StaticColorLayer';
 
@@ -16,7 +16,7 @@ const GarmentMeshes = () => {
   const { nodes } = useGLTF(modelUrl);
 
   return (
-    <group>
+    <group key={product.path}>
       {product.parts.flatMap((part) =>
         part.meshNames.map((meshName) => (
           <GarmentPartMesh key={`${part.id}-${meshName}`} registryKey={part.id} meshName={meshName} node={nodes[meshName]} renderOrder={part.renderOrder} />
@@ -36,9 +36,7 @@ const GarmentMeshes = () => {
       {product.preserveGltfMeshes?.map((meshName) => (
         <PreserveGltfMesh key={`preserve-${meshName}`} meshName={meshName} node={nodes[meshName]} />
       ))}
-      {product.parts.map((part) => (
-        <PartColorLayer key={`color-${part.id}`} partId={part.id} />
-      ))}
+      <GarmentTextureLayer />
       <StaticColorLayer />
     </group>
   );

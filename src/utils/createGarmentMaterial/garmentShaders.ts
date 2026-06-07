@@ -1,10 +1,12 @@
 const garmentVertexUvPars = /* glsl */ `
 #include <uv_pars_vertex>
 varying vec2 vRawUv1;
+varying vec2 vPrintUv;
 `;
 
 const garmentVertexUv = /* glsl */ `
 #include <uv_vertex>
+vPrintUv = uv;
 #ifdef USE_UV1
   vRawUv1 = uv1;
 #else
@@ -15,7 +17,12 @@ const garmentVertexUv = /* glsl */ `
 const garmentFragmentUvPars = /* glsl */ `
 #include <uv_pars_fragment>
 varying vec2 vRawUv1;
+varying vec2 vPrintUv;
 uniform sampler2D uBakeNormal;
+#ifdef USE_PRINT
+uniform sampler2D uPrintAtlas;
+uniform vec4 uPartUvBounds;
+#endif
 `;
 
 const garmentNormalFragment = /* glsl */ `

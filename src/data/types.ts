@@ -3,12 +3,25 @@ interface UvPoint {
   y: number;
 }
 
+interface UvBounds {
+  minX: number;
+  maxX: number;
+  minY: number;
+  maxY: number;
+}
+
+interface PrintAtlasConfig {
+  width: number;
+  height: number;
+}
+
 interface GarmentPartConfig {
   id: string;
   name: string;
   label: string;
   meshNames: string[];
   renderOrder?: number;
+  uvBounds?: UvBounds;
 }
 
 interface PatternPartConfig {
@@ -68,6 +81,8 @@ interface GarmentConfig {
   parts: GarmentPartConfig[];
   staticMeshes?: GarmentStaticMeshConfig[];
   preserveGltfMeshes?: string[];
+  printAtlas?: PrintAtlasConfig;
+  partTextureSize?: number;
   patterns: PatternConfig[];
   default_pattern?: PatternConfig[];
   namePositions?: TextPositionConfig[];
@@ -91,8 +106,10 @@ export type {
   NumberPositionConfig,
   PatternConfig,
   PatternPartConfig,
+  PrintAtlasConfig,
   StyleConfig,
   StyleId,
   TextPositionConfig,
+  UvBounds,
   UvPoint,
 };
