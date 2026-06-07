@@ -221,19 +221,32 @@
           ]
         }
       ],
+      "nameDefaults": {
+        "text": "PLAYER NAME",
+        "font": "Oswald",
+        "textColor": "#000000",
+        "strokeColor": "#ffffff",
+        "strokeWidth": 2,
+        "maxLength": 20,
+        "fontSizeMin": 50,
+        "fontSizeMax": 400,
+        "strokeWidthMax": 20
+      },
       "namePositions": [
         {
           "label": "Top Back",
-          "uv": { "x": 0.76, "y": 0.5 },
+          "partId": "back_crewneck",
+          "uv": { "x": 0.36, "y": 0.36 },
           "rotation": 90,
-          "fontSize": 200,
+          "fontSize": 80,
           "interactive": true
         },
         {
           "label": "Bottom Back",
-          "uv": { "x": 0.2, "y": 0.5 },
+          "partId": "back_crewneck",
+          "uv": { "x": 0.1, "y": 0.35 },
           "rotation": 90,
-          "fontSize": 200,
+          "fontSize": 80,
           "interactive": true
         }
       ],

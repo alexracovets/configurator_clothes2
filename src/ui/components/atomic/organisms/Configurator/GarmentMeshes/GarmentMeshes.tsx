@@ -6,6 +6,7 @@ import { resolveModelUrl } from '@utils';
 import { useConfiguratorProduct } from '@store';
 
 import { GarmentPartMesh } from '../GarmentPartMesh';
+import { GarmentNameTextureLayer } from '../GarmentNameTextureLayer';
 import { GarmentTextureLayer } from '../GarmentTextureLayer';
 import { PreserveGltfMesh } from '../PreserveGltfMesh';
 import { STATIC_REGISTRY_KEY, StaticColorLayer } from '../StaticColorLayer';
@@ -37,6 +38,7 @@ const GarmentMeshes = () => {
         <PreserveGltfMesh key={`preserve-${meshName}`} meshName={meshName} node={nodes[meshName]} />
       ))}
       <GarmentTextureLayer />
+      <GarmentNameTextureLayer />
       <StaticColorLayer />
     </group>
   );

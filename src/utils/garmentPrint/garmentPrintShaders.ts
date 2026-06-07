@@ -1,3 +1,5 @@
+import { garmentNameMapFragment } from './garmentNameShaders';
+
 const garmentPrintMapFragment = /* glsl */ `
 #ifdef USE_PRINT
   vec4 printColor = vec4( 0.0 );
@@ -18,6 +20,8 @@ const garmentPrintMapFragment = /* glsl */ `
   vec4 logos = texture2D( uDefaultLogos, vPrintUv );
   printColor.rgb = logos.rgb * logos.a + printColor.rgb * ( 1.0 - logos.a );
   printColor.a = logos.a + printColor.a * ( 1.0 - logos.a );
+
+${garmentNameMapFragment}
 
   diffuseColor.rgb = printColor.rgb * printColor.a + diffuseColor.rgb * ( 1.0 - printColor.a );
 #endif

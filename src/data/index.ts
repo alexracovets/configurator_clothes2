@@ -11,4 +11,15 @@ const getStyle = (id: StyleId): StyleConfig => STYLES[id];
 const getProduct = (styleId: StyleId, productIndex: number): GarmentConfig | undefined => STYLES[styleId]?.products[productIndex - 1];
 
 export { getProduct, getStyle, STYLES };
-export type { GarmentConfig, GarmentPartConfig, PartGradientConfig, PrintAtlasConfig, StyleConfig, StyleId, UvBounds } from './types';
+export type {
+  GarmentConfig,
+  GarmentPartConfig,
+  NamePositionConfig,
+  PartGradientConfig,
+  PrintAtlasConfig,
+  StyleConfig,
+  StyleId,
+  TextDefaultsConfig,
+  UvBounds,
+  UvPoint,
+} from './types';

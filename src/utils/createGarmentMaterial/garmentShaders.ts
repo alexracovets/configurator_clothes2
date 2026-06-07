@@ -46,11 +46,61 @@ float garmentGradientMask( vec2 uv ) {
 #endif
 #ifdef USE_PRINT
 uniform sampler2D uDefaultLogos;
+uniform vec2 uPrintAtlasSize;
+uniform sampler2D uNameFillMask;
+uniform vec2 uNameStampUv;
+uniform vec2 uNameAnchorUv[4];
+uniform float uNameRotation[4];
+uniform float uNameScale[4];
+uniform float uNameStrokeWidth[4];
+uniform vec3 uNameTextColors[4];
+uniform vec3 uNameStrokeColors[4];
 uniform sampler2D uPatternMask0;
 uniform sampler2D uPatternMask1;
 uniform vec3 uPatternColor0;
 uniform vec3 uPatternColor1;
 uniform float uPatternOpacity;
+
+vec4 garmentCompositeNameLayer( vec4 base, vec3 rgb, float alpha ) {
+  vec4 layer = vec4( rgb, alpha );
+  base.rgb = layer.rgb * layer.a + base.rgb * ( 1.0 - layer.a );
+  base.a = layer.a + base.a * ( 1.0 - layer.a );
+  return base;
+}
+
+vec2 garmentNameToStampUv( vec2 worldUv, vec2 anchor, float rotation, float scale ) {
+  vec2 deltaPx = ( worldUv - anchor ) * uPrintAtlasSize;
+  float c = cos( -rotation );
+  float s = sin( -rotation );
+  vec2 localPx = vec2( c * deltaPx.x - s * deltaPx.y, s * deltaPx.x + c * deltaPx.y ) / max( scale, 0.001 );
+  return uNameStampUv + localPx / uPrintAtlasSize;
+}
+
+float garmentNameFillChannel( sampler2D tex, vec2 uv, float channel ) {
+  vec4 masks = texture2D( tex, uv );
+  if ( channel < 0.5 ) return masks.r;
+  if ( channel < 1.5 ) return masks.g;
+  if ( channel < 2.5 ) return masks.b;
+  return masks.a;
+}
+
+float garmentNameStrokeChannel( sampler2D tex, vec2 uv, float channel, float radiusPx ) {
+  if ( radiusPx <= 0.0 ) return 0.0;
+
+  vec2 px = vec2( 1.0 ) / uPrintAtlasSize;
+  float fill = garmentNameFillChannel( tex, uv, channel );
+  float dilated = fill;
+  dilated = max( dilated, garmentNameFillChannel( tex, uv + vec2( radiusPx, 0.0 ) * px, channel ) );
+  dilated = max( dilated, garmentNameFillChannel( tex, uv + vec2( -radiusPx, 0.0 ) * px, channel ) );
+  dilated = max( dilated, garmentNameFillChannel( tex, uv + vec2( 0.0, radiusPx ) * px, channel ) );
+  dilated = max( dilated, garmentNameFillChannel( tex, uv + vec2( 0.0, -radiusPx ) * px, channel ) );
+  dilated = max( dilated, garmentNameFillChannel( tex, uv + vec2( radiusPx, radiusPx ) * px, channel ) );
+  dilated = max( dilated, garmentNameFillChannel( tex, uv + vec2( -radiusPx, radiusPx ) * px, channel ) );
+  dilated = max( dilated, garmentNameFillChannel( tex, uv + vec2( radiusPx, -radiusPx ) * px, channel ) );
+  dilated = max( dilated, garmentNameFillChannel( tex, uv + vec2( -radiusPx, -radiusPx ) * px, channel ) );
+
+  return max( dilated - fill, 0.0 );
+}
 #endif
 `;
 

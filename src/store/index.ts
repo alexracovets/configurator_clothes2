@@ -4,3 +4,12 @@ export { DEFAULT_COLOR, DEFAULT_PART_GRADIENT, DISABLED_PART_GRADIENT, resolveGr
 export type { PartGradient } from './useGarmentColor';
 export { useGarmentDesign } from './useGarmentDesign';
 export type { DesignPatternItem, DesignPatternPart } from './useGarmentDesign';
+export {
+  createNameInstance,
+  mapProductNamePositions,
+  resolveInstancesForRender,
+  resolveNameDefaults,
+  resolveNameLimits,
+  useGarmentName,
+} from './useGarmentName';
+export type { NameInstance, NameLimits, NamePosition, NamePreview } from './useGarmentName';

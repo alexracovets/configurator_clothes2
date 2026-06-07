@@ -8,7 +8,7 @@ interface RangeControlProps {
   label?: string;
   value: number;
   onChange: (value: number) => void;
-  onCommit?: () => void;
+  onCommit?: (value: number) => void;
   min?: number;
   max?: number;
   unit?: string;
@@ -46,12 +46,16 @@ const RangeControl = ({ label, value, onChange, onCommit, min = 0, max = 100, un
         max={safeMax}
         variant="default"
         onValueChange={(values) => handleChange(Array.isArray(values) ? (values[0] ?? safeMin) : values)}
-        onValueCommitted={() => {
+        onValueCommitted={(committedValue) => {
           isDragging.current = false;
-          onCommit?.();
+          const nextValue = Array.isArray(committedValue) ? (committedValue[0] ?? safeMin) : committedValue;
+          onCommit?.(nextValue);
         }}
         onPointerDown={() => {
           isDragging.current = true;
+        }}
+        onPointerUp={() => {
+          isDragging.current = false;
         }}
       />
       <Flex variant="slider_labels">

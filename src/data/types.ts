@@ -51,6 +51,22 @@ interface TextPositionConfig {
   interactive: boolean;
 }
 
+interface TextDefaultsConfig {
+  text: string;
+  font: string;
+  textColor: string;
+  strokeColor: string;
+  strokeWidth: number;
+  maxLength?: number;
+  fontSizeMin?: number;
+  fontSizeMax?: number;
+  strokeWidthMax?: number;
+}
+
+interface NamePositionConfig extends TextPositionConfig {
+  partId: string;
+}
+
 interface NumberPositionConfig extends TextPositionConfig {
   zone: string;
 }
@@ -94,7 +110,8 @@ interface GarmentConfig {
   partTextureSize?: number;
   patterns: PatternConfig[];
   default_pattern?: PatternConfig[];
-  namePositions?: TextPositionConfig[];
+  nameDefaults?: TextDefaultsConfig;
+  namePositions?: NamePositionConfig[];
   numberPositions?: NumberPositionConfig[];
   logoPositions?: LogoPositionConfig[];
 }
@@ -112,6 +129,7 @@ export type {
   GarmentPartConfig,
   GarmentStaticMeshConfig,
   LogoPositionConfig,
+  NamePositionConfig,
   NumberPositionConfig,
   PartGradientConfig,
   PatternConfig,
@@ -119,6 +137,7 @@ export type {
   PrintAtlasConfig,
   StyleConfig,
   StyleId,
+  TextDefaultsConfig,
   TextPositionConfig,
   UvBounds,
   UvPoint,
