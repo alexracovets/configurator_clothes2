@@ -1,1 +1,0 @@
-export { LogoGizmoHandler } from './LogoGizmoHandler';

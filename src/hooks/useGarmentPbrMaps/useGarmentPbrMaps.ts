@@ -18,6 +18,8 @@ const useGarmentPbrMaps = (paths: PbrTexturePaths): PbrMaps => {
   useMemo(() => {
     for (const tex of [bakeNormal, bakeAoRoughness, fabricNormal, fabricRoughness]) {
       tex.colorSpace = NoColorSpace;
+      tex.channel = 1;
+      tex.flipY = false;
       tex.needsUpdate = true;
     }
   }, [bakeNormal, bakeAoRoughness, fabricNormal, fabricRoughness]);

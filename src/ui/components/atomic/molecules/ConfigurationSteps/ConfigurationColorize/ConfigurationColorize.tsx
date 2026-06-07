@@ -1,32 +1,45 @@
 'use client';
 
-import { memo, useMemo } from 'react';
+import { memo } from 'react';
 
-import { AccordionAtom, Flex } from '@atoms';
-import { ColorControl, PartColorSwitch } from '@molecules';
+import { AccordionAtom, Flex, Text } from '@atoms';
+import { ColorControl } from '@molecules';
 
-import { useStepColor } from '@store';
+import { DEFAULT_COLOR, useConfiguratorProduct, useGarmentColor } from '@store';
 
-const MemoPartColorSwitch = memo(PartColorSwitch);
+interface PartColorControlProps {
+  partId: string;
+}
+
+const PartColorControl = memo(({ partId }: PartColorControlProps) => {
+  const color = useGarmentColor((state) => state.byPart[partId] ?? DEFAULT_COLOR);
+  const setPartColor = useGarmentColor((state) => state.setPartColor);
+
+  return (
+    <ColorControl partId={partId} color={color} onSelect={(value) => setPartColor(partId, value)} onPreviewSelect={(value) => setPartColor(partId, value)} />
+  );
+});
+
+PartColorControl.displayName = 'PartColorControl';
 
 const ConfigurationColorize = () => {
-  const parts = useStepColor((state) => state.parts);
-
-  const items = useMemo(
-    () =>
-      parts.map((part) => ({
-        value: part.id,
-        trigger: <MemoPartColorSwitch color={part.color} label={part.label} />,
-        content: <ColorControl partId={part.id} color={part.color} label={part.label} />,
-      })),
-    [parts],
-  );
+  const product = useConfiguratorProduct((state) => state.product);
+  const parts = product.parts;
 
   if (parts.length === 0) return null;
 
   return (
     <Flex variant="step_design">
-      <AccordionAtom items={items} defaultValue={[parts[0].id]} multiple={true} />
+      <AccordionAtom
+        key={product.path}
+        items={parts.map((part) => ({
+          value: part.id,
+          trigger: <Text>{part.label}</Text>,
+          content: <PartColorControl partId={part.id} />,
+        }))}
+        defaultValue={[parts[0].id]}
+        multiple
+      />
     </Flex>
   );
 };

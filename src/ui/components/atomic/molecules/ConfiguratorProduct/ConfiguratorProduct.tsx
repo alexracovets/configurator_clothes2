@@ -4,22 +4,12 @@ import { memo } from 'react';
 
 import { Flex, Grid, Text } from '@atoms';
 
-import { useConfigurationControl } from '@store';
 import { priceFormat } from '@utils';
-import { useShallow } from 'zustand/react/shallow';
+import { useConfigurationControl, useConfiguratorProduct } from '@store';
 
 const ConfiguratorProduct = memo(() => {
-  const { price, name, numberProduct, count_to_bonus, minimum_count, bonus_discount } = useConfigurationControl(
-    useShallow((state) => ({
-      price: state.price,
-      name: state.name,
-      numberProduct: state.numberProduct,
-      count_to_bonus: state.count_to_bonus,
-      bonus_discount: state.bonus_discount,
-      minimum_count: state.minimum_count,
-      productType: state.productType,
-    })),
-  );
+  const { price, name, bonus_count, minimum_count, bonus_discount } = useConfiguratorProduct((state) => state.product);
+  const numberProduct = useConfigurationControl((state) => state.numberProduct);
 
   return (
     <Flex className="flex-col">
@@ -29,12 +19,12 @@ const ConfiguratorProduct = memo(() => {
         </Text>
         <Flex className="flex-col items-start px-3 py-2 rounded-[4px] bg-primary hover:bg-primary/90 transition-colors">
           <Text className="font-semibold">Prodotto {numberProduct}</Text>
-          <Text className="text-[14px] text-gray">Minimo {minimum_count} pz</Text>
+          <Text className="text-[14px] text-gray">Minimo {minimum_count ?? 0} pz</Text>
         </Flex>
       </Grid>
       <Grid variant="configurator_price">
         <Text variant="product_price">{priceFormat(price)}</Text>
-        <Text className="text-[#6B7280] font-medium">{`>${count_to_bonus} pezzi +${bonus_discount}% di sconto`}</Text>
+        <Text className="text-[#6B7280] font-medium">{`>${bonus_count} pezzi +${bonus_discount}% di sconto`}</Text>
       </Grid>
     </Flex>
   );

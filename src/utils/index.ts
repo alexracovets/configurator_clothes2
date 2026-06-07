@@ -1,5 +1,6 @@
 export { cn } from './cn';
 export { priceFormat } from './priceFormat';
+export { resolveModelUrl } from './resolveModelUrl';
 export {
   isAcceptedLogoFile,
   LOGO_ACCEPTED_INPUT,

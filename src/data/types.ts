@@ -7,6 +7,8 @@ interface GarmentPartConfig {
   id: string;
   name: string;
   label: string;
+  meshNames: string[];
+  renderOrder?: number;
 }
 
 interface PatternPartConfig {
@@ -48,6 +50,11 @@ interface GarmentPbrTexturesConfig {
   fabricRoughness: string;
 }
 
+interface GarmentStaticMeshConfig {
+  meshNames: string[];
+  renderOrder?: number;
+}
+
 interface GarmentConfig {
   name: string;
   type: string;
@@ -57,8 +64,11 @@ interface GarmentConfig {
   minimum_count?: number;
   path: string;
   modelFile?: string;
+  defaultColor?: string;
   pbrTextures?: GarmentPbrTexturesConfig;
   parts: GarmentPartConfig[];
+  staticMeshes?: GarmentStaticMeshConfig[];
+  preserveGltfMeshes?: string[];
   patterns: PatternConfig[];
   default_pattern?: PatternConfig[];
   namePositions?: TextPositionConfig[];
@@ -77,6 +87,7 @@ export type {
   GarmentConfig,
   GarmentPbrTexturesConfig,
   GarmentPartConfig,
+  GarmentStaticMeshConfig,
   LogoPositionConfig,
   NumberPositionConfig,
   PatternConfig,

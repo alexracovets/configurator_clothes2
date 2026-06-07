@@ -1,1 +1,0 @@
-export { NameGizmoHandler } from './NameGizmoHandler';

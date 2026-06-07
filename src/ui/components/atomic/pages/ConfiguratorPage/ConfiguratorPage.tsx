@@ -1,14 +1,9 @@
 'use client';
 
-import { Configurator, ConfiguratorProductSync } from '@organisms';
+import { Configurator } from '@organisms';
 
 const ConfiguratorPage = () => {
-  return (
-    <>
-      <ConfiguratorProductSync />
-      <Configurator />
-    </>
-  );
+  return <Configurator />;
 };
 
 export { ConfiguratorPage };

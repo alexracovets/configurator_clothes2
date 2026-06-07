@@ -1,9 +1,8 @@
 'use client';
 
-import { memo, useCallback } from 'react';
+import { memo } from 'react';
 
 import { AtomInputHex, Button, ColorPicker, Flex, Grid, SvgIcon, Text } from '@atoms';
-import { useGarmentColorPreview, useStepColor } from '@store';
 import { PALETTE_COLORS } from '@constants';
 
 interface ColorControlProps {
@@ -11,50 +10,18 @@ interface ColorControlProps {
   label?: string;
   partId?: string;
   onSelect?: (color: string) => void;
-  /** Live updates while dragging the wheel (e.g. SFUMATURA Colore 2 → useGarmentShadingPreview). */
   onPreviewSelect?: (color: string) => void;
 }
 
 const ColorControl = memo(({ partId, color, label, onSelect, onPreviewSelect }: ColorControlProps) => {
-  const setPartColor = useStepColor((state) => state.setPartColor);
-  const setColorPreview = useGarmentColorPreview((state) => state.setColorPreview);
-  const clearColorPreview = useGarmentColorPreview((state) => state.clearColorPreview);
-
-  const handleCommit = useCallback(
-    (nextColor: string) => {
-      clearColorPreview();
-
-      if (onSelect) {
-        onSelect(nextColor);
-        return;
-      }
-
-      if (partId) setPartColor(partId, nextColor);
-    },
-    [clearColorPreview, onSelect, partId, setPartColor],
-  );
-
-  const handlePreview = useCallback(
-    (nextColor: string) => {
-      if (onPreviewSelect) {
-        onPreviewSelect(nextColor);
-        return;
-      }
-
-      if (onSelect || !partId) return;
-      setColorPreview(partId, nextColor);
-    },
-    [onPreviewSelect, onSelect, partId, setColorPreview],
-  );
-
   return (
     <Flex variant="configurator_part">
       {label && <Text variant="configurator_part_label">{label}</Text>}
       <Grid className="grid-cols-[auto_auto] items-center justify-between gap-2 w-full">
         <ColorPicker
           color={color}
-          onChange={handleCommit}
-          onPreviewChange={handlePreview}
+          onChange={(value) => onSelect?.(value)}
+          onPreviewChange={(value) => onPreviewSelect?.(value)}
           trigger={
             <Button variant="destructive" size="icon">
               <span>Seleziona il colore</span>
@@ -62,7 +29,7 @@ const ColorControl = memo(({ partId, color, label, onSelect, onPreviewSelect }: 
             </Button>
           }
         />
-        <AtomInputHex value={color} onChange={handleCommit} />
+        <AtomInputHex value={color} onChange={(value) => onSelect?.(value)} />
       </Grid>
       <Grid variant="select_parts">
         {PALETTE_COLORS.map((paletteColor) => (
@@ -71,7 +38,7 @@ const ColorControl = memo(({ partId, color, label, onSelect, onPreviewSelect }: 
             variant="select_part_short"
             data-active={color === paletteColor}
             style={{ backgroundColor: paletteColor }}
-            onClick={() => handleCommit(paletteColor)}
+            onClick={() => onSelect?.(paletteColor)}
           />
         ))}
       </Grid>

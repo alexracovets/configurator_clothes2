@@ -1,10 +1,13 @@
 'use client';
 
+import { Suspense } from 'react';
+
 import { Canvas } from '@react-three/fiber';
+import { Center } from '@react-three/drei';
 import * as THREE from 'three';
 
 import { CanvasControl } from './CanvasControl';
-import { LoadModel } from './LoadModel';
+import { Model } from './Model';
 
 const Configurator = () => {
   return (
@@ -22,7 +25,11 @@ const Configurator = () => {
       dpr={[1, 1.5]}
     >
       <CanvasControl />
-      <LoadModel />
+      <Suspense fallback={null}>
+        <Center>
+          <Model />
+        </Center>
+      </Suspense>
     </Canvas>
   );
 };

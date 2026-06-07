@@ -1,1 +1,1 @@
-export { cameraBridge, ViewControls } from './ViewControls';
+export { ViewControls } from './ViewControls';

@@ -1,1 +1,0 @@
-export { useGarmentColorPreview } from './useGarmentColorPreview';

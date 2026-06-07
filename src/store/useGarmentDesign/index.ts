@@ -1,0 +1,1 @@
+export { useGarmentDesign } from './useGarmentDesign';

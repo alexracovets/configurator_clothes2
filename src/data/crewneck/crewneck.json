@@ -10,6 +10,7 @@
       "minimum_count": 6,
       "path": "/models/crewneck/crewneck/",
       "modelFile": "crewneck.gltf",
+      "defaultColor": "#CCCCCC",
       "pbrTextures": {
         "bakeNormal": "bake_normal.jpg",
         "bakeAoRoughness": "bake_ao-bake_roughness.jpg",
@@ -20,30 +21,45 @@
         {
           "name": "Davanti",
           "label": "Front",
-          "id": "front_crewneck"
+          "id": "front_crewneck",
+          "meshNames": ["crewneck_front"],
+          "renderOrder": 1
         },
         {
           "name": "Retro",
           "label": "Back",
-          "id": "back_crewneck"
+          "id": "back_crewneck",
+          "meshNames": ["crewneck_back"],
+          "renderOrder": 1
         },
         {
           "name": "Manica 1",
           "label": "Left Sleeve",
-          "id": "sleeve_left_crewneck"
+          "id": "sleeve_left_crewneck",
+          "meshNames": ["crewneck_sleeve_left"],
+          "renderOrder": 1
         },
         {
           "name": "Manica 2",
           "label": "Right Sleeve",
-          "id": "sleeve_right_crewneck"
+          "id": "sleeve_right_crewneck",
+          "meshNames": ["crewneck_sleeve_right"],
+          "renderOrder": 1
         }
       ],
+      "staticMeshes": [
+        {
+          "meshNames": ["crewneck_collar"],
+          "renderOrder": 1
+        }
+      ],
+      "preserveGltfMeshes": ["crewneck_inside"],
       "patterns": [
         {
           "name": "Design 1",
           "parts": [
             {
-              "path_name": "crewneck_design_1.svg",
+              "path_name": "crewneck_design_1.webp",
               "id": 0
             }
           ]
@@ -52,11 +68,11 @@
           "name": "Design 2",
           "parts": [
             {
-              "path_name": "crewneck_design_2_color_1.svg",
+              "path_name": "crewneck_design_2_color_1.webp",
               "id": 2
             },
             {
-              "path_name": "crewneck_design_2_color_2.svg",
+              "path_name": "crewneck_design_2_color_2.webp",
               "id": 3
             }
           ]
@@ -65,11 +81,11 @@
           "name": "Design 3",
           "parts": [
             {
-              "path_name": "crewneck_design_3_color_1.svg",
+              "path_name": "crewneck_design_3_color_1.webp",
               "id": 4
             },
             {
-              "path_name": "crewneck_design_3_color_2.svg",
+              "path_name": "crewneck_design_3_color_2.webp",
               "id": 5
             }
           ]
@@ -78,11 +94,11 @@
           "name": "Design 4",
           "parts": [
             {
-              "path_name": "crewneck_design_4_color_1.svg",
+              "path_name": "crewneck_design_4_color_1.webp",
               "id": 6
             },
             {
-              "path_name": "crewneck_design_4_color_2.svg",
+              "path_name": "crewneck_design_4_color_2.webp",
               "id": 7
             }
           ]
@@ -91,11 +107,11 @@
           "name": "Design 5",
           "parts": [
             {
-              "path_name": "crewneck_design_5_color_1.svg",
+              "path_name": "crewneck_design_5_color_1.webp",
               "id": 6
             },
             {
-              "path_name": "crewneck_design_5_color_2.svg",
+              "path_name": "crewneck_design_5_color_2.webp",
               "id": 7
             }
           ]
@@ -104,11 +120,11 @@
           "name": "Design 6",
           "parts": [
             {
-              "path_name": "crewneck_design_6_color_1.svg",
+              "path_name": "crewneck_design_6_color_1.webp",
               "id": 8
             },
             {
-              "path_name": "crewneck_design_6_color_2.svg",
+              "path_name": "crewneck_design_6_color_2.webp",
               "id": 9
             }
           ]
@@ -117,7 +133,7 @@
           "name": "Design 7",
           "parts": [
             {
-              "path_name": "crewneck_design_7.svg",
+              "path_name": "crewneck_design_7.webp",
               "id": 10
             }
           ]
@@ -126,11 +142,11 @@
           "name": "Design 8",
           "parts": [
             {
-              "path_name": "crewneck_design_8_color_1.svg",
+              "path_name": "crewneck_design_8_color_1.webp",
               "id": 11
             },
             {
-              "path_name": "crewneck_design_8_color_2.svg",
+              "path_name": "crewneck_design_8_color_2.webp",
               "id": 12
             }
           ]
@@ -139,11 +155,11 @@
           "name": "Design 9",
           "parts": [
             {
-              "path_name": "crewneck_design_9_color_1.svg",
+              "path_name": "crewneck_design_9_color_1.webp",
               "id": 13
             },
             {
-              "path_name": "crewneck_design_9_color_2.svg",
+              "path_name": "crewneck_design_9_color_2.webp",
               "id": 14
             }
           ]
@@ -152,11 +168,11 @@
           "name": "Design 10",
           "parts": [
             {
-              "path_name": "crewneck_design_10_color_1.svg",
+              "path_name": "crewneck_design_10_color_1.webp",
               "id": 15
             },
             {
-              "path_name": "crewneck_design_10_color_2.svg",
+              "path_name": "crewneck_design_10_color_2.webp",
               "id": 16
             }
           ]
@@ -167,7 +183,7 @@
           "name": "default_0",
           "parts": [
             {
-              "path_name": "crewneck_logos.svg",
+              "path_name": "crewneck_logos.webp",
               "id": 0
             }
           ]
@@ -194,15 +210,15 @@
           "label": "Front Left",
           "zone": "front",
           "uv": { "x": 0.4, "y": 0.5 },
-          "rotation": 0,
+          "rotation": -90,
           "fontSize": 128,
           "interactive": false
         },
         {
           "label": "Front Right",
           "zone": "front",
-          "uv": { "x": 0.32, "y": 0.28 },
-          "rotation": 0,
+          "uv": { "x": 0.32, "y": 0.72 },
+          "rotation": -90,
           "fontSize": 128,
           "interactive": false
         },
@@ -210,7 +226,7 @@
           "label": "Back",
           "zone": "back",
           "uv": { "x": 0.5, "y": 0.5 },
-          "rotation": 0,
+          "rotation": 90,
           "fontSize": 420,
           "interactive": false
         }
@@ -220,7 +236,7 @@
           "label": "Logo Front",
           "uv": { "x": 0.66, "y": 0.55 },
           "src": "/logo/logo_short.png",
-          "rotation": 0,
+          "rotation": -90,
           "scale": 1,
           "default": true,
           "interactive": false
@@ -229,7 +245,7 @@
           "label": "Logo Back",
           "uv": { "x": 0.16, "y": 0.35 },
           "src": "/logo/logo_vertical.png",
-          "rotation": 0,
+          "rotation": -90,
           "scale": 1,
           "default": true,
           "interactive": false
@@ -245,25 +261,37 @@
       "minimum_count": 6,
       "path": "/models/crewneck/mans_shorts/",
       "modelFile": "mans_shorts.gltf",
+      "defaultColor": "#CCCCCC",
       "parts": [
         {
           "name": "Davanti",
           "label": "Front",
-          "id": "front_shorts"
+          "id": "front_shorts",
+          "meshNames": ["mans_shorts_left"],
+          "renderOrder": 1
         },
         {
           "name": "Retro",
           "label": "Back",
-          "id": "back_shorts"
+          "id": "back_shorts",
+          "meshNames": ["mans_shorts_right"],
+          "renderOrder": 1
         }
       ],
+      "staticMeshes": [
+        {
+          "meshNames": ["mans_shorts_laces"],
+          "renderOrder": 2
+        }
+      ],
+      "preserveGltfMeshes": ["mans_shorts_inside"],
       "patterns": [],
       "default_pattern": [
         {
           "name": "default_0",
           "parts": [
             {
-              "path_name": "mans_shorts_logo.svg",
+              "path_name": "mans_shorts_logo.webp",
               "id": 0
             }
           ]

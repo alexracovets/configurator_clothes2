@@ -1,1 +1,0 @@
-export { NumberGizmoHandler } from './NumberGizmoHandler';

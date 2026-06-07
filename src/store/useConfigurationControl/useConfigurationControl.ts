@@ -4,30 +4,21 @@ import { create } from 'zustand';
 
 import { STEPS_CONFIGURATION } from '@constants';
 
-interface ConfigurationControlStore {
+interface ConfigurationControlState {
   activeStep: number;
   name: string;
+  numberProduct: number;
   price: number;
   count: number;
   count_to_bonus: number;
   bonus_discount: number;
   minimum_count: number;
-  productType: string;
-  numberProduct: number;
-  setName: (name: string) => void;
-  setCount: (count: number) => void;
-  setCountToBonus: (count_to_bonus: number) => void;
-  setPrice: (price: number) => void;
-  setBonusDiscount: (bonus_discount: number) => void;
-  setMinimumCount: (minimum_count: number) => void;
-  setProductType: (productType: string) => void;
   setActiveStep: (step: number) => void;
   goToPreviousStep: () => void;
   goToNextStep: () => void;
-  setNumberProduct: (numberProduct: number) => void;
 }
 
-const useConfigurationControl = create<ConfigurationControlStore>((set, get) => ({
+const useConfigurationControl = create<ConfigurationControlState>((set, get) => ({
   activeStep: 1,
   name: 'Maglia Federer',
   numberProduct: 1,
@@ -36,28 +27,6 @@ const useConfigurationControl = create<ConfigurationControlStore>((set, get) => 
   count_to_bonus: 5,
   bonus_discount: 0,
   minimum_count: 5,
-  productType: 'shirt',
-  setName: (name) => {
-    set({ name });
-  },
-  setCount: (count) => {
-    set({ count });
-  },
-  setCountToBonus: (count_to_bonus) => {
-    set({ count_to_bonus });
-  },
-  setPrice: (price) => {
-    set({ price });
-  },
-  setBonusDiscount: (bonus_discount) => {
-    set({ bonus_discount });
-  },
-  setMinimumCount: (minimum_count) => {
-    set({ minimum_count });
-  },
-  setProductType: (productType) => {
-    set({ productType });
-  },
   setActiveStep: (step) => {
     if (step < 1 || step > STEPS_CONFIGURATION.length) return;
     set({ activeStep: step });
@@ -71,9 +40,6 @@ const useConfigurationControl = create<ConfigurationControlStore>((set, get) => 
     const { activeStep } = get();
     if (activeStep >= STEPS_CONFIGURATION.length) return;
     set({ activeStep: activeStep + 1 });
-  },
-  setNumberProduct: (numberProduct) => {
-    set({ numberProduct });
   },
 }));
 

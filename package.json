@@ -12,6 +12,7 @@
     "format:check": "prettier --check .",
     "validate": "pnpm format:check && pnpm lint && pnpm verify:design-assets",
     "verify:design-assets": "node scripts/verify-design-assets.mjs",
+    "convert:design-assets": "node scripts/convert-design-assets.mjs",
     "prepare": "husky",
     "postinstall": "pnpm copy:logo-assets",
     "copy:logo-assets": "node scripts/copy-logo-assets.mjs"
@@ -70,6 +71,7 @@
     "knip": "^6.14.2",
     "lint-staged": "^17.0.5",
     "prettier": "^3.8.3",
+    "sharp": "0.34.5",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
