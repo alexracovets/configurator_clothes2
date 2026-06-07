@@ -24,7 +24,9 @@ interface UseGarmentDesignStore {
   patterns: DesignPatternItem[];
   activePattern: DesignPatternItem | null;
   patternColors: Record<string, string>;
+  designLayerColors: Record<number, string>;
   activeOpacity: number;
+  designOpacity: number;
   defaultPattern: DesignPatternItem | null;
   initForProduct: (product: GarmentConfig) => void;
   setPatterns: (patterns: DesignPatternItem[]) => void;
@@ -59,14 +61,17 @@ const mapDefaultPattern = (product: GarmentConfig): DesignPatternItem | null => 
   };
 };
 
-const buildPatternColors = (pattern: DesignPatternItem): Record<string, string> => Object.fromEntries(pattern.parts.map((part) => [part.key, DEFAULT_COLOR]));
+const buildPatternColors = (pattern: DesignPatternItem, layerColors: Record<number, string>): Record<string, string> =>
+  Object.fromEntries(pattern.parts.map((part, index) => [part.key, layerColors[index] ?? DEFAULT_COLOR]));
 
 const useGarmentDesign = create<UseGarmentDesignStore>((set, get) => ({
   productPath: null,
   patterns: [],
   activePattern: null,
   patternColors: {},
+  designLayerColors: {},
   activeOpacity: DEFAULT_OPACITY,
+  designOpacity: DEFAULT_OPACITY,
   defaultPattern: null,
 
   initForProduct: (product) => {
@@ -76,7 +81,9 @@ const useGarmentDesign = create<UseGarmentDesignStore>((set, get) => ({
       defaultPattern: mapDefaultPattern(product),
       activePattern: null,
       patternColors: {},
+      designLayerColors: {},
       activeOpacity: DEFAULT_OPACITY,
+      designOpacity: DEFAULT_OPACITY,
     });
   },
 
@@ -84,25 +91,41 @@ const useGarmentDesign = create<UseGarmentDesignStore>((set, get) => ({
 
   setActivePattern: (pattern) => {
     if (!pattern) {
-      set({ activePattern: null, patternColors: {}, activeOpacity: DEFAULT_OPACITY });
+      set({ activePattern: null, patternColors: {} });
       return;
     }
 
-    set({ activePattern: pattern, patternColors: buildPatternColors(pattern), activeOpacity: DEFAULT_OPACITY });
+    const { designLayerColors, designOpacity } = get();
+
+    set({
+      activePattern: pattern,
+      patternColors: buildPatternColors(pattern, designLayerColors),
+      activeOpacity: designOpacity,
+    });
   },
 
   setPartColor: (partKey, color) => {
+    const { activePattern } = get();
+    const partIndex = activePattern?.parts.findIndex((part) => part.key === partKey) ?? -1;
+
     set((state) => ({
       patternColors: {
         ...state.patternColors,
         [partKey]: color,
       },
+      designLayerColors:
+        partIndex >= 0
+          ? {
+              ...state.designLayerColors,
+              [partIndex]: color,
+            }
+          : state.designLayerColors,
     }));
   },
 
   getPartColor: (partKey) => get().patternColors[partKey] ?? DEFAULT_COLOR,
 
-  setActiveOpacity: (opacity) => set({ activeOpacity: opacity }),
+  setActiveOpacity: (opacity) => set({ activeOpacity: opacity, designOpacity: opacity }),
 
   setDefaultPattern: (pattern) => set({ defaultPattern: pattern }),
 }));
