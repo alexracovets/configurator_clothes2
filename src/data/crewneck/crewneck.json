@@ -239,7 +239,8 @@
           "uv": { "x": 0.36, "y": 0.36 },
           "rotation": 90,
           "fontSize": 80,
-          "interactive": true
+          "interactive": true,
+          "interactive_show": true
         },
         {
           "label": "Bottom Back",
@@ -247,7 +248,8 @@
           "uv": { "x": 0.1, "y": 0.35 },
           "rotation": 90,
           "fontSize": 80,
-          "interactive": true
+          "interactive": true,
+          "interactive_show": true
         }
       ],
       "numberPositions": [
