@@ -20,8 +20,12 @@ varying vec2 vRawUv1;
 varying vec2 vPrintUv;
 uniform sampler2D uBakeNormal;
 #ifdef USE_PRINT
-uniform sampler2D uPrintAtlas;
-uniform vec4 uPartUvBounds;
+uniform sampler2D uDefaultLogos;
+uniform sampler2D uPatternMask0;
+uniform sampler2D uPatternMask1;
+uniform vec3 uPatternColor0;
+uniform vec3 uPatternColor1;
+uniform float uPatternOpacity;
 #endif
 `;
 

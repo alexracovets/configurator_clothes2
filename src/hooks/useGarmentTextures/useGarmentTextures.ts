@@ -3,18 +3,36 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 import { useThree } from '@react-three/fiber';
-import { CanvasTexture, SRGBColorSpace, type Texture } from 'three';
+import type { Texture } from 'three';
 
 import { useGarmentMaterialRegistry } from '@providers';
 import { DEFAULT_COLOR, useConfiguratorProduct, useGarmentColor, useGarmentDesign } from '@store';
-import { applyGarmentPrint, clearImageTextureCache, composePrintAtlas, resolvePartUvBounds, resolvePrintAtlasSize } from '@utils';
+import type { DesignPatternItem } from '@store';
+import {
+  applyGarmentPatternTints,
+  applyGarmentPrint,
+  clearImageTextureCache,
+  emptyMaskPair,
+  type GarmentPrintState,
+  imageToTexture,
+  PATTERN_LAYER_COUNT,
+  type PatternColorPair,
+  type PatternMaskPair,
+} from '@utils';
 
-const buildAtlasKey = (
-  activePatternKey: string | undefined,
-  activeOpacity: number,
-  patternColors: Record<string, string>,
-  defaultPatternKey: string | undefined,
-) => `${activePatternKey ?? 'none'}|${activeOpacity}|${JSON.stringify(patternColors)}|${defaultPatternKey ?? 'none'}`;
+const DEFAULT_PATTERN_COLOR = '#000000';
+
+const buildPatternColors = (pattern: DesignPatternItem | null, patternColors: Record<string, string>): PatternColorPair => {
+  const colors: [string, string] = [DEFAULT_PATTERN_COLOR, DEFAULT_PATTERN_COLOR];
+
+  if (!pattern) return colors;
+
+  for (let index = 0; index < Math.min(pattern.parts.length, PATTERN_LAYER_COUNT); index += 1) {
+    colors[index] = patternColors[pattern.parts[index].key] ?? DEFAULT_PATTERN_COLOR;
+  }
+
+  return colors;
+};
 
 const useGarmentTextures = () => {
   const product = useConfiguratorProduct((state) => state.product);
@@ -27,32 +45,38 @@ const useGarmentTextures = () => {
   const { getMaterials } = useGarmentMaterialRegistry();
   const invalidate = useThree((state) => state.invalidate);
 
-  const atlasCanvasRef = useRef<HTMLCanvasElement | null>(null);
-  const printTextureRef = useRef<CanvasTexture | null>(null);
-  const atlasKeyRef = useRef('');
-  const requestIdRef = useRef(0);
-  const rafRef = useRef<number | null>(null);
-  const syncQueueRef = useRef(Promise.resolve());
+  const logosTextureRef = useRef<Texture | null>(null);
+  const maskTexturesRef = useRef<PatternMaskPair>(emptyMaskPair());
+  const masksPatternKeyRef = useRef<string | null>(null);
+  const logosProductPathRef = useRef<string | null>(null);
 
   const clearRuntime = useCallback(() => {
-    printTextureRef.current?.dispose();
-    printTextureRef.current = null;
-    atlasCanvasRef.current = null;
-    atlasKeyRef.current = '';
+    logosTextureRef.current = null;
+    maskTexturesRef.current = emptyMaskPair();
+    masksPatternKeyRef.current = null;
+    logosProductPathRef.current = null;
     clearImageTextureCache();
   }, []);
 
-  const applyPrintAtlas = useCallback(
-    (printTexture: Texture) => {
-      for (const part of product.parts) {
-        const uvBounds = resolvePartUvBounds(part);
+  const buildPrintState = useCallback((): GarmentPrintState => {
+    return {
+      defaultLogos: logosTextureRef.current ?? emptyMaskPair()[0],
+      patternMasks: maskTexturesRef.current,
+      patternColors: buildPatternColors(activePattern, patternColors),
+      patternOpacity: activeOpacity,
+    };
+  }, [activeOpacity, activePattern, patternColors]);
 
+  const applyPrintState = useCallback(
+    (state: GarmentPrintState) => {
+      for (const part of product.parts) {
         for (const material of getMaterials(part.id)) {
-          applyGarmentPrint(material, printTexture, uvBounds);
+          applyGarmentPrint(material, state);
         }
       }
+      invalidate();
     },
-    [getMaterials, product.parts],
+    [getMaterials, invalidate, product.parts],
   );
 
   const applyPartColors = useCallback(() => {
@@ -67,64 +91,17 @@ const useGarmentTextures = () => {
     }
   }, [byPart, getMaterials, product.parts]);
 
-  const applyToMaterials = useCallback(() => {
-    const printTexture = printTextureRef.current;
-    if (!printTexture) return;
+  const applyPatternTints = useCallback(() => {
+    const colors = buildPatternColors(activePattern, patternColors);
 
-    applyPartColors();
-    applyPrintAtlas(printTexture);
+    for (const part of product.parts) {
+      for (const material of getMaterials(part.id)) {
+        applyGarmentPatternTints(material, colors, activeOpacity);
+      }
+    }
+
     invalidate();
-  }, [applyPartColors, applyPrintAtlas, invalidate]);
-
-  const syncAtlas = useCallback(async () => {
-    if (productPath !== product.path) return;
-
-    const atlasSize = resolvePrintAtlasSize(product);
-    const atlasKey = buildAtlasKey(activePattern?.key, activeOpacity, patternColors, defaultPattern?.key);
-
-    if (atlasKey === atlasKeyRef.current && printTextureRef.current) {
-      applyToMaterials();
-      return;
-    }
-
-    const requestId = requestIdRef.current + 1;
-    requestIdRef.current = requestId;
-
-    if (!atlasCanvasRef.current) {
-      atlasCanvasRef.current = document.createElement('canvas');
-    }
-
-    await composePrintAtlas({
-      atlasSize,
-      activePattern,
-      patternColors,
-      activeOpacity,
-      defaultPattern,
-      targetCanvas: atlasCanvasRef.current,
-    });
-
-    if (requestIdRef.current !== requestId) return;
-
-    if (!printTextureRef.current) {
-      const texture = new CanvasTexture(atlasCanvasRef.current);
-      texture.colorSpace = SRGBColorSpace;
-      texture.flipY = false;
-      printTextureRef.current = texture;
-    } else {
-      printTextureRef.current.needsUpdate = true;
-    }
-
-    atlasKeyRef.current = atlasKey;
-    applyToMaterials();
-  }, [activeOpacity, activePattern, applyToMaterials, defaultPattern, patternColors, product, productPath]);
-
-  const scheduleAtlasSync = useCallback(() => {
-    if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
-    rafRef.current = requestAnimationFrame(() => {
-      rafRef.current = null;
-      syncQueueRef.current = syncQueueRef.current.then(() => syncAtlas());
-    });
-  }, [syncAtlas]);
+  }, [activeOpacity, activePattern, getMaterials, invalidate, patternColors, product.parts]);
 
   useEffect(() => {
     if (productPath !== product.path) {
@@ -132,11 +109,77 @@ const useGarmentTextures = () => {
       return;
     }
 
-    scheduleAtlasSync();
-  }, [activeOpacity, activePattern, clearRuntime, defaultPattern, patternColors, product.path, productPath, scheduleAtlasSync]);
+    const logosSrc = defaultPattern?.parts[0]?.src;
+    if (!logosSrc) return;
+
+    if (logosProductPathRef.current === product.path && logosTextureRef.current) {
+      applyPrintState(buildPrintState());
+      return;
+    }
+
+    let cancelled = false;
+
+    imageToTexture(logosSrc).then((texture) => {
+      if (cancelled) return;
+
+      logosTextureRef.current = texture;
+      logosProductPathRef.current = product.path;
+      applyPrintState(buildPrintState());
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [applyPrintState, buildPrintState, clearRuntime, defaultPattern, product.path, productPath]);
 
   useEffect(() => {
-    if (productPath !== product.path || !printTextureRef.current) return;
+    if (productPath !== product.path) return;
+
+    if (!activePattern) {
+      maskTexturesRef.current = emptyMaskPair();
+      masksPatternKeyRef.current = null;
+      applyPrintState(buildPrintState());
+      return;
+    }
+
+    if (masksPatternKeyRef.current === activePattern.key) {
+      applyPrintState(buildPrintState());
+      return;
+    }
+
+    let cancelled = false;
+
+    const loadMasks = async () => {
+      const masks = emptyMaskPair();
+
+      await Promise.all(
+        activePattern.parts.slice(0, PATTERN_LAYER_COUNT).map(async (part, index) => {
+          masks[index] = await imageToTexture(part.src);
+        }),
+      );
+
+      if (cancelled) return;
+
+      maskTexturesRef.current = masks;
+      masksPatternKeyRef.current = activePattern.key;
+      applyPrintState(buildPrintState());
+    };
+
+    loadMasks();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activePattern, applyPrintState, buildPrintState, product.path, productPath]);
+
+  useEffect(() => {
+    if (productPath !== product.path) return;
+
+    applyPatternTints();
+  }, [activeOpacity, applyPatternTints, patternColors, product.path, productPath]);
+
+  useEffect(() => {
+    if (productPath !== product.path) return;
 
     applyPartColors();
     invalidate();

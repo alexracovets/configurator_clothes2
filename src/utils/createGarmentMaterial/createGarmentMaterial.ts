@@ -1,7 +1,8 @@
-import { MeshStandardMaterial, type Texture, Vector4 } from 'three';
+import { Color, MeshStandardMaterial, type Texture } from 'three';
 
 import type { PbrMaps } from '../pbrMaps';
 
+import type { GarmentPrintState } from '../garmentPrint/applyGarmentPrint';
 import { getEmptyPrintTexture } from '../garmentPrint/emptyPrintTexture';
 import { garmentPrintMapFragment } from '../garmentPrint/garmentPrintShaders';
 
@@ -21,17 +22,25 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
   material.userData.garmentShaderConfigured = true;
 
   const bakeNormal = material.userData.pbrBakeNormal as Texture;
-  const printTexture = (material.userData.printTexture as Texture | undefined) ?? getEmptyPrintTexture();
-  material.userData.printTexture = printTexture;
-  material.userData.uPartUvBounds = material.userData.uPartUvBounds ?? new Vector4(0, 0, 1, 1);
+  const printState = material.userData.garmentPrintState as GarmentPrintState | undefined;
+  const emptyPrint = getEmptyPrintTexture();
 
   material.onBeforeCompile = (shader) => {
     shader.defines = { ...shader.defines, USE_UV1: '', USE_PRINT: '' };
     shader.uniforms.uBakeNormal = { value: bakeNormal };
-    shader.uniforms.uPrintAtlas = { value: printTexture };
-    shader.uniforms.uPartUvBounds = { value: material.userData.uPartUvBounds };
-    material.userData.uPrintAtlasUniform = shader.uniforms.uPrintAtlas;
-    material.userData.uPartUvBoundsUniform = shader.uniforms.uPartUvBounds;
+    shader.uniforms.uDefaultLogos = { value: printState?.defaultLogos ?? emptyPrint };
+    shader.uniforms.uPatternMask0 = { value: printState?.patternMasks[0] ?? emptyPrint };
+    shader.uniforms.uPatternMask1 = { value: printState?.patternMasks[1] ?? emptyPrint };
+    shader.uniforms.uPatternColor0 = { value: new Color(printState?.patternColors[0] ?? '#000000') };
+    shader.uniforms.uPatternColor1 = { value: new Color(printState?.patternColors[1] ?? '#000000') };
+    shader.uniforms.uPatternOpacity = { value: printState?.patternOpacity ?? 1 };
+
+    material.userData.uDefaultLogosUniform = shader.uniforms.uDefaultLogos;
+    material.userData.uPatternMask0Uniform = shader.uniforms.uPatternMask0;
+    material.userData.uPatternMask1Uniform = shader.uniforms.uPatternMask1;
+    material.userData.uPatternColor0Uniform = shader.uniforms.uPatternColor0;
+    material.userData.uPatternColor1Uniform = shader.uniforms.uPatternColor1;
+    material.userData.uPatternOpacityUniform = shader.uniforms.uPatternOpacity;
 
     shader.vertexShader = shader.vertexShader.replace('#include <uv_pars_vertex>', garmentVertexUvPars).replace('#include <uv_vertex>', garmentVertexUv);
 
@@ -42,7 +51,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       .replace('#include <roughnessmap_fragment>', garmentRoughnessFragment);
   };
 
-  material.customProgramCacheKey = () => 'garment-pbr-print-v4';
+  material.customProgramCacheKey = () => 'garment-pbr-print-v5';
 };
 
 const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMaterial, meshName = ''): MeshStandardMaterial => {
