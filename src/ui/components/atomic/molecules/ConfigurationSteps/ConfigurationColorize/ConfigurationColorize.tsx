@@ -15,9 +15,7 @@ const PartColorControl = memo(({ partId }: PartColorControlProps) => {
   const color = useGarmentColor((state) => state.byPart[partId] ?? DEFAULT_COLOR);
   const setPartColor = useGarmentColor((state) => state.setPartColor);
 
-  return (
-    <ColorControl partId={partId} color={color} onSelect={(value) => setPartColor(partId, value)} onPreviewSelect={(value) => setPartColor(partId, value)} />
-  );
+  return <ColorControl color={color} onSelect={(value) => setPartColor(partId, value)} onPreviewSelect={(value) => setPartColor(partId, value)} />;
 });
 
 PartColorControl.displayName = 'PartColorControl';

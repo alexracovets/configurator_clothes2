@@ -8,12 +8,11 @@ import { PALETTE_COLORS } from '@constants';
 interface ColorControlProps {
   color: string;
   label?: string;
-  partId?: string;
   onSelect?: (color: string) => void;
   onPreviewSelect?: (color: string) => void;
 }
 
-const ColorControl = memo(({ partId, color, label, onSelect, onPreviewSelect }: ColorControlProps) => {
+const ColorControl = memo(({ color, label, onSelect, onPreviewSelect }: ColorControlProps) => {
   return (
     <Flex variant="configurator_part">
       {label && <Text variant="configurator_part_label">{label}</Text>}
