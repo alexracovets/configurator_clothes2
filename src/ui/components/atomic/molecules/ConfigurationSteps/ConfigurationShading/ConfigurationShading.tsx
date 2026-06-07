@@ -19,7 +19,10 @@ const ConfigurationShading = () => {
 
       if (!gradient?.enabled) return baseColor;
 
-      return `linear-gradient(${gradient.rotation}deg, ${baseColor}, ${gradient.color2})`;
+      const color1 = gradient.reversed ? gradient.color2 : baseColor;
+      const color2 = gradient.reversed ? baseColor : gradient.color2;
+
+      return `linear-gradient(${gradient.rotation}deg, ${color1}, ${color2})`;
     },
     [byPart, gradientsByPart],
   );

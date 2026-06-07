@@ -5,7 +5,8 @@ import { create } from 'zustand';
 import { PALETTE_COLORS } from '@constants';
 import { GarmentConfig } from '@data';
 
-import { DEFAULT_PART_GRADIENT, DISABLED_PART_GRADIENT, type PartGradient } from './partGradientTypes';
+import { buildDefaultGradients } from './mapPartGradientDefaults';
+import { DISABLED_PART_GRADIENT, type PartGradient } from './partGradientTypes';
 
 const DEFAULT_COLOR = PALETTE_COLORS[0];
 
@@ -35,7 +36,7 @@ const useGarmentColor = create<GarmentColorState>((set, get) => ({
   gradientsByPart: {},
 
   initForProduct: (product) => {
-    set({ byPart: buildDefaultColors(product), gradientsByPart: {} });
+    set({ byPart: buildDefaultColors(product), gradientsByPart: buildDefaultGradients(product) });
   },
 
   setPartColor: (partId, color) => {
@@ -56,7 +57,7 @@ const useGarmentColor = create<GarmentColorState>((set, get) => ({
       return {
         gradientsByPart: {
           ...state.gradientsByPart,
-          [partId]: enabled ? { ...DEFAULT_PART_GRADIENT, ...current, enabled: true } : { ...current, enabled: false },
+          [partId]: { ...current, enabled },
         },
       };
     });

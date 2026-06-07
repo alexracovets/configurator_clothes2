@@ -1,5 +1,6 @@
 interface PartGradient {
   enabled: boolean;
+  reversed: boolean;
   color2: string;
   rotation: number;
   position: number;
@@ -7,9 +8,12 @@ interface PartGradient {
   opacity: number;
 }
 
+const DEFAULT_GRADIENT_COLOR2 = '#000000';
+
 const DEFAULT_PART_GRADIENT: PartGradient = {
   enabled: true,
-  color2: '#000000',
+  reversed: false,
+  color2: DEFAULT_GRADIENT_COLOR2,
   rotation: 0,
   position: 0.5,
   softness: 0.5,
@@ -18,12 +22,13 @@ const DEFAULT_PART_GRADIENT: PartGradient = {
 
 const DISABLED_PART_GRADIENT: PartGradient = {
   enabled: false,
-  color2: '#000000',
+  reversed: false,
+  color2: DEFAULT_GRADIENT_COLOR2,
   rotation: 0,
   position: 0.5,
   softness: 0.5,
   opacity: 1,
 };
 
-export { DEFAULT_PART_GRADIENT, DISABLED_PART_GRADIENT };
+export { DEFAULT_GRADIENT_COLOR2, DEFAULT_PART_GRADIENT, DISABLED_PART_GRADIENT };
 export type { PartGradient };

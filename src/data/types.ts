@@ -15,6 +15,14 @@ interface PrintAtlasConfig {
   height: number;
 }
 
+interface PartGradientConfig {
+  reversed: boolean;
+  rotation: number;
+  position: number;
+  softness: number;
+  opacity: number;
+}
+
 interface GarmentPartConfig {
   id: string;
   name: string;
@@ -22,6 +30,7 @@ interface GarmentPartConfig {
   meshNames: string[];
   renderOrder?: number;
   uvBounds?: UvBounds;
+  gradient?: PartGradientConfig;
 }
 
 interface PatternPartConfig {
@@ -104,6 +113,7 @@ export type {
   GarmentStaticMeshConfig,
   LogoPositionConfig,
   NumberPositionConfig,
+  PartGradientConfig,
   PatternConfig,
   PatternPartConfig,
   PrintAtlasConfig,

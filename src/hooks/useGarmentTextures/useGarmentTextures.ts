@@ -7,7 +7,7 @@ import type { Texture } from 'three';
 
 import { useGarmentMaterialRegistry } from '@providers';
 import type { DesignPatternItem } from '@store';
-import { DEFAULT_COLOR, DISABLED_PART_GRADIENT, useConfiguratorProduct, useGarmentColor, useGarmentDesign } from '@store';
+import { DEFAULT_COLOR, DISABLED_PART_GRADIENT, resolveGradientColors, useConfiguratorProduct, useGarmentColor, useGarmentDesign } from '@store';
 import {
   applyGarmentGradient,
   applyGarmentPartUvBounds,
@@ -87,13 +87,14 @@ const useGarmentTextures = () => {
     for (const part of product.parts) {
       const color = byPart[part.id] ?? DEFAULT_COLOR;
       const gradient = gradientsByPart[part.id] ?? DISABLED_PART_GRADIENT;
+      const { fabricColor, gradientColor2 } = resolveGradientColors(color, gradient);
       const uvBounds = resolvePartUvBounds(part);
 
       for (const material of getMaterials(part.id)) {
-        material.color.set(color);
+        material.color.set(fabricColor);
         material.map = null;
         applyGarmentPartUvBounds(material, uvBounds);
-        applyGarmentGradient(material, gradient);
+        applyGarmentGradient(material, { ...gradient, color2: gradientColor2 });
         material.needsUpdate = true;
       }
     }
