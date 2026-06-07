@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useMemo } from 'react';
 
-import type { PbrMaps } from '@compositing';
+import type { PbrMaps } from '@utils';
 
 const PbrMapsContext = createContext<PbrMaps | null>(null);
 

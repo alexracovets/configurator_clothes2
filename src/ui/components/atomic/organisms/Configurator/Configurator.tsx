@@ -20,7 +20,7 @@ const Configurator = () => {
         powerPreference: 'high-performance',
         stencil: true,
         toneMapping: THREE.ACESFilmicToneMapping,
-        toneMappingExposure: 1.0,
+        toneMappingExposure: 1.12,
       }}
       dpr={[1, 1.5]}
     >

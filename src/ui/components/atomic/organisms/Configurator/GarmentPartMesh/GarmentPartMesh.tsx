@@ -4,6 +4,7 @@ import { memo, useEffect, useLayoutEffect, useMemo } from 'react';
 import type { Mesh, MeshStandardMaterial, Object3D } from 'three';
 
 import { useGarmentMaterialRegistry, usePbrMaps } from '@providers';
+import { createGarmentMaterial } from '@utils';
 
 interface GarmentPartMeshProps {
   registryKey: string;
@@ -19,7 +20,7 @@ const GarmentPartMesh = memo(({ registryKey, meshName, node, renderOrder = 0 }: 
   const source = node as Mesh;
   const sourceMaterial = Array.isArray(source.material) ? source.material[0] : source.material;
 
-  const material = useMemo(() => createGarmentMaterial(pbrMaps, sourceMaterial as MeshStandardMaterial), [pbrMaps, sourceMaterial]);
+  const material = useMemo(() => createGarmentMaterial(pbrMaps, sourceMaterial as MeshStandardMaterial, meshName), [meshName, pbrMaps, sourceMaterial]);
 
   useLayoutEffect(() => {
     register(registryKey, material);

@@ -12,7 +12,7 @@ const CanvasControl = () => {
       <directionalLight position={[-5, 5, -5]} intensity={0.46} />
       <directionalLight position={[0, -5, 5]} intensity={0.26} />
       <directionalLight position={[-3, 3, 5]} intensity={0.32} />
-      <Environment preset="warehouse" background={false} environmentIntensity={0.19} />
+      <Environment preset="warehouse" background={false} environmentIntensity={0.32} />
       <ViewControls />
     </>
   );

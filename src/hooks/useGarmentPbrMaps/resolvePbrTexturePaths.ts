@@ -1,5 +1,5 @@
 import type { GarmentConfig } from '@data';
-import type { PbrTexturePaths } from '@compositing';
+import type { PbrTexturePaths } from '@utils';
 
 const resolvePbrTexturePaths = (product: GarmentConfig): PbrTexturePaths | null => {
   const files = product.pbrTextures;

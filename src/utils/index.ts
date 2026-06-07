@@ -1,4 +1,6 @@
 export { cn } from './cn';
+export { createGarmentMaterial } from './createGarmentMaterial';
+export type { PbrMaps, PbrTexturePaths } from './pbrMaps';
 export { priceFormat } from './priceFormat';
 export { resolveModelUrl } from './resolveModelUrl';
 export {
