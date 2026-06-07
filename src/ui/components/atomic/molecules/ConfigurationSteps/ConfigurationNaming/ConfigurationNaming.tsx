@@ -128,16 +128,16 @@ const ConfigurationNaming = () => {
 
   const resolvedOpenItems = useMemo(() => {
     const validIds = new Set(instances.map((instance) => instance.id));
-    const filtered = openItems.filter((id) => validIds.has(id));
-    if (filtered.length > 0) return filtered;
-    return instances.length > 0 ? [instances[0].id] : [];
+    return openItems.filter((id) => validIds.has(id));
   }, [instances, openItems]);
 
   const createInstanceForPosition = (position: NamePosition) => {
     if (!position.interactive) return;
 
     nextInstanceIdRef.current += 1;
-    addInstance(createNameInstance(product, position, `${position.key}_${nextInstanceIdRef.current}`));
+    const instanceId = `${position.key}_${nextInstanceIdRef.current}`;
+    addInstance(createNameInstance(product, position, instanceId));
+    setOpenItems((current) => [...current, instanceId]);
     setIsLocationPickerOpen(false);
   };
 
