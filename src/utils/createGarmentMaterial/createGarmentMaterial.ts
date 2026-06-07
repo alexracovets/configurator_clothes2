@@ -6,7 +6,6 @@ import { garmentGradientMapFragment } from '../garmentGradient/garmentGradientSh
 import type { GarmentPrintState } from '../garmentPrint/applyGarmentPrint';
 import { getEmptyPrintTexture } from '../garmentPrint/emptyPrintTexture';
 import { NAME_SLOT_COUNT } from '../garmentPrint/nameSlotConstants';
-import { NAME_STAMP_UV } from '../garmentPrint/nameStampConstants';
 import { hydrateGarmentNameUniforms } from '../garmentPrint/applyGarmentNames';
 import { garmentPrintMapFragment } from '../garmentPrint/garmentPrintShaders';
 
@@ -53,11 +52,13 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     shader.uniforms.uDefaultLogos = { value: printState?.defaultLogos ?? emptyPrint };
     shader.uniforms.uPrintAtlasSize = { value: new Vector2(2048, 1074) };
     shader.uniforms.uNameFillMask = { value: emptyPrint };
-    shader.uniforms.uNameStampUv = { value: new Vector2(NAME_STAMP_UV.x, NAME_STAMP_UV.y) };
+    shader.uniforms.uNameStrokeMask = { value: emptyPrint };
+    shader.uniforms.uNameStampSize = { value: new Vector2(1, 1) };
     shader.uniforms.uNameAnchorUv = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Vector2()) };
     shader.uniforms.uNameRotation = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
     shader.uniforms.uNameScale = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 1) };
-    shader.uniforms.uNameStrokeWidth = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uNameSlotActive = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uNamePartBounds = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Vector4(0, 0, 1, 1)) };
     shader.uniforms.uNameTextColors = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Color('#000000')) };
     shader.uniforms.uNameStrokeColors = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Color('#ffffff')) };
     shader.uniforms.uPatternMask0 = { value: printState?.patternMasks[0] ?? emptyPrint };
@@ -69,11 +70,13 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     material.userData.uDefaultLogosUniform = shader.uniforms.uDefaultLogos;
     material.userData.uPrintAtlasSizeUniform = shader.uniforms.uPrintAtlasSize;
     material.userData.uNameFillMaskUniform = shader.uniforms.uNameFillMask;
-    material.userData.uNameStampUvUniform = shader.uniforms.uNameStampUv;
+    material.userData.uNameStrokeMaskUniform = shader.uniforms.uNameStrokeMask;
+    material.userData.uNameStampSizeUniform = shader.uniforms.uNameStampSize;
     material.userData.uNameAnchorUvUniform = shader.uniforms.uNameAnchorUv;
     material.userData.uNameRotationUniform = shader.uniforms.uNameRotation;
     material.userData.uNameScaleUniform = shader.uniforms.uNameScale;
-    material.userData.uNameStrokeWidthUniform = shader.uniforms.uNameStrokeWidth;
+    material.userData.uNameSlotActiveUniform = shader.uniforms.uNameSlotActive;
+    material.userData.uNamePartBoundsUniform = shader.uniforms.uNamePartBounds;
     material.userData.uNameTextColorsUniform = shader.uniforms.uNameTextColors;
     material.userData.uNameStrokeColorsUniform = shader.uniforms.uNameStrokeColors;
     material.userData.uPatternMask0Uniform = shader.uniforms.uPatternMask0;
@@ -84,11 +87,13 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
 
     hydrateGarmentNameUniforms(material, {
       uNameFillMask: shader.uniforms.uNameFillMask,
-      uNameStampUv: shader.uniforms.uNameStampUv,
+      uNameStrokeMask: shader.uniforms.uNameStrokeMask,
+      uNameStampSize: shader.uniforms.uNameStampSize,
       uNameAnchorUv: shader.uniforms.uNameAnchorUv,
       uNameRotation: shader.uniforms.uNameRotation,
       uNameScale: shader.uniforms.uNameScale,
-      uNameStrokeWidth: shader.uniforms.uNameStrokeWidth,
+      uNameSlotActive: shader.uniforms.uNameSlotActive,
+      uNamePartBounds: shader.uniforms.uNamePartBounds,
       uNameTextColors: shader.uniforms.uNameTextColors,
       uNameStrokeColors: shader.uniforms.uNameStrokeColors,
     });
@@ -102,7 +107,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       .replace('#include <roughnessmap_fragment>', garmentRoughnessFragment);
   };
 
-  material.customProgramCacheKey = () => 'garment-pbr-print-v18';
+  material.customProgramCacheKey = () => 'garment-pbr-print-v30';
 };
 
 const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMaterial, meshName = ''): MeshStandardMaterial => {

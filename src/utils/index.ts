@@ -1,7 +1,8 @@
 export { cn } from './cn';
 export { composePartAlbedo } from './composePartAlbedo/composePartAlbedo';
-export { composeNameMaskAtlas } from './composeNameAtlas/composeNameMaskAtlas';
+export { composeNameMaskAtlas, resolveNameStampSize } from './composeNameAtlas/composeNameMaskAtlas';
 export type { ComposeNameMaskAtlasInput, NameMaskAtlas } from './composeNameAtlas/composeNameMaskAtlas';
+export type { StampPixelSize } from './drawNameOnAtlas/measureNameStampBounds';
 export { composePrintAtlas } from './composePrintAtlas/composePrintAtlas';
 export type { ComposePrintAtlasInput } from './composePrintAtlas/composePrintAtlas';
 export { composePrintAtlasFbo } from './composePrintAtlasFbo/composePrintAtlasFbo';

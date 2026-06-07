@@ -16,10 +16,26 @@ import {
   canvasToMaskTexture,
   composeNameMaskAtlas,
   getEmptyPrintTexture,
+  resolveNameStampSize,
   resolvePrintAtlasSize,
 } from '@utils';
+import type { NameMaskAtlas } from '@utils';
 
-const buildNameGeometrySignature = (instances: NameInstance[]) => JSON.stringify(instances.map((instance) => ({ text: instance.text, font: instance.font })));
+type StampPixelSize = NameMaskAtlas['stampSize'];
+
+const DEFAULT_STAMP_SIZE: StampPixelSize = { width: 1, height: 1 };
+
+const buildNameFillSignature = (instances: NameInstance[]) => JSON.stringify(instances.map((instance) => ({ text: instance.text, font: instance.font })));
+
+const buildNameStrokeSignature = (instances: NameInstance[]) =>
+  JSON.stringify(
+    instances.map((instance) => ({
+      text: instance.text,
+      font: instance.font,
+      strokeWidth: instance.strokeWidth,
+      fontSize: instance.fontSize,
+    })),
+  );
 
 const buildNameStyleSignature = (instances: NameInstance[]) =>
   JSON.stringify(
@@ -27,11 +43,13 @@ const buildNameStyleSignature = (instances: NameInstance[]) =>
       textColor: instance.textColor,
       strokeColor: instance.strokeColor,
       fontSize: instance.fontSize,
-      strokeWidth: instance.strokeWidth,
       uv: instance.uv,
       rotation: instance.rotation,
+      partId: instance.partId,
     })),
   );
+
+const stampSizeChanged = (previous: StampPixelSize, next: StampPixelSize) => previous.width !== next.width || previous.height !== next.height;
 
 const useGarmentNameTextures = () => {
   const product = useConfiguratorProduct((state) => state.product);
@@ -42,23 +60,59 @@ const useGarmentNameTextures = () => {
   const invalidate = useThree((state) => state.invalidate);
 
   const fillCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const strokeCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const fillTextureRef = useRef<Texture | null>(null);
+  const strokeTextureRef = useRef<Texture | null>(null);
+  const stampSizeRef = useRef<StampPixelSize>(DEFAULT_STAMP_SIZE);
+  const maskGenerationRef = useRef(0);
+  const prevFillSignatureRef = useRef('');
+
   const instancesForRender = useMemo(() => resolveInstancesForRender(nameInstances, namePreview), [nameInstances, namePreview]);
-  const geometrySignature = useMemo(() => buildNameGeometrySignature(instancesForRender), [instancesForRender]);
+  const fillSignature = useMemo(() => buildNameFillSignature(instancesForRender), [instancesForRender]);
+  const strokeSignature = useMemo(() => buildNameStrokeSignature(instancesForRender), [instancesForRender]);
   const styleSignature = useMemo(() => buildNameStyleSignature(instancesForRender), [instancesForRender]);
   const atlasSize = useMemo(() => resolvePrintAtlasSize(product), [product]);
 
   const clearRuntime = useCallback(() => {
     fillTextureRef.current?.dispose();
+    strokeTextureRef.current?.dispose();
     fillTextureRef.current = null;
+    strokeTextureRef.current = null;
     fillCanvasRef.current = null;
+    strokeCanvasRef.current = null;
+    stampSizeRef.current = DEFAULT_STAMP_SIZE;
+    prevFillSignatureRef.current = '';
+  }, []);
+
+  const ensureMaskResources = useCallback((stampSize: StampPixelSize) => {
+    if (!fillCanvasRef.current) {
+      fillCanvasRef.current = document.createElement('canvas');
+      fillTextureRef.current = canvasToMaskTexture(fillCanvasRef.current);
+    }
+
+    if (!strokeCanvasRef.current) {
+      strokeCanvasRef.current = document.createElement('canvas');
+      strokeTextureRef.current = canvasToMaskTexture(strokeCanvasRef.current);
+    }
+
+    if (!stampSizeChanged(stampSizeRef.current, stampSize)) return;
+
+    fillCanvasRef.current.width = stampSize.width;
+    fillCanvasRef.current.height = stampSize.height;
+    strokeCanvasRef.current.width = stampSize.width;
+    strokeCanvasRef.current.height = stampSize.height;
+    fillTextureRef.current?.dispose();
+    strokeTextureRef.current?.dispose();
+    fillTextureRef.current = canvasToMaskTexture(fillCanvasRef.current);
+    strokeTextureRef.current = canvasToMaskTexture(strokeCanvasRef.current);
+    stampSizeRef.current = stampSize;
   }, []);
 
   const applyNameMasks = useCallback(
-    (fillMask: Texture) => {
+    (fillMask: Texture, strokeMask: Texture) => {
       for (const part of product.parts) {
         for (const material of getMaterials(part.id)) {
-          applyGarmentNameMasks(material, { fillMask });
+          applyGarmentNameMasks(material, { fillMask, strokeMask });
         }
       }
       invalidate();
@@ -66,47 +120,60 @@ const useGarmentNameTextures = () => {
     [getMaterials, invalidate, product.parts],
   );
 
-  const applyNameStyle = useCallback(() => {
-    const style = buildNameStyleUniforms(instancesForRender);
+  const applyNameStyle = useCallback(
+    (stampSize: StampPixelSize = stampSizeRef.current) => {
+      for (const part of product.parts) {
+        const style = buildNameStyleUniforms(instancesForRender, product.parts, stampSize, part.id);
 
-    for (const part of product.parts) {
-      for (const material of getMaterials(part.id)) {
-        applyGarmentPrintAtlasSize(material, atlasSize.width, atlasSize.height);
-        applyGarmentNameStyle(material, style);
+        for (const material of getMaterials(part.id)) {
+          applyGarmentPrintAtlasSize(material, atlasSize.width, atlasSize.height);
+          applyGarmentNameStyle(material, style);
+        }
       }
-    }
 
-    invalidate();
-  }, [atlasSize.height, atlasSize.width, getMaterials, instancesForRender, invalidate, product.parts]);
+      invalidate();
+    },
+    [atlasSize.height, atlasSize.width, getMaterials, instancesForRender, invalidate, product.parts],
+  );
 
-  const updateNameMasks = useCallback(async () => {
-    if (nameProductPath !== product.path) return;
+  const updateNameMasks = useCallback(
+    async (redrawFill: boolean, redrawStroke: boolean) => {
+      if (nameProductPath !== product.path) return;
 
-    const empty = getEmptyPrintTexture();
+      const generation = ++maskGenerationRef.current;
+      const empty = getEmptyPrintTexture();
 
-    if (instancesForRender.length === 0) {
-      applyNameMasks(empty);
-      return;
-    }
+      if (instancesForRender.length === 0) {
+        stampSizeRef.current = DEFAULT_STAMP_SIZE;
+        applyNameMasks(empty, empty);
+        applyNameStyle(DEFAULT_STAMP_SIZE);
+        return;
+      }
 
-    await document.fonts.ready;
+      await document.fonts.ready;
+      if (generation !== maskGenerationRef.current) return;
 
-    const printAtlasSize = resolvePrintAtlasSize(product);
+      const stampSize = resolveNameStampSize(instancesForRender);
+      ensureMaskResources(stampSize);
+      if (generation !== maskGenerationRef.current) return;
 
-    if (!fillCanvasRef.current) {
-      fillCanvasRef.current = document.createElement('canvas');
-      fillTextureRef.current = canvasToMaskTexture(fillCanvasRef.current);
-    }
+      composeNameMaskAtlas({
+        instances: instancesForRender,
+        fillCanvas: fillCanvasRef.current!,
+        strokeCanvas: strokeCanvasRef.current!,
+        redrawFill,
+        redrawStroke,
+      });
 
-    composeNameMaskAtlas({
-      atlasSize: printAtlasSize,
-      instances: instancesForRender,
-      fillCanvas: fillCanvasRef.current,
-    });
+      if (generation !== maskGenerationRef.current) return;
 
-    fillTextureRef.current!.needsUpdate = true;
-    applyNameMasks(fillTextureRef.current!);
-  }, [applyNameMasks, instancesForRender, nameProductPath, product]);
+      fillTextureRef.current!.needsUpdate = true;
+      strokeTextureRef.current!.needsUpdate = true;
+      applyNameMasks(fillTextureRef.current!, strokeTextureRef.current!);
+      applyNameStyle(stampSize);
+    },
+    [applyNameMasks, applyNameStyle, ensureMaskResources, instancesForRender, nameProductPath, product.path],
+  );
 
   useEffect(() => {
     if (nameProductPath !== product.path) {
@@ -114,8 +181,11 @@ const useGarmentNameTextures = () => {
       return;
     }
 
-    void updateNameMasks();
-  }, [clearRuntime, geometrySignature, nameProductPath, product.path, updateNameMasks]);
+    const fillChanged = prevFillSignatureRef.current !== fillSignature;
+    prevFillSignatureRef.current = fillSignature;
+
+    void updateNameMasks(fillChanged, true);
+  }, [clearRuntime, fillSignature, nameProductPath, product.path, strokeSignature, updateNameMasks]);
 
   useEffect(() => {
     if (nameProductPath !== product.path) return;

@@ -1,57 +1,100 @@
-import type { PrintAtlasConfig } from '@data';
 import type { NameInstance } from '@store';
 
 import { drawNameMaskGeometry } from '../drawNameOnAtlas/drawNameMaskGeometry';
+import { drawNameStrokeMaskGeometry } from '../drawNameOnAtlas/drawNameStrokeMaskGeometry';
+import { measureNameStampPixelSize, type StampPixelSize, unionStampPixelSize } from '../drawNameOnAtlas/measureNameStampBounds';
 import { NAME_SLOT_COUNT } from '../garmentPrint/nameSlotConstants';
 
 import { mergeMaskChannel } from './mergeMaskChannel';
 
 interface ComposeNameMaskAtlasInput {
-  atlasSize: PrintAtlasConfig;
   instances: NameInstance[];
   fillCanvas?: HTMLCanvasElement;
+  strokeCanvas?: HTMLCanvasElement;
+  redrawFill?: boolean;
+  redrawStroke?: boolean;
 }
 
 interface NameMaskAtlas {
   fillCanvas: HTMLCanvasElement;
+  strokeCanvas: HTMLCanvasElement;
+  stampSize: StampPixelSize;
 }
 
-const createWorkCanvas = (size: PrintAtlasConfig) => {
+const createWorkCanvas = (width: number, height: number) => {
   const canvas = document.createElement('canvas');
-  canvas.width = size.width;
-  canvas.height = size.height;
+  canvas.width = width;
+  canvas.height = height;
   return canvas;
 };
 
-const ensureCanvasSize = (canvas: HTMLCanvasElement, size: PrintAtlasConfig) => {
-  if (canvas.width !== size.width || canvas.height !== size.height) {
-    canvas.width = size.width;
-    canvas.height = size.height;
+const ensureCanvasSize = (canvas: HTMLCanvasElement, width: number, height: number) => {
+  if (canvas.width !== width || canvas.height !== height) {
+    canvas.width = width;
+    canvas.height = height;
   }
+};
+
+const resolveNameStampSize = (instances: NameInstance[]): StampPixelSize => {
+  const measureCanvas = document.createElement('canvas');
+  const measureCtx = measureCanvas.getContext('2d');
+  if (!measureCtx) return { width: 1, height: 1 };
+
+  return unionStampPixelSize(
+    instances
+      .slice(0, NAME_SLOT_COUNT)
+      .map((instance) => measureNameStampPixelSize(instance.text, instance.font, measureCtx))
+      .filter((size): size is StampPixelSize => size !== null),
+  );
 };
 
 const composeNameMaskAtlas = (input: ComposeNameMaskAtlasInput): NameMaskAtlas => {
-  const fillCanvas = input.fillCanvas ?? createWorkCanvas(input.atlasSize);
+  const redrawFill = input.redrawFill ?? true;
+  const redrawStroke = input.redrawStroke ?? true;
+  const activeInstances = input.instances.slice(0, NAME_SLOT_COUNT);
+  const stampSize = resolveNameStampSize(activeInstances);
+  const fillCanvas = input.fillCanvas ?? createWorkCanvas(stampSize.width, stampSize.height);
+  const strokeCanvas = input.strokeCanvas ?? createWorkCanvas(stampSize.width, stampSize.height);
   const fillCtx = fillCanvas.getContext('2d', { willReadFrequently: true });
-  const scratchCanvas = createWorkCanvas(input.atlasSize);
+  const strokeCtx = strokeCanvas.getContext('2d', { willReadFrequently: true });
+  const scratchCanvas = createWorkCanvas(stampSize.width, stampSize.height);
   const scratchCtx = scratchCanvas.getContext('2d');
 
-  if (!fillCtx || !scratchCtx) {
-    return { fillCanvas };
+  if (!fillCtx || !strokeCtx || !scratchCtx) {
+    return { fillCanvas, strokeCanvas, stampSize };
   }
 
-  ensureCanvasSize(fillCanvas, input.atlasSize);
-  ensureCanvasSize(scratchCanvas, input.atlasSize);
-  fillCtx.clearRect(0, 0, fillCanvas.width, fillCanvas.height);
+  ensureCanvasSize(fillCanvas, stampSize.width, stampSize.height);
+  ensureCanvasSize(strokeCanvas, stampSize.width, stampSize.height);
+  ensureCanvasSize(scratchCanvas, stampSize.width, stampSize.height);
 
-  input.instances.slice(0, NAME_SLOT_COUNT).forEach((instance, slotIndex) => {
-    scratchCtx.clearRect(0, 0, scratchCanvas.width, scratchCanvas.height);
-    drawNameMaskGeometry(scratchCtx, { text: instance.text, font: instance.font }, scratchCanvas.width, scratchCanvas.height);
-    mergeMaskChannel(fillCtx, scratchCanvas, slotIndex as 0 | 1 | 2 | 3);
-  });
+  if (redrawFill) {
+    fillCtx.clearRect(0, 0, fillCanvas.width, fillCanvas.height);
 
-  return { fillCanvas };
+    activeInstances.forEach((instance, slotIndex) => {
+      scratchCtx.clearRect(0, 0, scratchCanvas.width, scratchCanvas.height);
+      drawNameMaskGeometry(scratchCtx, { text: instance.text, font: instance.font }, scratchCanvas.width, scratchCanvas.height);
+      mergeMaskChannel(fillCtx, scratchCanvas, slotIndex as 0 | 1 | 2 | 3);
+    });
+  }
+
+  if (redrawStroke) {
+    strokeCtx.clearRect(0, 0, strokeCanvas.width, strokeCanvas.height);
+
+    activeInstances.forEach((instance, slotIndex) => {
+      scratchCtx.clearRect(0, 0, scratchCanvas.width, scratchCanvas.height);
+      drawNameStrokeMaskGeometry(
+        scratchCtx,
+        { text: instance.text, font: instance.font, strokeWidth: instance.strokeWidth, fontSize: instance.fontSize },
+        scratchCanvas.width,
+        scratchCanvas.height,
+      );
+      mergeMaskChannel(strokeCtx, scratchCanvas, slotIndex as 0 | 1 | 2 | 3);
+    });
+  }
+
+  return { fillCanvas, strokeCanvas, stampSize };
 };
 
-export { composeNameMaskAtlas };
+export { composeNameMaskAtlas, resolveNameStampSize };
 export type { ComposeNameMaskAtlasInput, NameMaskAtlas };

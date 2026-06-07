@@ -1,6 +1,6 @@
 import { FONTS_CONFIGURATION } from '@constants';
 
-import { NAME_REFERENCE_FONT_SIZE, NAME_STAMP_UV } from '../garmentPrint/nameStampConstants';
+import { NAME_REFERENCE_FONT_SIZE } from '../garmentPrint/nameStampConstants';
 
 interface DrawNameMaskGeometryInput {
   text: string;
@@ -11,16 +11,15 @@ const FONT_FAMILY_BY_NAME = Object.fromEntries(FONTS_CONFIGURATION.map((font) =>
 
 const resolveFontFamily = (fontName: string) => FONT_FAMILY_BY_NAME[fontName] ?? fontName;
 
-// Лише форма гліфів; колір, розмір і обводка — GPU uniforms.
-const drawNameMaskGeometry = (ctx: CanvasRenderingContext2D, instance: DrawNameMaskGeometryInput, atlasWidth: number, atlasHeight: number) => {
+const drawNameMaskGeometry = (ctx: CanvasRenderingContext2D, instance: DrawNameMaskGeometryInput, canvasWidth: number, canvasHeight: number) => {
   if (!instance.text.trim()) return;
 
-  const x = NAME_STAMP_UV.x * atlasWidth;
-  const y = NAME_STAMP_UV.y * atlasHeight;
   const fontFamily = resolveFontFamily(instance.font);
 
   ctx.save();
-  ctx.translate(x, y);
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
+  ctx.translate(canvasWidth / 2, canvasHeight / 2);
   ctx.font = `${NAME_REFERENCE_FONT_SIZE}px ${fontFamily}`;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';

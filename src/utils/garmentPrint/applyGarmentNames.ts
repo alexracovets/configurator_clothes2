@@ -1,9 +1,10 @@
-import { Color, type MeshStandardMaterial, type Texture, Vector2 } from 'three';
+import { Color, type MeshStandardMaterial, type Texture, Vector2, Vector4 } from 'three';
 
 import type { NameStyleUniforms } from './buildNameStyleUniforms';
 
 interface GarmentNameMaskState {
   fillMask: Texture;
+  strokeMask: Texture;
 }
 
 let pendingNameMasks: GarmentNameMaskState | null = null;
@@ -12,11 +13,14 @@ let pendingNameStyle: NameStyleUniforms | null = null;
 const applyNameMasksToUniforms = (material: MeshStandardMaterial, state: GarmentNameMaskState) => {
   const fillUniform = material.userData.uNameFillMaskUniform as { value: Texture } | undefined;
   if (fillUniform) fillUniform.value = state.fillMask;
+
+  const strokeUniform = material.userData.uNameStrokeMaskUniform as { value: Texture } | undefined;
+  if (strokeUniform) strokeUniform.value = state.strokeMask;
 };
 
 const applyNameStyleToUniforms = (material: MeshStandardMaterial, style: NameStyleUniforms) => {
-  const stampUniform = material.userData.uNameStampUvUniform as { value: Vector2 } | undefined;
-  if (stampUniform) stampUniform.value.set(style.stampUv.x, style.stampUv.y);
+  const stampSizeUniform = material.userData.uNameStampSizeUniform as { value: Vector2 } | undefined;
+  if (stampSizeUniform) stampSizeUniform.value.set(style.stampSize.width, style.stampSize.height);
 
   const anchorUniform = material.userData.uNameAnchorUvUniform as { value: Vector2[] } | undefined;
   if (anchorUniform) {
@@ -39,10 +43,17 @@ const applyNameStyleToUniforms = (material: MeshStandardMaterial, style: NameSty
     });
   }
 
-  const strokeWidthUniform = material.userData.uNameStrokeWidthUniform as { value: number[] } | undefined;
-  if (strokeWidthUniform) {
-    style.strokeWidth.forEach((value, index) => {
-      strokeWidthUniform.value[index] = value;
+  const slotActiveUniform = material.userData.uNameSlotActiveUniform as { value: number[] } | undefined;
+  if (slotActiveUniform) {
+    style.slotActive.forEach((value, index) => {
+      slotActiveUniform.value[index] = value;
+    });
+  }
+
+  const partBoundsUniform = material.userData.uNamePartBoundsUniform as { value: Vector4[] } | undefined;
+  if (partBoundsUniform) {
+    style.partBounds.forEach((bounds, index) => {
+      partBoundsUniform.value[index].set(bounds.minX, bounds.minY, bounds.maxX, bounds.maxY);
     });
   }
 
@@ -82,11 +93,13 @@ const hydrateGarmentNameUniforms = (
   material: MeshStandardMaterial,
   uniforms: {
     uNameFillMask: { value: Texture };
-    uNameStampUv: { value: Vector2 };
+    uNameStrokeMask: { value: Texture };
+    uNameStampSize: { value: Vector2 };
     uNameAnchorUv: { value: Vector2[] };
     uNameRotation: { value: number[] };
     uNameScale: { value: number[] };
-    uNameStrokeWidth: { value: number[] };
+    uNameSlotActive: { value: number[] };
+    uNamePartBounds: { value: Vector4[] };
     uNameTextColors: { value: Color[] };
     uNameStrokeColors: { value: Color[] };
   },
@@ -96,18 +109,21 @@ const hydrateGarmentNameUniforms = (
 
   if (maskState) {
     uniforms.uNameFillMask.value = maskState.fillMask;
+    uniforms.uNameStrokeMask.value = maskState.strokeMask;
     material.userData.garmentNameMaskState = maskState;
     material.userData.uNameFillMaskUniform = uniforms.uNameFillMask;
+    material.userData.uNameStrokeMaskUniform = uniforms.uNameStrokeMask;
   }
 
   if (styleState) {
     applyNameStyleToUniforms(material, styleState);
     material.userData.garmentNameStyleState = styleState;
-    material.userData.uNameStampUvUniform = uniforms.uNameStampUv;
+    material.userData.uNameStampSizeUniform = uniforms.uNameStampSize;
     material.userData.uNameAnchorUvUniform = uniforms.uNameAnchorUv;
     material.userData.uNameRotationUniform = uniforms.uNameRotation;
     material.userData.uNameScaleUniform = uniforms.uNameScale;
-    material.userData.uNameStrokeWidthUniform = uniforms.uNameStrokeWidth;
+    material.userData.uNameSlotActiveUniform = uniforms.uNameSlotActive;
+    material.userData.uNamePartBoundsUniform = uniforms.uNamePartBounds;
     material.userData.uNameTextColorsUniform = uniforms.uNameTextColors;
     material.userData.uNameStrokeColorsUniform = uniforms.uNameStrokeColors;
   }
