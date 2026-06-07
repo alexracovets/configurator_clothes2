@@ -7,6 +7,7 @@ export type { ComposePrintAtlasFboInput } from './composePrintAtlasFbo/PrintAtla
 export { PrintAtlasFbo } from './composePrintAtlasFbo/PrintAtlasFbo';
 export { createGarmentMaterial } from './createGarmentMaterial';
 export { createPartAlbedoTexture } from './createPartAlbedoTexture/createPartAlbedoTexture';
+export { applyGarmentGradient, applyGarmentPartUvBounds } from './garmentGradient/applyGarmentGradient';
 export { applyGarmentPatternTints, applyGarmentPrint, emptyMaskPair, PATTERN_LAYER_COUNT } from './garmentPrint/applyGarmentPrint';
 export type { GarmentPrintState, PatternColorPair, PatternMaskPair } from './garmentPrint/applyGarmentPrint';
 export { clearImageTextureCache, imageToTexture } from './garmentPrint/imageToTexture';

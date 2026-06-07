@@ -6,9 +6,11 @@ import { useThree } from '@react-three/fiber';
 import type { Texture } from 'three';
 
 import { useGarmentMaterialRegistry } from '@providers';
-import { DEFAULT_COLOR, useConfiguratorProduct, useGarmentColor, useGarmentDesign } from '@store';
 import type { DesignPatternItem } from '@store';
+import { DEFAULT_COLOR, DISABLED_PART_GRADIENT, useConfiguratorProduct, useGarmentColor, useGarmentDesign } from '@store';
 import {
+  applyGarmentGradient,
+  applyGarmentPartUvBounds,
   applyGarmentPatternTints,
   applyGarmentPrint,
   clearImageTextureCache,
@@ -18,6 +20,7 @@ import {
   PATTERN_LAYER_COUNT,
   type PatternColorPair,
   type PatternMaskPair,
+  resolvePartUvBounds,
 } from '@utils';
 
 const DEFAULT_PATTERN_COLOR = '#000000';
@@ -37,6 +40,7 @@ const buildPatternColors = (pattern: DesignPatternItem | null, patternColors: Re
 const useGarmentTextures = () => {
   const product = useConfiguratorProduct((state) => state.product);
   const byPart = useGarmentColor((state) => state.byPart);
+  const gradientsByPart = useGarmentColor((state) => state.gradientsByPart);
   const productPath = useGarmentDesign((state) => state.productPath);
   const activePattern = useGarmentDesign((state) => state.activePattern);
   const patternColors = useGarmentDesign((state) => state.patternColors);
@@ -82,14 +86,18 @@ const useGarmentTextures = () => {
   const applyPartColors = useCallback(() => {
     for (const part of product.parts) {
       const color = byPart[part.id] ?? DEFAULT_COLOR;
+      const gradient = gradientsByPart[part.id] ?? DISABLED_PART_GRADIENT;
+      const uvBounds = resolvePartUvBounds(part);
 
       for (const material of getMaterials(part.id)) {
         material.color.set(color);
         material.map = null;
+        applyGarmentPartUvBounds(material, uvBounds);
+        applyGarmentGradient(material, gradient);
         material.needsUpdate = true;
       }
     }
-  }, [byPart, getMaterials, product.parts]);
+  }, [byPart, getMaterials, gradientsByPart, product.parts]);
 
   const applyPatternTints = useCallback(() => {
     const colors = buildPatternColors(activePattern, patternColors);
@@ -183,7 +191,7 @@ const useGarmentTextures = () => {
 
     applyPartColors();
     invalidate();
-  }, [applyPartColors, byPart, invalidate, product.path, productPath]);
+  }, [applyPartColors, byPart, gradientsByPart, invalidate, product.path, productPath]);
 
   useEffect(() => () => clearRuntime(), [clearRuntime]);
 };

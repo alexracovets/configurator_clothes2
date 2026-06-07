@@ -1,7 +1,8 @@
-import { Color, MeshStandardMaterial, type Texture } from 'three';
+import { Color, MeshStandardMaterial, type Texture, Vector4 } from 'three';
 
 import type { PbrMaps } from '../pbrMaps';
 
+import { garmentGradientMapFragment } from '../garmentGradient/garmentGradientShaders';
 import type { GarmentPrintState } from '../garmentPrint/applyGarmentPrint';
 import { getEmptyPrintTexture } from '../garmentPrint/emptyPrintTexture';
 import { garmentPrintMapFragment } from '../garmentPrint/garmentPrintShaders';
@@ -23,11 +24,29 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
 
   const bakeNormal = material.userData.pbrBakeNormal as Texture;
   const printState = material.userData.garmentPrintState as GarmentPrintState | undefined;
+  const gradient = material.userData.garmentGradient as
+    | { color2: string; rotation: number; position: number; softness: number; opacity: number; enabled: boolean }
+    | undefined;
   const emptyPrint = getEmptyPrintTexture();
+  material.userData.uPartUvBounds = material.userData.uPartUvBounds ?? new Vector4(0, 0, 1, 1);
 
   material.onBeforeCompile = (shader) => {
-    shader.defines = { ...shader.defines, USE_UV1: '', USE_PRINT: '' };
+    shader.defines = { ...shader.defines, USE_UV1: '', USE_GRADIENT: '', USE_PRINT: '' };
     shader.uniforms.uBakeNormal = { value: bakeNormal };
+    shader.uniforms.uPartUvBounds = { value: material.userData.uPartUvBounds };
+    material.userData.uPartUvBoundsUniform = shader.uniforms.uPartUvBounds;
+    shader.uniforms.uGradientEnabled = { value: gradient?.enabled ? 1 : 0 };
+    shader.uniforms.uGradientColor2 = { value: new Color(gradient?.color2 ?? '#000000') };
+    shader.uniforms.uGradientRotation = { value: ((gradient?.rotation ?? 0) * Math.PI) / 180 };
+    shader.uniforms.uGradientPosition = { value: gradient?.position ?? 0.5 };
+    shader.uniforms.uGradientSoftness = { value: gradient?.softness ?? 0.5 };
+    shader.uniforms.uGradientOpacity = { value: gradient?.opacity ?? 1 };
+    material.userData.uGradientEnabledUniform = shader.uniforms.uGradientEnabled;
+    material.userData.uGradientColor2Uniform = shader.uniforms.uGradientColor2;
+    material.userData.uGradientRotationUniform = shader.uniforms.uGradientRotation;
+    material.userData.uGradientPositionUniform = shader.uniforms.uGradientPosition;
+    material.userData.uGradientSoftnessUniform = shader.uniforms.uGradientSoftness;
+    material.userData.uGradientOpacityUniform = shader.uniforms.uGradientOpacity;
     shader.uniforms.uDefaultLogos = { value: printState?.defaultLogos ?? emptyPrint };
     shader.uniforms.uPatternMask0 = { value: printState?.patternMasks[0] ?? emptyPrint };
     shader.uniforms.uPatternMask1 = { value: printState?.patternMasks[1] ?? emptyPrint };
@@ -46,12 +65,12 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
 
     shader.fragmentShader = shader.fragmentShader
       .replace('#include <uv_pars_fragment>', garmentFragmentUvPars)
-      .replace('#include <map_fragment>', `#include <map_fragment>\n${garmentPrintMapFragment}`)
+      .replace('#include <map_fragment>', `#include <map_fragment>\n${garmentGradientMapFragment}\n${garmentPrintMapFragment}`)
       .replace('#include <normal_fragment_maps>', garmentNormalFragment)
       .replace('#include <roughnessmap_fragment>', garmentRoughnessFragment);
   };
 
-  material.customProgramCacheKey = () => 'garment-pbr-print-v5';
+  material.customProgramCacheKey = () => 'garment-pbr-print-v8';
 };
 
 const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMaterial, meshName = ''): MeshStandardMaterial => {
