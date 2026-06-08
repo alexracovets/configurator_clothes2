@@ -1,8 +1,6 @@
-const mergeMaskChannel = (targetCtx: CanvasRenderingContext2D, source: HTMLCanvasElement, channel: 0 | 1 | 2 | 3) => {
-  const width = source.width;
-  const height = source.height;
-  const sourceCtx = source.getContext('2d', { willReadFrequently: true });
-  if (!sourceCtx) return;
+const mergeMaskChannel = (targetCtx: CanvasRenderingContext2D, sourceCtx: CanvasRenderingContext2D, channel: 0 | 1 | 2 | 3) => {
+  const width = sourceCtx.canvas.width;
+  const height = sourceCtx.canvas.height;
 
   const sourceData = sourceCtx.getImageData(0, 0, width, height);
   const targetData = targetCtx.getImageData(0, 0, width, height);

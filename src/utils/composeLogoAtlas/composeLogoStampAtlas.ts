@@ -75,7 +75,7 @@ const composeLogoStampAtlas = async ({ instances, canvas }: ComposeLogoStampAtla
   canvas.width = cellSize.width * LOGO_STAMP_GRID;
   canvas.height = cellSize.height * LOGO_STAMP_GRID;
 
-  const ctx = canvas.getContext('2d', { alpha: true });
+  const ctx = canvas.getContext('2d', { alpha: true, willReadFrequently: true });
   if (!ctx) return { canvas, cellSize };
 
   configureLogoStampContext(ctx);
@@ -84,7 +84,7 @@ const composeLogoStampAtlas = async ({ instances, canvas }: ComposeLogoStampAtla
   const scratch = document.createElement('canvas');
   scratch.width = cellSize.width;
   scratch.height = cellSize.height;
-  const scratchCtx = scratch.getContext('2d', { alpha: true });
+  const scratchCtx = scratch.getContext('2d', { alpha: true, willReadFrequently: true });
   if (!scratchCtx) return { canvas, cellSize };
 
   configureLogoStampContext(scratchCtx);

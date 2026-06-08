@@ -58,7 +58,7 @@ const composeNameMaskAtlas = (input: ComposeNameMaskAtlasInput): NameMaskAtlas =
   const fillCtx = fillCanvas.getContext('2d', { willReadFrequently: true });
   const strokeCtx = strokeCanvas.getContext('2d', { willReadFrequently: true });
   const scratchCanvas = createWorkCanvas(stampSize.width, stampSize.height);
-  const scratchCtx = scratchCanvas.getContext('2d');
+  const scratchCtx = scratchCanvas.getContext('2d', { willReadFrequently: true });
 
   if (!fillCtx || !strokeCtx || !scratchCtx) {
     return { fillCanvas, strokeCanvas, stampSize };
@@ -74,7 +74,7 @@ const composeNameMaskAtlas = (input: ComposeNameMaskAtlasInput): NameMaskAtlas =
     activeInstances.forEach((instance, slotIndex) => {
       scratchCtx.clearRect(0, 0, scratchCanvas.width, scratchCanvas.height);
       drawNameMaskGeometry(scratchCtx, { text: instance.text, font: instance.font }, scratchCanvas.width, scratchCanvas.height);
-      mergeMaskChannel(fillCtx, scratchCanvas, slotIndex as 0 | 1 | 2 | 3);
+      mergeMaskChannel(fillCtx, scratchCtx, slotIndex as 0 | 1 | 2 | 3);
     });
   }
 
@@ -89,7 +89,7 @@ const composeNameMaskAtlas = (input: ComposeNameMaskAtlasInput): NameMaskAtlas =
         scratchCanvas.width,
         scratchCanvas.height,
       );
-      mergeMaskChannel(strokeCtx, scratchCanvas, slotIndex as 0 | 1 | 2 | 3);
+      mergeMaskChannel(strokeCtx, scratchCtx, slotIndex as 0 | 1 | 2 | 3);
     });
   }
 
