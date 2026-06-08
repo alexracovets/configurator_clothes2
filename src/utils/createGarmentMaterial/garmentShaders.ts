@@ -110,20 +110,29 @@ float garmentGizmoRectBorder( vec2 localPx, vec2 halfPx, float lineHalfPx ) {
   return 1.0 - smoothstep( lineHalfPx - aa, lineHalfPx + aa, abs( dist ) );
 }
 
-// 1D parameter along the rectangle perimeter, used to cut the border into dashes.
+// 1D parameter along the rectangle perimeter (0..period), alternates colour segments.
 float garmentGizmoDash( vec2 localPx, vec2 halfPx, float period ) {
   vec2 d = abs( localPx ) - halfPx;
   float t = ( d.x > d.y ) ? ( localPx.y + halfPx.y ) : ( localPx.x + halfPx.x );
   return step( period * 0.5, mod( t, period ) );
 }
 
-vec4 garmentGizmoFrameColor( vec2 stampUv, vec2 halfPx, float enabled, float insidePart ) {
+// Converts world UV to local px without rotation (axis-aligned, for AABB frame).
+vec2 garmentNameToLocalPxNoRot( vec2 worldUv, vec2 anchor, float scale ) {
+  vec2 deltaPx = ( worldUv - anchor ) * uPrintAtlasSize;
+  return deltaPx / max( scale, 0.001 );
+}
+
+// Frame is drawn in world UV space (no rotation) so it acts as an AABB around the rotated text.
+// Border alternates black / white with no transparent gap.
+vec4 garmentGizmoFrameColor( vec2 worldUv, vec2 anchor, float scale, vec2 halfPx, float enabled, float insidePart ) {
   if ( enabled < 0.5 || insidePart < 0.5 ) return vec4( 0.0 );
-  vec2 localPx = ( stampUv - vec2( 0.5 ) ) * uNameStampSize;
+  vec2 localPx = garmentNameToLocalPxNoRot( worldUv, anchor, scale );
   float border = garmentGizmoRectBorder( localPx, halfPx, 3.0 );
   if ( border < 0.01 ) return vec4( 0.0 );
   float dash = garmentGizmoDash( localPx, halfPx, 46.0 );
-  return vec4( vec3( 0.10, 0.11, 0.13 ), border * dash );
+  vec3 col = mix( vec3( 1.0 ), vec3( 0.10, 0.11, 0.13 ), dash );
+  return vec4( col, border );
 }
 
 // Half button size + outset in reference px. Must match BUTTON_STAMP_PX/2 and HANDLE_OUTSET_PX in PrintGizmoInstance.
@@ -136,9 +145,10 @@ vec4 garmentGizmoIconCell( sampler2D icons, vec2 localPx, vec2 cornerCenter, flo
   return texture2D( icons, vec2( ( cell + d.x ) * 0.25, 1.0 - d.y ) );
 }
 
-vec4 garmentGizmoButtons( vec2 stampUv, vec2 halfPx, float enabled, float insidePart, sampler2D icons ) {
+// Buttons are also placed at AABB corners (no rotation applied to localPx).
+vec4 garmentGizmoButtons( vec2 worldUv, vec2 anchor, float scale, vec2 halfPx, float enabled, float insidePart, sampler2D icons ) {
   if ( enabled < 0.5 || insidePart < 0.5 ) return vec4( 0.0 );
-  vec2 localPx = ( stampUv - vec2( 0.5 ) ) * uNameStampSize;
+  vec2 localPx = garmentNameToLocalPxNoRot( worldUv, anchor, scale );
   vec2 ext = halfPx + vec2( GIZMO_BTN_OUTSET );
 
   vec4 c0 = garmentGizmoIconCell( icons, localPx, vec2( -ext.x,  ext.y ), 0.0 ); // top-left: duplicate

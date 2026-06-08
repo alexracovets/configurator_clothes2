@@ -54,15 +54,12 @@ const usePrintGizmoDrag = ({ element, atlasSize }: UsePrintGizmoDragOptions) => 
       return hit?.uv ? { x: hit.uv.x, y: hit.uv.y } : null;
     };
 
-    // Convert a print-UV hit to the name's local stamp px (same transform as the shader).
+    // Convert a print-UV hit to the name's local px without rotation (matches the AABB frame in the shader).
     const uvToLocalPx = (uv: { x: number; y: number }) => {
       const el = ctx.current.element;
-      const rad = (el.rotation * Math.PI) / 180;
-      const cos = Math.cos(rad);
-      const sin = Math.sin(rad);
       const dx = (uv.x - el.uv.x) * ctx.current.atlasSize.width;
       const dy = (uv.y - el.uv.y) * ctx.current.atlasSize.height;
-      return { x: (cos * dx + sin * dy) / el.scale, y: (-sin * dx + cos * dy) / el.scale };
+      return { x: dx / el.scale, y: dy / el.scale };
     };
 
     const setControls = (enabled: boolean) => {

@@ -15,9 +15,6 @@ const drawCircle = (ctx: CanvasRenderingContext2D, ox: number) => {
   ctx.arc(ox + CX, CX, RADIUS, 0, Math.PI * 2);
   ctx.fillStyle = '#ffffff';
   ctx.fill();
-  ctx.lineWidth = 4;
-  ctx.strokeStyle = '#9aa0a6';
-  ctx.stroke();
 };
 
 const drawDuplicate = (ctx: CanvasRenderingContext2D, ox: number) => {

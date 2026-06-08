@@ -25,8 +25,13 @@ const buildNameGizmoElements = ({ product, instances, fontSizeMin, fontSizeMax }
     const part = partsById[instance.partId];
     if (!part) return [];
 
-    const half = measureCtx ? measureNameGizmoHalf(instance.text, instance.font, measureCtx) : null;
-    if (!half) return [];
+    const rawHalf = measureCtx ? measureNameGizmoHalf(instance.text, instance.font, measureCtx) : null;
+    if (!rawHalf) return [];
+
+    const rad = (instance.rotation * Math.PI) / 180;
+    const cosA = Math.abs(Math.cos(rad));
+    const sinA = Math.abs(Math.sin(rad));
+    const half = { x: rawHalf.x * cosA + rawHalf.y * sinA, y: rawHalf.x * sinA + rawHalf.y * cosA };
 
     return [
       {

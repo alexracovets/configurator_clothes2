@@ -18,7 +18,15 @@ const buildGizmoFrameUniforms = (instances: NameInstance[], meshPartId: string, 
       if (instance.partId !== meshPartId || !instance.text.trim()) return;
 
       const measured = measureNameGizmoHalf(instance.text, instance.font, measureCtx);
-      if (measured) half[index] = measured;
+      if (measured) {
+        const rad = (instance.rotation * Math.PI) / 180;
+        const cosA = Math.abs(Math.cos(rad));
+        const sinA = Math.abs(Math.sin(rad));
+        half[index] = {
+          x: measured.x * cosA + measured.y * sinA,
+          y: measured.x * sinA + measured.y * cosA,
+        };
+      }
     });
   }
 
