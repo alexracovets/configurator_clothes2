@@ -292,26 +292,7 @@
           "show_gizmo": false
         }
       ],
-      "logoPositions": [
-        {
-          "label": "Logo Front",
-          "uv": { "x": 0.66, "y": 0.55 },
-          "src": "/logo/logo_short.png",
-          "rotation": -90,
-          "scale": 1,
-          "show_frame": true,
-          "show_gizmo": false
-        },
-        {
-          "label": "Logo Back",
-          "uv": { "x": 0.16, "y": 0.35 },
-          "src": "/logo/logo_vertical.png",
-          "rotation": -90,
-          "scale": 1,
-          "show_frame": true,
-          "show_gizmo": false
-        }
-      ]
+      "logoPositions": []
     },
     {
       "name": "Shorts Classic",
@@ -349,28 +330,8 @@
       ],
       "preserveGltfMeshes": ["mans_shorts_inside"],
       "patterns": [],
-      "default_pattern": [
-        {
-          "name": "default_0",
-          "parts": [
-            {
-              "path_name": "mans_shorts_logo.webp",
-              "id": 0
-            }
-          ]
-        }
-      ],
-      "logoPositions": [
-        {
-          "label": "Logo Front",
-          "uv": { "x": 0.5, "y": 0.5 },
-          "src": "/logo/logo_short.png",
-          "rotation": 0,
-          "scale": 1,
-          "default": true,
-          "interactive": false
-        }
-      ]
+      "default_pattern": [],
+      "logoPositions": []
     }
   ]
 }

@@ -6,7 +6,9 @@ import { garmentGradientMapFragment } from '../garmentGradient/garmentGradientSh
 import type { GarmentPrintState } from '../garmentPrint/applyGarmentPrint';
 import { getEmptyPrintTexture } from '../garmentPrint/emptyPrintTexture';
 import { NAME_SLOT_COUNT } from '../garmentPrint/nameSlotConstants';
+import { hydrateGarmentLogoUniforms } from '../garmentPrint/applyGarmentLogos';
 import { hydrateGarmentNameUniforms, hydrateGarmentNumberUniforms } from '../garmentPrint/applyGarmentNames';
+import { LOGO_SLOT_COUNT } from '../garmentPrint/logoStampConstants';
 import { garmentPrintMapFragment } from '../garmentPrint/garmentPrintShaders';
 
 import { applyPbrMaps } from './applyPbrMaps';
@@ -94,6 +96,18 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     shader.uniforms.uNumberGizmoEnabled = { value: 0 };
     shader.uniforms.uNumberGizmoFrameActive = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
     shader.uniforms.uNumberGizmoHalf = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Vector2(0, 0)) };
+    shader.uniforms.uLogoStamp = { value: emptyPrint };
+    shader.uniforms.uLogoStampCellSize = { value: new Vector2(1, 1) };
+    shader.uniforms.uLogoAnchorUv = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => new Vector2()) };
+    shader.uniforms.uLogoRotation = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uLogoScale = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => 1) };
+    shader.uniforms.uLogoSlotActive = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uLogoPartBounds = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => new Vector4(0, 0, 1, 1)) };
+    shader.uniforms.uLogoGizmoEnabled = { value: 0 };
+    shader.uniforms.uLogoGizmoFrameActive = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uLogoGizmoButtonsActive = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uLogoGizmoButtonsReveal = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uLogoGizmoHalf = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => new Vector2(0, 0)) };
     shader.uniforms.uPatternMask0 = { value: printState?.patternMasks[0] ?? emptyPrint };
     shader.uniforms.uPatternMask1 = { value: printState?.patternMasks[1] ?? emptyPrint };
     shader.uniforms.uPatternColor0 = { value: new Color(printState?.patternColors[0] ?? '#000000') };
@@ -134,6 +148,18 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     material.userData.uNumberGizmoEnabledUniform = shader.uniforms.uNumberGizmoEnabled;
     material.userData.uNumberGizmoFrameActiveUniform = shader.uniforms.uNumberGizmoFrameActive;
     material.userData.uNumberGizmoHalfUniform = shader.uniforms.uNumberGizmoHalf;
+    material.userData.uLogoStampUniform = shader.uniforms.uLogoStamp;
+    material.userData.uLogoStampCellSizeUniform = shader.uniforms.uLogoStampCellSize;
+    material.userData.uLogoAnchorUvUniform = shader.uniforms.uLogoAnchorUv;
+    material.userData.uLogoRotationUniform = shader.uniforms.uLogoRotation;
+    material.userData.uLogoScaleUniform = shader.uniforms.uLogoScale;
+    material.userData.uLogoSlotActiveUniform = shader.uniforms.uLogoSlotActive;
+    material.userData.uLogoPartBoundsUniform = shader.uniforms.uLogoPartBounds;
+    material.userData.uLogoGizmoEnabledUniform = shader.uniforms.uLogoGizmoEnabled;
+    material.userData.uLogoGizmoFrameActiveUniform = shader.uniforms.uLogoGizmoFrameActive;
+    material.userData.uLogoGizmoButtonsActiveUniform = shader.uniforms.uLogoGizmoButtonsActive;
+    material.userData.uLogoGizmoButtonsRevealUniform = shader.uniforms.uLogoGizmoButtonsReveal;
+    material.userData.uLogoGizmoHalfUniform = shader.uniforms.uLogoGizmoHalf;
     material.userData.uPatternMask0Uniform = shader.uniforms.uPatternMask0;
     material.userData.uPatternMask1Uniform = shader.uniforms.uPatternMask1;
     material.userData.uPatternColor0Uniform = shader.uniforms.uPatternColor0;
@@ -171,6 +197,18 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       uNumberGizmoHalf: shader.uniforms.uNumberGizmoHalf,
     });
 
+    hydrateGarmentLogoUniforms(material, {
+      uLogoStamp: shader.uniforms.uLogoStamp,
+      uLogoStampCellSize: shader.uniforms.uLogoStampCellSize,
+      uLogoAnchorUv: shader.uniforms.uLogoAnchorUv,
+      uLogoRotation: shader.uniforms.uLogoRotation,
+      uLogoScale: shader.uniforms.uLogoScale,
+      uLogoSlotActive: shader.uniforms.uLogoSlotActive,
+      uLogoPartBounds: shader.uniforms.uLogoPartBounds,
+      uLogoGizmoEnabled: shader.uniforms.uLogoGizmoEnabled,
+      uLogoGizmoHalf: shader.uniforms.uLogoGizmoHalf,
+    });
+
     shader.vertexShader = shader.vertexShader.replace('#include <uv_pars_vertex>', garmentVertexUvPars).replace('#include <uv_vertex>', garmentVertexUv);
 
     shader.fragmentShader = shader.fragmentShader
@@ -181,7 +219,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       .replace('#include <tonemapping_fragment>', `#include <tonemapping_fragment>\n${garmentGizmoLightsFragment}`);
   };
 
-  material.customProgramCacheKey = () => 'garment-pbr-print-v47-number-layer';
+  material.customProgramCacheKey = () => 'garment-pbr-print-v51-logo-stamp-inside';
 };
 
 const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMaterial, meshName = ''): MeshStandardMaterial => {

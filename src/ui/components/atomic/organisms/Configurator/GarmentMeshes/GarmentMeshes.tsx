@@ -6,6 +6,7 @@ import { resolveModelUrl } from '@utils';
 import { useConfiguratorProduct } from '@store';
 
 import { GarmentPartMesh } from '../GarmentPartMesh';
+import { GarmentLogoTextureLayer } from '../GarmentLogoTextureLayer';
 import { GarmentNameTextureLayer } from '../GarmentNameTextureLayer';
 import { PrintGizmoLayer } from '../PrintGizmoLayer';
 import { GarmentTextureLayer } from '../GarmentTextureLayer';
@@ -40,6 +41,7 @@ const GarmentMeshes = () => {
       ))}
       <GarmentTextureLayer />
       <GarmentNameTextureLayer />
+      <GarmentLogoTextureLayer />
       <PrintGizmoLayer />
       <StaticColorLayer />
     </group>

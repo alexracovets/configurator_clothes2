@@ -79,8 +79,11 @@ interface LogoPositionConfig {
   src?: string;
   rotation: number;
   scale: number;
-  default: boolean;
-  interactive: boolean;
+  partId?: string;
+  default?: boolean;
+  interactive?: boolean;
+  show_frame?: boolean;
+  show_gizmo?: boolean;
 }
 
 interface GarmentPbrTexturesConfig {

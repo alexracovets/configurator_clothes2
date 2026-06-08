@@ -5,21 +5,23 @@ import { useThree } from '@react-three/fiber';
 
 import { clearGizmoButtonHover, resolveGizmoPointerTarget } from '@gizmo';
 import type { PrintGizmoElement } from '@gizmo';
-import { useConfigurationControl, useGarmentName } from '@store';
 
-const NAME_STEP = 4;
+interface GizmoSelectionStore {
+  selectedInstanceId: string | null;
+  setSelectedInstance: (id: string) => void;
+  clearSelectedInstance: () => void;
+  bringInstanceToFront: (id: string) => void;
+}
 
 interface UseGizmoSelectionOptions {
   elements: PrintGizmoElement[];
   atlasSize: { width: number; height: number };
+  gizmoStep: number | null;
+  store: GizmoSelectionStore;
 }
 
-const useGizmoSelection = ({ elements, atlasSize }: UseGizmoSelectionOptions) => {
-  const activeStep = useConfigurationControl((state) => state.activeStep);
-  const selectedInstanceId = useGarmentName((state) => state.selectedInstanceId);
-  const setSelectedInstance = useGarmentName((state) => state.setSelectedInstance);
-  const clearSelectedInstance = useGarmentName((state) => state.clearSelectedInstance);
-  const bringInstanceToFront = useGarmentName((state) => state.bringInstanceToFront);
+const useGizmoSelection = ({ elements, atlasSize, gizmoStep, store }: UseGizmoSelectionOptions) => {
+  const { selectedInstanceId, setSelectedInstance, clearSelectedInstance, bringInstanceToFront } = store;
 
   const raycaster = useThree((state) => state.raycaster);
   const camera = useThree((state) => state.camera);
@@ -34,7 +36,7 @@ const useGizmoSelection = ({ elements, atlasSize }: UseGizmoSelectionOptions) =>
   const ctx = useRef({
     elements,
     atlasSize,
-    activeStep,
+    gizmoStep,
     selectedInstanceId,
     raycaster,
     camera,
@@ -50,7 +52,7 @@ const useGizmoSelection = ({ elements, atlasSize }: UseGizmoSelectionOptions) =>
     ctx.current = {
       elements,
       atlasSize,
-      activeStep,
+      gizmoStep,
       selectedInstanceId,
       raycaster,
       camera,
@@ -64,17 +66,11 @@ const useGizmoSelection = ({ elements, atlasSize }: UseGizmoSelectionOptions) =>
   });
 
   useEffect(() => {
-    if (activeStep !== NAME_STEP) {
-      clearSelectedInstance();
-    }
-  }, [activeStep, clearSelectedInstance]);
-
-  useEffect(() => {
     const dom = gl.domElement;
 
     const onPointerDown = (event: PointerEvent) => {
       if (event.button !== 0) return;
-      if (ctx.current.activeStep !== NAME_STEP) return;
+      if (ctx.current.gizmoStep === null) return;
 
       const target = resolveGizmoPointerTarget(
         event.clientX,
@@ -110,7 +106,7 @@ const useGizmoSelection = ({ elements, atlasSize }: UseGizmoSelectionOptions) =>
     };
 
     const onControlsStart = () => {
-      if (ctx.current.activeStep !== NAME_STEP) return;
+      if (ctx.current.gizmoStep === null) return;
       ctx.current.clearSelectedInstance();
       clearGizmoButtonHover();
       ctx.current.invalidate();
@@ -127,3 +123,4 @@ const useGizmoSelection = ({ elements, atlasSize }: UseGizmoSelectionOptions) =>
 };
 
 export { useGizmoSelection };
+export type { GizmoSelectionStore };

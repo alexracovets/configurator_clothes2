@@ -70,6 +70,18 @@ uniform vec3 uNumberStrokeColors[4];
 uniform float uNumberGizmoEnabled;
 uniform float uNumberGizmoFrameActive[4];
 uniform vec2 uNumberGizmoHalf[4];
+uniform sampler2D uLogoStamp;
+uniform vec2 uLogoStampCellSize;
+uniform vec2 uLogoAnchorUv[4];
+uniform float uLogoRotation[4];
+uniform float uLogoScale[4];
+uniform float uLogoSlotActive[4];
+uniform vec4 uLogoPartBounds[4];
+uniform float uLogoGizmoEnabled;
+uniform float uLogoGizmoFrameActive[4];
+uniform float uLogoGizmoButtonsActive[4];
+uniform float uLogoGizmoButtonsReveal[4];
+uniform vec2 uLogoGizmoHalf[4];
 uniform float uNameGizmoEnabled;
 uniform float uNameGizmoFrameActive[4];
 uniform float uNameGizmoButtonsActive[4];
@@ -117,6 +129,19 @@ vec2 garmentNumberToStampUv( vec2 worldUv, vec2 anchor, float rotation, float sc
   float s = sin( -rotation );
   vec2 localPx = vec2( c * deltaPx.x - s * deltaPx.y, s * deltaPx.x + c * deltaPx.y ) / max( scale, 0.001 );
   return vec2( 0.5 ) + localPx / uNumberStampSize;
+}
+
+vec2 garmentLogoToStampUv( vec2 worldUv, vec2 anchor, float rotation, float scale ) {
+  vec2 deltaPx = ( worldUv - anchor ) * uPrintAtlasSize;
+  float c = cos( -rotation );
+  float s = sin( -rotation );
+  vec2 localPx = vec2( c * deltaPx.x - s * deltaPx.y, s * deltaPx.x + c * deltaPx.y ) / max( scale, 0.001 );
+  return vec2( 0.5 ) + localPx / uLogoStampCellSize;
+}
+
+vec2 garmentLogoStampAtlasUv( vec2 stampUv, float slotIndex ) {
+  vec2 cell = vec2( mod( slotIndex, 2.0 ), floor( slotIndex * 0.5 ) );
+  return ( cell + stampUv ) * 0.5;
 }
 
 float garmentNameFillChannel( sampler2D tex, vec2 uv, float channel ) {

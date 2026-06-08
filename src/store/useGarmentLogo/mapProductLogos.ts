@@ -1,0 +1,151 @@
+import type { GarmentConfig, LogoPositionConfig, UvPoint } from '@data';
+import { resolvePartUvBounds } from '@utils';
+
+interface LogoPosition {
+  key: string;
+  label: string;
+  partId: string;
+  uv: UvPoint;
+  rotation: number;
+  scale: number;
+  src?: string;
+  showFrame: boolean;
+  showGizmo: boolean;
+  interactive: boolean;
+  isDefault: boolean;
+}
+
+interface LogoInstance {
+  id: string;
+  positionKey: string;
+  label: string;
+  partId: string;
+  uv: UvPoint;
+  rotation: number;
+  scale: number;
+  src: string;
+  fileName: string;
+  isDefault: boolean;
+  showFrame: boolean;
+  showGizmo: boolean;
+  naturalWidth: number;
+  naturalHeight: number;
+  opacity: number;
+}
+
+interface LogoPreview {
+  instanceId: string;
+  patch: Partial<Pick<LogoInstance, 'scale' | 'rotation' | 'uv'>>;
+}
+
+const resolvePartIdForAtlasUv = (product: GarmentConfig, uv: UvPoint): string => {
+  const match = product.parts.find((part) => {
+    const bounds = resolvePartUvBounds(part);
+    return uv.x >= bounds.minX && uv.x <= bounds.maxX && uv.y >= bounds.minY && uv.y <= bounds.maxY;
+  });
+
+  if (!match) {
+    throw new Error(`Product "${product.path}" has no part for logo UV (${uv.x}, ${uv.y}).`);
+  }
+
+  return match.id;
+};
+
+const mapLogoPosition = (product: GarmentConfig, position: LogoPositionConfig, index: number): LogoPosition => {
+  const isDefault = position.default ?? Boolean(position.src);
+
+  return {
+    key: `logo-pos-${index}`,
+    label: position.label,
+    partId: position.partId ?? resolvePartIdForAtlasUv(product, position.uv),
+    uv: position.uv,
+    rotation: position.rotation,
+    scale: position.scale,
+    src: position.src,
+    showFrame: position.show_frame ?? true,
+    showGizmo: position.show_gizmo ?? position.interactive === true,
+    interactive: position.interactive ?? !isDefault,
+    isDefault,
+  };
+};
+
+const mapProductLogoPositions = (product: GarmentConfig): LogoPosition[] =>
+  (product.logoPositions ?? []).map((position, index) => mapLogoPosition(product, position, index));
+
+const resolveLogoFileName = (src: string) => {
+  const segments = src.split('/');
+  return segments[segments.length - 1] || 'logo';
+};
+
+const createLogoInstance = (
+  position: LogoPosition,
+  id: string,
+  options: { src: string; fileName?: string; isDefault?: boolean; naturalWidth?: number; naturalHeight?: number },
+): LogoInstance => ({
+  id,
+  positionKey: position.key,
+  label: position.label,
+  partId: position.partId,
+  uv: position.uv,
+  rotation: position.rotation,
+  scale: position.scale,
+  src: options.src,
+  fileName: options.fileName ?? resolveLogoFileName(options.src),
+  isDefault: options.isDefault ?? position.isDefault,
+  showFrame: (options.isDefault ?? position.isDefault) ? position.showFrame : true,
+  showGizmo: (options.isDefault ?? position.isDefault) ? position.showGizmo : true,
+  naturalWidth: options.naturalWidth ?? 0,
+  naturalHeight: options.naturalHeight ?? 0,
+  opacity: 1,
+});
+
+const createDefaultLogoInstances = (positions: LogoPosition[]): LogoInstance[] =>
+  positions
+    .filter((position) => position.src)
+    .map((position) =>
+      createLogoInstance(position, `${position.key}_default`, {
+        src: position.src!,
+        isDefault: true,
+      }),
+    );
+
+const resolveLogoDefaults = (product: GarmentConfig) => {
+  const frontPart = product.parts.find((part) => part.label === 'Front') ?? product.parts[0];
+
+  if (!frontPart) {
+    throw new Error(`Product "${product.path}" has no parts for logo defaults.`);
+  }
+
+  const bounds = resolvePartUvBounds(frontPart);
+
+  return {
+    partId: frontPart.id,
+    uv: {
+      x: (bounds.minX + bounds.maxX) / 2,
+      y: (bounds.minY + bounds.maxY) / 2,
+    },
+    rotation: 0,
+    scale: 1,
+  };
+};
+
+const createDynamicUserLogoPosition = (product: GarmentConfig, index: number): LogoPosition => {
+  const defaults = resolveLogoDefaults(product);
+  const offset = index * 0.03;
+
+  return {
+    key: `logo-user-${index}`,
+    label: `Logo ${index + 1}`,
+    partId: defaults.partId,
+    uv: { x: defaults.uv.x + offset, y: defaults.uv.y - offset },
+    rotation: defaults.rotation,
+    scale: defaults.scale,
+    showFrame: true,
+    showGizmo: true,
+    interactive: true,
+    isDefault: false,
+  };
+};
+
+export { createDefaultLogoInstances, createDynamicUserLogoPosition, createLogoInstance, mapProductLogoPositions, resolveLogoDefaults, resolvePartIdForAtlasUv };
+export type { LogoInstance, LogoPosition, LogoPreview };

@@ -13,15 +13,15 @@ import {
   setGizmoButtonHover,
   toWorldPx,
 } from '@gizmo';
-import { useGarmentName } from '@store';
 
 interface UseGizmoButtonHoverOptions {
   elements: PrintGizmoElement[];
   atlasSize: { width: number; height: number };
+  gizmoStep: number | null;
+  selectedInstanceId: string | null;
 }
 
-const useGizmoButtonHover = ({ elements, atlasSize }: UseGizmoButtonHoverOptions) => {
-  const selectedInstanceId = useGarmentName((state) => state.selectedInstanceId);
+const useGizmoButtonHover = ({ elements, atlasSize, gizmoStep, selectedInstanceId }: UseGizmoButtonHoverOptions) => {
   const raycaster = useThree((state) => state.raycaster);
   const camera = useThree((state) => state.camera);
   const gl = useThree((state) => state.gl);
@@ -31,6 +31,7 @@ const useGizmoButtonHover = ({ elements, atlasSize }: UseGizmoButtonHoverOptions
   const ctx = useRef({
     elements,
     atlasSize,
+    gizmoStep,
     selectedInstanceId,
     raycaster,
     camera,
@@ -43,6 +44,7 @@ const useGizmoButtonHover = ({ elements, atlasSize }: UseGizmoButtonHoverOptions
     ctx.current = {
       elements,
       atlasSize,
+      gizmoStep,
       selectedInstanceId,
       raycaster,
       camera,
@@ -56,6 +58,7 @@ const useGizmoButtonHover = ({ elements, atlasSize }: UseGizmoButtonHoverOptions
     const dom = gl.domElement;
 
     const onPointerMove = (event: PointerEvent) => {
+      if (ctx.current.gizmoStep === null) return;
       if (isGizmoButtonDragActive()) return;
 
       const c = ctx.current;

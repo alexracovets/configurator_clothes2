@@ -23,3 +23,7 @@ export {
 } from './useGarmentNumber';
 export type { NumberInstance, NumberLimits, NumberPosition, NumberPreview } from './useGarmentNumber';
 export type { GarmentTextRenderInstance } from './garmentTextRenderInstance';
+export { resolveLogoInstancesForRender, useGarmentLogo } from './useGarmentLogo';
+export type { LogoInstance, LogoPosition, LogoPreview } from './useGarmentLogo';
+export { useStepLogo } from './useStepLogo';
+export type { StepLogoPartState, StepLogoPositionState, StepLogoUv } from './useStepLogo';

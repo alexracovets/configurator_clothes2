@@ -14,6 +14,7 @@ export { getProduct, getStyle, STYLES };
 export type {
   GarmentConfig,
   GarmentPartConfig,
+  LogoPositionConfig,
   NamePositionConfig,
   PartGradientConfig,
   PrintAtlasConfig,

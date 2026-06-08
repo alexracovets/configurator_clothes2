@@ -39,6 +39,7 @@ const buildNameGizmoElements = ({ product, instances, fontSizeMin, fontSizeMax }
 
     return [
       {
+        kind: 'name' as const,
         id: instance.id,
         partId: instance.partId,
         slotIndex,

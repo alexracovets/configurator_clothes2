@@ -1,3 +1,4 @@
+import { garmentLogoMapFragment } from './garmentLogoShaders';
 import { garmentNameMapFragment } from './garmentNameShaders';
 import { garmentNumberMapFragment } from './garmentNumberShaders';
 
@@ -25,6 +26,8 @@ const garmentPrintMapFragment = /* glsl */ `
 ${garmentNameMapFragment}
 
 ${garmentNumberMapFragment}
+
+${garmentLogoMapFragment}
 
   diffuseColor.rgb = printColor.rgb * printColor.a + diffuseColor.rgb * ( 1.0 - printColor.a );
 #endif

@@ -12,8 +12,18 @@ const copies = [
 ];
 
 mkdirSync(join(root, 'public/ghostscript'), { recursive: true });
+mkdirSync(join(root, 'public/logo'), { recursive: true });
 
 for (const [from, to] of copies) {
+  copyFileSync(join(root, from), join(root, to));
+}
+
+const logoCopies = [
+  ['public/png/logo_r.png', 'public/logo/logo_short.png'],
+  ['public/png/logo.png', 'public/logo/logo_vertical.png'],
+];
+
+for (const [from, to] of logoCopies) {
   copyFileSync(join(root, from), join(root, to));
 }
 

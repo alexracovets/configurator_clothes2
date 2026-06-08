@@ -18,11 +18,9 @@ const PatternPreview = ({ parts, eager }: { parts: DesignPatternPart[]; eager?: 
         key={part.key}
         src={part.src}
         alt=""
-        width={80}
-        height={80}
         loading={eager ? 'eager' : 'lazy'}
         fetchPriority={eager ? 'high' : 'low'}
-        className={cn('w-full h-full object-cover', index > 0 && 'absolute inset-0')}
+        className={cn(index > 0 && 'absolute inset-0')}
         draggable={false}
       />
     ))}

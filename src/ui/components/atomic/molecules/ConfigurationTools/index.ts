@@ -5,6 +5,7 @@ export { ShedingControl } from './ShedingControl';
 export { ToggleControl } from './ToggleControl';
 export { FontSelectRow } from './FontSelectRow';
 export { LogoEditPanel } from './LogoEditPanel';
+export { HiddenLogoFileInput, LogoUpload, useLogoFileHandler } from './LogoUpload';
 export { ColorControl } from './ColorControl';
 export { PatternLayerColorControl } from './PatternLayerColorControl';
 export type { PatternLayer, PatternLayerColorControlProps } from './PatternLayerColorControl';

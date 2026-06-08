@@ -1,5 +1,7 @@
 export { cn } from './cn';
 export { composePartAlbedo } from './composePartAlbedo/composePartAlbedo';
+export { composeLogoPrintAtlas, resolveLogoDisplayScale, resolveLogoDrawSize, resolveLogoReferenceDrawSize } from './composeLogoAtlas/composeLogoPrintAtlas';
+export { composeLogoStampAtlas } from './composeLogoAtlas/composeLogoStampAtlas';
 export { composeNameMaskAtlas, resolveNameStampSize } from './composeNameAtlas/composeNameMaskAtlas';
 export type { ComposeNameMaskAtlasInput, NameMaskAtlas } from './composeNameAtlas/composeNameMaskAtlas';
 export type { StampPixelSize } from './drawNameOnAtlas/measureNameStampBounds';
@@ -28,7 +30,25 @@ export {
   hydrateGarmentNumberUniforms,
 } from './garmentPrint/applyGarmentNames';
 export type { GarmentNameMaskState, GizmoFrameState } from './garmentPrint/applyGarmentNames';
+export {
+  applyGarmentLogoGizmoButtonsReveal,
+  applyGarmentLogoGizmoFrame,
+  applyGarmentLogoStamp,
+  applyGarmentLogoStyle,
+  hydrateGarmentLogoUniforms,
+} from './garmentPrint/applyGarmentLogos';
+export { buildLogoGizmoFrameUniforms } from './garmentPrint/buildLogoGizmoFrameUniforms';
+export { buildLogoStyleUniforms } from './garmentPrint/buildLogoStyleUniforms';
 export { buildGizmoFrameUniforms } from './garmentPrint/buildGizmoFrameUniforms';
+export {
+  LOGO_ATLAS_REF_HEIGHT,
+  LOGO_ATLAS_REF_WIDTH,
+  LOGO_MARK_REF_WIDTH,
+  LOGO_SCALE_MAX,
+  LOGO_SCALE_MIN,
+  LOGO_SLOT_COUNT,
+  LOGO_VERTICAL_REF_HEIGHT,
+} from './garmentPrint/logoStampConstants';
 export { NAME_GIZMO_BTN_HALF_ATLAS, NAME_GIZMO_BTN_OUTSET_ATLAS } from './garmentPrint/nameStampConstants';
 export { applyGarmentPatternTints, applyGarmentPrint, emptyMaskPair, PATTERN_LAYER_COUNT } from './garmentPrint/applyGarmentPrint';
 export { getEmptyPrintTexture } from './garmentPrint/emptyPrintTexture';

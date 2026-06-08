@@ -1,3 +1,4 @@
+export { buildLogoGizmoElements } from './buildLogoGizmoElements';
 export { buildNameGizmoElements } from './buildNameGizmoElements';
 export {
   clearGizmoButtonHover,
