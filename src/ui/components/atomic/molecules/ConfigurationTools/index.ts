@@ -1,4 +1,4 @@
-export { ConfigurationLogo } from './ConfigurationLogo';
+export { ConfigurationLogo } from '../ConfigurationSteps/ConfigurationLogo';
 export { ColorTabControl } from './ColorTabControl';
 export { PartColorSwitch } from './PartColorSwitch';
 export { ShedingControl } from './ShedingControl';
