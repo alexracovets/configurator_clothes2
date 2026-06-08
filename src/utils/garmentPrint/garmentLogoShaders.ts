@@ -29,16 +29,16 @@ const garmentLogoMapFragment = /* glsl */ `
   printColor = garmentCompositeUiLayer( printColor, logo2 );
   printColor = garmentCompositeUiLayer( printColor, logo3 );
 
-  printColor = garmentCompositeUiLayer( printColor, garmentGizmoFrameColor( vPrintUv, uLogoAnchorUv[0], uLogoScale[0], uLogoGizmoHalf[0], uLogoRotation[0], uLogoPartRotation[0], uLogoGizmoEnabled * uLogoGizmoFrameActive[0], logoInside0 ) );
-  printColor = garmentCompositeUiLayer( printColor, garmentGizmoFrameColor( vPrintUv, uLogoAnchorUv[1], uLogoScale[1], uLogoGizmoHalf[1], uLogoRotation[1], uLogoPartRotation[1], uLogoGizmoEnabled * uLogoGizmoFrameActive[1], logoInside1 ) );
-  printColor = garmentCompositeUiLayer( printColor, garmentGizmoFrameColor( vPrintUv, uLogoAnchorUv[2], uLogoScale[2], uLogoGizmoHalf[2], uLogoRotation[2], uLogoPartRotation[2], uLogoGizmoEnabled * uLogoGizmoFrameActive[2], logoInside2 ) );
-  printColor = garmentCompositeUiLayer( printColor, garmentGizmoFrameColor( vPrintUv, uLogoAnchorUv[3], uLogoScale[3], uLogoGizmoHalf[3], uLogoRotation[3], uLogoPartRotation[3], uLogoGizmoEnabled * uLogoGizmoFrameActive[3], logoInside3 ) );
+  printColor = garmentCompositeUiLayer( printColor, garmentGizmoFrameColor( vPrintUv, uLogoAnchorUv[0], uLogoScale[0], uLogoGizmoHalf[0], 0.0, uLogoPartRotation[0], uLogoGizmoEnabled * uLogoGizmoFrameActive[0], logoInside0 ) );
+  printColor = garmentCompositeUiLayer( printColor, garmentGizmoFrameColor( vPrintUv, uLogoAnchorUv[1], uLogoScale[1], uLogoGizmoHalf[1], 0.0, uLogoPartRotation[1], uLogoGizmoEnabled * uLogoGizmoFrameActive[1], logoInside1 ) );
+  printColor = garmentCompositeUiLayer( printColor, garmentGizmoFrameColor( vPrintUv, uLogoAnchorUv[2], uLogoScale[2], uLogoGizmoHalf[2], 0.0, uLogoPartRotation[2], uLogoGizmoEnabled * uLogoGizmoFrameActive[2], logoInside2 ) );
+  printColor = garmentCompositeUiLayer( printColor, garmentGizmoFrameColor( vPrintUv, uLogoAnchorUv[3], uLogoScale[3], uLogoGizmoHalf[3], 0.0, uLogoPartRotation[3], uLogoGizmoEnabled * uLogoGizmoFrameActive[3], logoInside3 ) );
 
   vec4 logoGizmoUi = vec4( 0.0 );
-  vec4 logoBtn0 = garmentGizmoButtons( vPrintUv, uLogoAnchorUv[0], uLogoScale[0], uLogoGizmoHalf[0], uLogoRotation[0], uLogoPartRotation[0], uLogoGizmoEnabled * uLogoGizmoButtonsActive[0], uLogoGizmoButtonsReveal[0], logoInside0, uNameGizmoIcons, 0.0 );
-  vec4 logoBtn1 = garmentGizmoButtons( vPrintUv, uLogoAnchorUv[1], uLogoScale[1], uLogoGizmoHalf[1], uLogoRotation[1], uLogoPartRotation[1], uLogoGizmoEnabled * uLogoGizmoButtonsActive[1], uLogoGizmoButtonsReveal[1], logoInside1, uNameGizmoIcons, 1.0 );
-  vec4 logoBtn2 = garmentGizmoButtons( vPrintUv, uLogoAnchorUv[2], uLogoScale[2], uLogoGizmoHalf[2], uLogoRotation[2], uLogoPartRotation[2], uLogoGizmoEnabled * uLogoGizmoButtonsActive[2], uLogoGizmoButtonsReveal[2], logoInside2, uNameGizmoIcons, 2.0 );
-  vec4 logoBtn3 = garmentGizmoButtons( vPrintUv, uLogoAnchorUv[3], uLogoScale[3], uLogoGizmoHalf[3], uLogoRotation[3], uLogoPartRotation[3], uLogoGizmoEnabled * uLogoGizmoButtonsActive[3], uLogoGizmoButtonsReveal[3], logoInside3, uNameGizmoIcons, 3.0 );
+  vec4 logoBtn0 = garmentGizmoButtons( vPrintUv, uLogoAnchorUv[0], uLogoScale[0], uLogoGizmoHalf[0], 0.0, uLogoPartRotation[0], uLogoGizmoEnabled * uLogoGizmoButtonsActive[0], uLogoGizmoButtonsReveal[0], logoInside0, uNameGizmoIcons, 0.0 );
+  vec4 logoBtn1 = garmentGizmoButtons( vPrintUv, uLogoAnchorUv[1], uLogoScale[1], uLogoGizmoHalf[1], 0.0, uLogoPartRotation[1], uLogoGizmoEnabled * uLogoGizmoButtonsActive[1], uLogoGizmoButtonsReveal[1], logoInside1, uNameGizmoIcons, 1.0 );
+  vec4 logoBtn2 = garmentGizmoButtons( vPrintUv, uLogoAnchorUv[2], uLogoScale[2], uLogoGizmoHalf[2], 0.0, uLogoPartRotation[2], uLogoGizmoEnabled * uLogoGizmoButtonsActive[2], uLogoGizmoButtonsReveal[2], logoInside2, uNameGizmoIcons, 2.0 );
+  vec4 logoBtn3 = garmentGizmoButtons( vPrintUv, uLogoAnchorUv[3], uLogoScale[3], uLogoGizmoHalf[3], 0.0, uLogoPartRotation[3], uLogoGizmoEnabled * uLogoGizmoButtonsActive[3], uLogoGizmoButtonsReveal[3], logoInside3, uNameGizmoIcons, 3.0 );
 
   logoGizmoUi = garmentCompositeUiLayer( logoGizmoUi, logoBtn0 );
   logoGizmoUi = garmentCompositeUiLayer( logoGizmoUi, logoBtn1 );

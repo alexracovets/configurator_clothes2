@@ -39,7 +39,7 @@ const buildLogoGizmoElements = ({ product, instances }: BuildLogoGizmoElementsIn
         slotIndex,
         meshNames: part.meshNames,
         uv: instance.uv,
-        rotation: instance.rotation,
+        rotation: 0,
         partRotation: resolvePartPrintRotation(part),
         scale: resolveLogoDisplayScale(instance, naturalWidth, naturalHeight, atlasSize.width, atlasSize.height),
         half,

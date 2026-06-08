@@ -168,7 +168,7 @@ const usePrintGizmoDrag = ({ element, elements, printableParts, atlasSize, gizmo
         activePartId: grab?.partId ?? instance.partId,
       };
       const grabPartRotation = grab ? resolvePrintRotation(ctx.current.printableParts, grab.partId, el.partRotation) : el.partRotation;
-      const startLocal = grab ? toPrintLocalPx(grab.uv, centerUv, ctx.current.atlasSize, grabPartRotation, startRotation) : { x: 1, y: 0 };
+      const startLocal = grab ? toPrintLocalPx(grab.uv, centerUv, ctx.current.atlasSize, grabPartRotation, 0) : { x: 1, y: 0 };
       const startDistance = Math.hypot(startLocal.x, startLocal.y) || 0.05;
       const startAngle = Math.atan2(startLocal.y, startLocal.x);
 
@@ -192,13 +192,13 @@ const usePrintGizmoDrag = ({ element, elements, printableParts, atlasSize, gizmo
           });
         } else if (mode === 'rotate') {
           const partRotation = resolvePrintRotation(ctx.current.printableParts, hit.partId, el.partRotation);
-          const local = toPrintLocalPx(hit.uv, centerUv, ctx.current.atlasSize, partRotation, startRotation);
+          const local = toPrintLocalPx(hit.uv, centerUv, ctx.current.atlasSize, partRotation, 0);
           const angle = Math.atan2(local.y, local.x);
           const deltaDeg = ((angle - startAngle) * 180) / Math.PI;
           useGarmentLogo.getState().updateInstance(el.id, { rotation: startRotation + deltaDeg });
         } else {
           const partRotation = resolvePrintRotation(ctx.current.printableParts, hit.partId, el.partRotation);
-          const local = toPrintLocalPx(hit.uv, centerUv, ctx.current.atlasSize, partRotation, startRotation);
+          const local = toPrintLocalPx(hit.uv, centerUv, ctx.current.atlasSize, partRotation, 0);
           const distance = Math.hypot(local.x, local.y);
           const ratio = distance / Math.max(startDistance, 0.0001);
           const next = Math.min(el.scaleMax ?? Infinity, Math.max(el.scaleMin ?? 0, startScale * ratio));
