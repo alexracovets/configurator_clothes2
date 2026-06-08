@@ -7,7 +7,7 @@ export {
   setGizmoButtonHover,
   subscribeGizmoButtonHover,
 } from './gizmoButtonHover';
-export { GIZMO_CORNERS, hitTestGizmoButton } from './hitTestGizmoButton';
+export { GIZMO_CORNERS, getGizmoHoverCursor, hitTestGizmoButton, hitTestGizmoFrame } from './hitTestGizmoButton';
 export { useGizmoIconAtlas } from './useGizmoIconAtlas';
 export type { GizmoButtonHoverTarget } from './gizmoButtonHover';
 export type { GizmoButtonHit } from './hitTestGizmoButton';

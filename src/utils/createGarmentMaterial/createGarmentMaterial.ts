@@ -10,7 +10,15 @@ import { hydrateGarmentNameUniforms } from '../garmentPrint/applyGarmentNames';
 import { garmentPrintMapFragment } from '../garmentPrint/garmentPrintShaders';
 
 import { applyPbrMaps } from './applyPbrMaps';
-import { garmentFragmentUvPars, garmentNormalFragment, garmentRoughnessFragment, garmentVertexUv, garmentVertexUvPars } from './garmentShaders';
+import { NAME_GIZMO_BTN_ACTIVE_COLOR, NAME_GIZMO_BTN_FILL_COLOR, NAME_GIZMO_ICON_COLOR } from '../garmentPrint/nameStampConstants';
+import {
+  garmentFragmentUvPars,
+  garmentGizmoLightsFragment,
+  garmentNormalFragment,
+  garmentRoughnessFragment,
+  garmentVertexUv,
+  garmentVertexUvPars,
+} from './garmentShaders';
 
 const SLEEVE_POLYGON_OFFSET = { factor: -1, units: -1 } as const;
 
@@ -67,6 +75,9 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     shader.uniforms.uNameGizmoHoverSlot = { value: -1 };
     shader.uniforms.uNameGizmoHoverCorner = { value: -1 };
     shader.uniforms.uNameGizmoHoverScale = { value: 1 };
+    shader.uniforms.uNameGizmoBtnFill = { value: new Color(NAME_GIZMO_BTN_FILL_COLOR) };
+    shader.uniforms.uNameGizmoBtnFillActive = { value: new Color(NAME_GIZMO_BTN_ACTIVE_COLOR) };
+    shader.uniforms.uNameGizmoIconColor = { value: new Color(NAME_GIZMO_ICON_COLOR) };
     shader.uniforms.uPatternMask0 = { value: printState?.patternMasks[0] ?? emptyPrint };
     shader.uniforms.uPatternMask1 = { value: printState?.patternMasks[1] ?? emptyPrint };
     shader.uniforms.uPatternColor0 = { value: new Color(printState?.patternColors[0] ?? '#000000') };
@@ -119,10 +130,11 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       .replace('#include <uv_pars_fragment>', garmentFragmentUvPars)
       .replace('#include <map_fragment>', `#include <map_fragment>\n${garmentGradientMapFragment}\n${garmentPrintMapFragment}`)
       .replace('#include <normal_fragment_maps>', garmentNormalFragment)
-      .replace('#include <roughnessmap_fragment>', garmentRoughnessFragment);
+      .replace('#include <roughnessmap_fragment>', garmentRoughnessFragment)
+      .replace('#include <tonemapping_fragment>', `#include <tonemapping_fragment>\n${garmentGizmoLightsFragment}`);
   };
 
-  material.customProgramCacheKey = () => 'garment-pbr-print-v38-gizmo-icon-alpha';
+  material.customProgramCacheKey = () => 'garment-pbr-print-v40-gizmo-ui-post-tonemap';
 };
 
 const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMaterial, meshName = ''): MeshStandardMaterial => {

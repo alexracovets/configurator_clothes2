@@ -5,7 +5,7 @@ import { useThree } from '@react-three/fiber';
 import { Vector2 } from 'three';
 
 import type { PrintGizmoElement } from '@gizmo';
-import { clearGizmoButtonHover, hitTestGizmoButton, isGizmoButtonDragActive, setGizmoButtonHover } from '@gizmo';
+import { clearGizmoButtonHover, getGizmoHoverCursor, hitTestGizmoButton, isGizmoButtonDragActive, setGizmoButtonHover } from '@gizmo';
 
 interface UseGizmoButtonHoverOptions {
   elements: PrintGizmoElement[];
@@ -57,8 +57,9 @@ const useGizmoButtonHover = ({ elements, atlasSize }: UseGizmoButtonHoverOptions
         return;
       }
 
-      const buttonHit = hitTestGizmoButton(uvToWorldPx(result.uv, result.element), result.element);
-      dom.style.cursor = buttonHit ? 'pointer' : '';
+      const world = uvToWorldPx(result.uv, result.element);
+      const buttonHit = hitTestGizmoButton(world, result.element);
+      dom.style.cursor = getGizmoHoverCursor(world, result.element) ?? '';
       setGizmoButtonHover(buttonHit);
     };
 

@@ -63,11 +63,22 @@ uniform sampler2D uNameGizmoIcons;
 uniform float uNameGizmoHoverSlot;
 uniform float uNameGizmoHoverCorner;
 uniform float uNameGizmoHoverScale;
+uniform vec3 uNameGizmoBtnFill;
+uniform vec3 uNameGizmoBtnFillActive;
+uniform vec3 uNameGizmoIconColor;
 uniform sampler2D uPatternMask0;
 uniform sampler2D uPatternMask1;
 uniform vec3 uPatternColor0;
 uniform vec3 uPatternColor1;
 uniform float uPatternOpacity;
+
+vec4 garmentGizmoUiColor;
+
+vec4 garmentCompositeUiLayer( vec4 base, vec4 layer ) {
+  base.rgb = layer.rgb * layer.a + base.rgb * ( 1.0 - layer.a );
+  base.a = layer.a + base.a * ( 1.0 - layer.a );
+  return base;
+}
 
 vec4 garmentCompositeNameLayer( vec4 base, vec3 rgb, float alpha ) {
   vec4 layer = vec4( rgb, alpha );
@@ -135,7 +146,7 @@ float garmentGizmoCircleDash( vec2 rel, float radius, float period ) {
 }
 
 vec3 garmentGizmoDashColor( float dash ) {
-  return mix( vec3( 1.0 ), vec3( 0.10, 0.11, 0.13 ), dash );
+  return mix( vec3( 1.0 ), uNameGizmoIconColor, dash );
 }
 
 // Print-atlas px from anchor (axis-aligned, no rotation). Gizmo UI uses this space so
@@ -149,8 +160,6 @@ const float GIZMO_BTN_HALF = 24.0;
 const float GIZMO_BTN_OUTSET = 16.0;
 const float GIZMO_FRAME_LINE_HALF = 0.6;
 const float GIZMO_DASH_PERIOD = 9.2;
-const vec3 GIZMO_BTN_FILL = vec3( 1.0 );
-const vec3 GIZMO_BTN_FILL_ACTIVE = vec3( 0.862745, 0.172549, 0.435294 ); // #dc2c6f
 const float GIZMO_BTN_HOVER_SCALE_RANGE = 0.1;
 
 // Frame is an axis-aligned AABB around the scaled text. Only the extent uses scale; stroke/dash
@@ -179,7 +188,7 @@ vec4 garmentGizmoButtonCell( sampler2D icons, vec2 worldPx, vec2 center, float c
   if ( r > outerR ) return vec4( 0.0 );
 
   float activeMix = clamp( ( hoverScale - 1.0 ) / GIZMO_BTN_HOVER_SCALE_RANGE, 0.0, 1.0 );
-  vec3 fillColor = mix( GIZMO_BTN_FILL, GIZMO_BTN_FILL_ACTIVE, activeMix );
+  vec3 fillColor = mix( uNameGizmoBtnFill, uNameGizmoBtnFillActive, activeMix );
   vec4 col = vec4( 0.0 );
 
   // Fill stops at the inner stroke edge so the full-width dash ring matches the text frame.
@@ -187,7 +196,7 @@ vec4 garmentGizmoButtonCell( sampler2D icons, vec2 worldPx, vec2 center, float c
     col = vec4( fillColor, 1.0 );
     vec2 d = rel / ( 2.0 * GIZMO_BTN_HALF ) + 0.5;
     vec4 icon = texture2D( icons, vec2( ( cell + d.x ) * 0.25, 1.0 - d.y ) );
-    vec3 iconRgb = mix( icon.rgb, vec3( 1.0 ), activeMix );
+    vec3 iconRgb = mix( uNameGizmoIconColor, vec3( 1.0 ), activeMix );
     col.rgb = iconRgb * icon.a + col.rgb * ( 1.0 - icon.a );
     col.a = icon.a + col.a * ( 1.0 - icon.a );
   }
@@ -239,6 +248,12 @@ const garmentNormalFragment = /* glsl */ `
 #endif
 `;
 
+const garmentGizmoLightsFragment = /* glsl */ `
+#ifdef USE_PRINT
+  gl_FragColor.rgb = mix( gl_FragColor.rgb, garmentGizmoUiColor.rgb, garmentGizmoUiColor.a );
+#endif
+`;
+
 const garmentRoughnessFragment = /* glsl */ `
 float roughnessFactor = roughness;
 #ifdef USE_ROUGHNESSMAP
@@ -252,4 +267,4 @@ float roughnessFactor = roughness;
 #endif
 `;
 
-export { garmentFragmentUvPars, garmentNormalFragment, garmentRoughnessFragment, garmentVertexUv, garmentVertexUvPars };
+export { garmentFragmentUvPars, garmentGizmoLightsFragment, garmentNormalFragment, garmentRoughnessFragment, garmentVertexUv, garmentVertexUvPars };

@@ -19,7 +19,7 @@ const GIZMO_ICONS = [
 ] as const satisfies ReadonlyArray<{ kind: string; Icon: IconType }>;
 
 const CELL = 120;
-const ICON_SIZE = 74;
+const ICON_SIZE = 64;
 const ICON_COLOR = '#1a1a1a';
 // UV print space is rotated vs screen; bake icons 90° so they read upright on the garment.
 const ICON_ROTATION = Math.PI / 2;

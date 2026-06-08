@@ -18,9 +18,9 @@ const hitTestGizmoButton = (world: { x: number; y: number }, element: PrintGizmo
   const halfWorld = { x: element.half.x * element.scale, y: element.half.y * element.scale };
 
   const corner = GIZMO_CORNERS.find(({ sx, sy }) => {
-    const cx = Math.abs(world.x - sx * (halfWorld.x + NAME_GIZMO_BTN_OUTSET_ATLAS));
-    const cy = Math.abs(world.y - sy * (halfWorld.y + NAME_GIZMO_BTN_OUTSET_ATLAS));
-    return cx <= NAME_GIZMO_BTN_HALF_ATLAS && cy <= NAME_GIZMO_BTN_HALF_ATLAS;
+    const cx = world.x - sx * (halfWorld.x + NAME_GIZMO_BTN_OUTSET_ATLAS);
+    const cy = world.y - sy * (halfWorld.y + NAME_GIZMO_BTN_OUTSET_ATLAS);
+    return Math.hypot(cx, cy) <= NAME_GIZMO_BTN_HALF_ATLAS;
   });
 
   if (!corner) return null;
@@ -28,5 +28,27 @@ const hitTestGizmoButton = (world: { x: number; y: number }, element: PrintGizmo
   return { slotIndex: element.slotIndex, cornerIndex: corner.cornerIndex };
 };
 
-export { GIZMO_CORNERS, hitTestGizmoButton };
+const hitTestGizmoFrame = (world: { x: number; y: number }, element: PrintGizmoElement): boolean => {
+  const halfWorld = { x: element.half.x * element.scale, y: element.half.y * element.scale };
+  return Math.abs(world.x) <= halfWorld.x && Math.abs(world.y) <= halfWorld.y;
+};
+
+const GIZMO_HANDLE_CURSORS: Record<(typeof GIZMO_CORNERS)[number]['kind'], string> = {
+  duplicate: 'copy',
+  delete: 'pointer',
+  rotate: 's-resize',
+  scale: 'nwse-resize',
+};
+
+const getGizmoHoverCursor = (world: { x: number; y: number }, element: PrintGizmoElement): string | null => {
+  const buttonHit = hitTestGizmoButton(world, element);
+  if (buttonHit) {
+    const corner = GIZMO_CORNERS.find((item) => item.cornerIndex === buttonHit.cornerIndex);
+    return corner ? GIZMO_HANDLE_CURSORS[corner.kind] : null;
+  }
+
+  return hitTestGizmoFrame(world, element) ? 'move' : null;
+};
+
+export { GIZMO_CORNERS, getGizmoHoverCursor, hitTestGizmoButton, hitTestGizmoFrame };
 export type { GizmoButtonHit };

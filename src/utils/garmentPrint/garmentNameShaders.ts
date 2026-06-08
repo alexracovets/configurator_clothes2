@@ -34,33 +34,27 @@ const garmentNameMapFragment = /* glsl */ `
   printColor.rgb = nameColor.rgb * nameColor.a + printColor.rgb * ( 1.0 - nameColor.a );
   printColor.a = nameColor.a + printColor.a * ( 1.0 - nameColor.a );
 
+  garmentGizmoUiColor = vec4( 0.0 );
+
   vec4 gizmo0 = garmentGizmoFrameColor( vPrintUv, uNameAnchorUv[0], uNameScale[0], uNameGizmoHalf[0], uNameGizmoEnabled, nameInside0 );
   vec4 gizmo1 = garmentGizmoFrameColor( vPrintUv, uNameAnchorUv[1], uNameScale[1], uNameGizmoHalf[1], uNameGizmoEnabled, nameInside1 );
   vec4 gizmo2 = garmentGizmoFrameColor( vPrintUv, uNameAnchorUv[2], uNameScale[2], uNameGizmoHalf[2], uNameGizmoEnabled, nameInside2 );
   vec4 gizmo3 = garmentGizmoFrameColor( vPrintUv, uNameAnchorUv[3], uNameScale[3], uNameGizmoHalf[3], uNameGizmoEnabled, nameInside3 );
 
-  printColor.rgb = gizmo0.rgb * gizmo0.a + printColor.rgb * ( 1.0 - gizmo0.a );
-  printColor.a = gizmo0.a + printColor.a * ( 1.0 - gizmo0.a );
-  printColor.rgb = gizmo1.rgb * gizmo1.a + printColor.rgb * ( 1.0 - gizmo1.a );
-  printColor.a = gizmo1.a + printColor.a * ( 1.0 - gizmo1.a );
-  printColor.rgb = gizmo2.rgb * gizmo2.a + printColor.rgb * ( 1.0 - gizmo2.a );
-  printColor.a = gizmo2.a + printColor.a * ( 1.0 - gizmo2.a );
-  printColor.rgb = gizmo3.rgb * gizmo3.a + printColor.rgb * ( 1.0 - gizmo3.a );
-  printColor.a = gizmo3.a + printColor.a * ( 1.0 - gizmo3.a );
+  garmentGizmoUiColor = garmentCompositeUiLayer( garmentGizmoUiColor, gizmo0 );
+  garmentGizmoUiColor = garmentCompositeUiLayer( garmentGizmoUiColor, gizmo1 );
+  garmentGizmoUiColor = garmentCompositeUiLayer( garmentGizmoUiColor, gizmo2 );
+  garmentGizmoUiColor = garmentCompositeUiLayer( garmentGizmoUiColor, gizmo3 );
 
   vec4 gbtn0 = garmentGizmoButtons( vPrintUv, uNameAnchorUv[0], uNameScale[0], uNameGizmoHalf[0], uNameGizmoEnabled, nameInside0, uNameGizmoIcons, 0.0 );
   vec4 gbtn1 = garmentGizmoButtons( vPrintUv, uNameAnchorUv[1], uNameScale[1], uNameGizmoHalf[1], uNameGizmoEnabled, nameInside1, uNameGizmoIcons, 1.0 );
   vec4 gbtn2 = garmentGizmoButtons( vPrintUv, uNameAnchorUv[2], uNameScale[2], uNameGizmoHalf[2], uNameGizmoEnabled, nameInside2, uNameGizmoIcons, 2.0 );
   vec4 gbtn3 = garmentGizmoButtons( vPrintUv, uNameAnchorUv[3], uNameScale[3], uNameGizmoHalf[3], uNameGizmoEnabled, nameInside3, uNameGizmoIcons, 3.0 );
 
-  printColor.rgb = gbtn0.rgb * gbtn0.a + printColor.rgb * ( 1.0 - gbtn0.a );
-  printColor.a = gbtn0.a + printColor.a * ( 1.0 - gbtn0.a );
-  printColor.rgb = gbtn1.rgb * gbtn1.a + printColor.rgb * ( 1.0 - gbtn1.a );
-  printColor.a = gbtn1.a + printColor.a * ( 1.0 - gbtn1.a );
-  printColor.rgb = gbtn2.rgb * gbtn2.a + printColor.rgb * ( 1.0 - gbtn2.a );
-  printColor.a = gbtn2.a + printColor.a * ( 1.0 - gbtn2.a );
-  printColor.rgb = gbtn3.rgb * gbtn3.a + printColor.rgb * ( 1.0 - gbtn3.a );
-  printColor.a = gbtn3.a + printColor.a * ( 1.0 - gbtn3.a );
+  garmentGizmoUiColor = garmentCompositeUiLayer( garmentGizmoUiColor, gbtn0 );
+  garmentGizmoUiColor = garmentCompositeUiLayer( garmentGizmoUiColor, gbtn1 );
+  garmentGizmoUiColor = garmentCompositeUiLayer( garmentGizmoUiColor, gbtn2 );
+  garmentGizmoUiColor = garmentCompositeUiLayer( garmentGizmoUiColor, gbtn3 );
 `;
 
 export { garmentNameMapFragment };
