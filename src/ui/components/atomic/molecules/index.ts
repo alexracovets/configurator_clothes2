@@ -1,4 +1,9 @@
 export { ConfiguratorProduct } from './ConfiguratorProduct';
+export { CardAddProduct } from './CardAddProduct';
+export { ProductCatalogOption } from './ProductCatalogOption';
+export { ProductCatalogPopover } from './ProductCatalogPopover';
+export { ProductSessionAddButton } from './ProductSessionAddButton';
+export { ProductSessionRow } from './ProductSessionRow';
 export { LangSwitcher } from './LangSwitcher';
 export { Notification } from './Notification';
 export { Search } from './Search';

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 
 import { AtomImage, Button, Flex, Grid, SvgIcon } from '@atoms';
 import { ColorControl, ColorTabControl, PatternLayerColorControl, RangeControl } from '@molecules';
@@ -29,21 +29,13 @@ const PatternPreview = ({ parts, eager }: { parts: DesignPatternPart[]; eager?: 
 
 const ConfigurationDesign = () => {
   const product = useConfiguratorProduct((state) => state.product);
-  const designProductPath = useGarmentDesign((state) => state.productPath);
   const patterns = useGarmentDesign((state) => state.patterns);
   const activePattern = useGarmentDesign((state) => state.activePattern);
   const patternColors = useGarmentDesign((state) => state.patternColors);
   const activeOpacity = useGarmentDesign((state) => state.activeOpacity);
-  const initForProduct = useGarmentDesign((state) => state.initForProduct);
   const setActivePattern = useGarmentDesign((state) => state.setActivePattern);
   const setPartColor = useGarmentDesign((state) => state.setPartColor);
   const setActiveOpacity = useGarmentDesign((state) => state.setActiveOpacity);
-
-  useEffect(() => {
-    if (designProductPath !== product.path) {
-      initForProduct(product);
-    }
-  }, [designProductPath, initForProduct, product]);
 
   const getPartColor = useCallback((partKey: string) => patternColors[partKey] ?? DEFAULT_PART_COLOR, [patternColors]);
 

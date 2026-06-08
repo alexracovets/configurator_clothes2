@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { AccordionAtom, AtomPopover, AtomPopoverContent, AtomPopoverTrigger, Button, Flex, SvgIcon, Text } from '@atoms';
 import { ColorTabControl, FontSelectRow, PartColorSwitch, RangeControl } from '@molecules';
@@ -108,7 +108,6 @@ const ConfigurationNaming = () => {
   const product = useConfiguratorProduct((state) => state.product);
   const positions = useGarmentName((state) => state.positions);
   const instances = useGarmentName((state) => state.instances);
-  const initForProduct = useGarmentName((state) => state.initForProduct);
   const addInstance = useGarmentName((state) => state.addInstance);
   const [isLocationPickerOpen, setIsLocationPickerOpen] = useState(false);
   const [openItems, setOpenItems] = useState<string[]>([]);
@@ -116,10 +115,6 @@ const ConfigurationNaming = () => {
 
   const nameDefaults = useMemo(() => (positions.length > 0 ? resolveNameDefaults(product) : null), [positions.length, product]);
   const limits = useMemo(() => (positions.length > 0 ? resolveNameLimits(product) : null), [positions.length, product]);
-
-  useEffect(() => {
-    initForProduct(product);
-  }, [initForProduct, product]);
 
   const availablePositions = useMemo(() => {
     const used = new Set(instances.map((instance) => instance.positionKey));

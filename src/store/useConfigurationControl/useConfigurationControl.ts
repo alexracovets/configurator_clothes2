@@ -14,6 +14,7 @@ interface ConfigurationControlState {
   bonus_discount: number;
   minimum_count: number;
   setActiveStep: (step: number) => void;
+  setNumberProduct: (numberProduct: number) => void;
   goToPreviousStep: () => void;
   goToNextStep: () => void;
 }
@@ -31,6 +32,7 @@ const useConfigurationControl = create<ConfigurationControlState>((set, get) => 
     if (step < 1 || step > STEPS_CONFIGURATION.length) return;
     set({ activeStep: step });
   },
+  setNumberProduct: (numberProduct) => set({ numberProduct }),
   goToPreviousStep: () => {
     const { activeStep } = get();
     if (activeStep <= 1) return;

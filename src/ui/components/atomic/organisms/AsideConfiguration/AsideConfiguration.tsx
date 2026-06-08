@@ -1,7 +1,7 @@
 'use client';
 
 import { Grid, ScrollArea } from '@atoms';
-import { ConfiguratorProduct } from '@molecules';
+import { CardAddProduct, ConfiguratorProduct } from '@molecules';
 
 import { STEPS_CONFIGURATION } from '@constants';
 import { useConfigurationControl } from '@store';
@@ -25,7 +25,8 @@ const ActiveStepContent = () => {
 
 const AsideConfiguration = () => {
   return (
-    <aside className="h-full min-h-0 overflow-hidden p-4 pl-28">
+    <aside className="relative h-full min-h-0 overflow-visible p-4 pl-28">
+      <CardAddProduct />
       <Grid className="grid h-full min-h-0 w-[334px] grid-rows-[auto_minmax(0,1fr)] gap-6">
         <ConfiguratorProduct />
         <ActiveStepContent />

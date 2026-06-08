@@ -7,6 +7,10 @@ import type { GarmentConfig } from '@data';
 import { mapProductNumberPositions } from './mapProductNumbers';
 import type { NumberInstance, NumberPosition, NumberPreview } from './mapProductNumbers';
 
+interface GarmentNumberSnapshot {
+  instances: NumberInstance[];
+}
+
 interface GarmentNumberState {
   productPath: string | null;
   positionsKey: string | null;
@@ -14,6 +18,7 @@ interface GarmentNumberState {
   instances: NumberInstance[];
   preview: NumberPreview | null;
   initForProduct: (product: GarmentConfig) => void;
+  restoreSnapshot: (product: GarmentConfig, snapshot: GarmentNumberSnapshot) => void;
   addInstance: (instance: NumberInstance) => void;
   removeInstance: (id: string) => void;
   updateInstance: (id: string, patch: Partial<NumberInstance>) => void;
@@ -59,6 +64,18 @@ const useGarmentNumber = create<GarmentNumberState>((set, get) => ({
       positionsKey,
       positions,
       instances: [],
+      preview: null,
+    });
+  },
+  restoreSnapshot: (product, snapshot) => {
+    const positionsKey = buildPositionsKey(product);
+    const positions = mapProductNumberPositions(product);
+
+    set({
+      productPath: product.path,
+      positionsKey,
+      positions,
+      instances: snapshot.instances,
       preview: null,
     });
   },

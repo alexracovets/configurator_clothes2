@@ -1,4 +1,5 @@
 export { useConfiguratorProduct } from './useConfiguratorProduct';
+export { useConfigurationCartSync } from './useConfigurationCartSync';
 export { useControlledState } from './useControlledState';
 export { useSlidingIndicator } from './useSlidingIndicator';
 export { resolvePbrTexturePaths, useGarmentPbrMaps } from './useGarmentPbrMaps';

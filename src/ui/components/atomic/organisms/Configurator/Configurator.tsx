@@ -3,7 +3,6 @@
 import { Suspense } from 'react';
 
 import { Canvas } from '@react-three/fiber';
-import { Center } from '@react-three/drei';
 import * as THREE from 'three';
 
 import { CanvasControl } from './CanvasControl';
@@ -26,9 +25,7 @@ const Configurator = () => {
     >
       <CanvasControl />
       <Suspense fallback={null}>
-        <Center>
-          <Model />
-        </Center>
+        <Model />
       </Suspense>
     </Canvas>
   );

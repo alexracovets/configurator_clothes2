@@ -10,10 +10,16 @@ import { DISABLED_PART_GRADIENT, type PartGradient } from './partGradientTypes';
 
 const DEFAULT_COLOR = PALETTE_COLORS[0];
 
+interface GarmentColorSnapshot {
+  byPart: Record<string, string>;
+  gradientsByPart: Record<string, PartGradient>;
+}
+
 interface GarmentColorState {
   byPart: Record<string, string>;
   gradientsByPart: Record<string, PartGradient>;
   initForProduct: (product: GarmentConfig) => void;
+  restoreSnapshot: (snapshot: GarmentColorSnapshot) => void;
   setPartColor: (partId: string, color: string) => void;
   getPartColor: (partId: string) => string;
   setPartGradientEnabled: (partId: string, enabled: boolean) => void;
@@ -37,6 +43,13 @@ const useGarmentColor = create<GarmentColorState>((set, get) => ({
 
   initForProduct: (product) => {
     set({ byPart: buildDefaultColors(product), gradientsByPart: buildDefaultGradients(product) });
+  },
+
+  restoreSnapshot: (snapshot) => {
+    set({
+      byPart: snapshot.byPart,
+      gradientsByPart: snapshot.gradientsByPart,
+    });
   },
 
   setPartColor: (partId, color) => {

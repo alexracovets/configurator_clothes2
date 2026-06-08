@@ -9,6 +9,7 @@ interface ConfiguratorProductState {
   productIndex: number;
   product: GarmentConfig;
   setProductIndex: (index: number) => void;
+  setProduct: (styleId: StyleId, productIndex: number) => void;
 }
 
 const DEFAULT_STYLE_ID: StyleId = 'crewneck';
@@ -25,9 +26,16 @@ const useConfiguratorProduct = create<ConfiguratorProductState>((set) => ({
   productIndex: DEFAULT_PRODUCT_INDEX,
   product: resolveProduct(DEFAULT_STYLE_ID, DEFAULT_PRODUCT_INDEX),
   setProductIndex: (productIndex) => {
-    set({
+    set((state) => ({
       productIndex,
-      product: resolveProduct(DEFAULT_STYLE_ID, productIndex),
+      product: resolveProduct(state.styleId, productIndex),
+    }));
+  },
+  setProduct: (styleId, productIndex) => {
+    set({
+      styleId,
+      productIndex,
+      product: resolveProduct(styleId, productIndex),
     });
   },
 }));

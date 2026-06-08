@@ -11,39 +11,45 @@ import { GarmentNameTextureLayer } from '../GarmentNameTextureLayer';
 import { PrintGizmoLayer } from '../PrintGizmoLayer';
 import { GarmentTextureLayer } from '../GarmentTextureLayer';
 import { PreserveGltfMesh } from '../PreserveGltfMesh';
-import { STATIC_REGISTRY_KEY, StaticColorLayer } from '../StaticColorLayer';
+import { StaticGltfMesh } from '../StaticGltfMesh';
 
 const GarmentMeshes = () => {
   const product = useConfiguratorProduct((state) => state.product);
   const modelUrl = resolveModelUrl(product);
-  const { nodes } = useGLTF(modelUrl);
+  const { meshes, nodes } = useGLTF(modelUrl);
+
+  const resolveMeshNode = (meshName: string) => meshes[meshName] ?? nodes[meshName];
 
   return (
-    <group key={product.path}>
+    <group key={modelUrl}>
       {product.parts.flatMap((part) =>
-        part.meshNames.map((meshName) => (
-          <GarmentPartMesh key={`${part.id}-${meshName}`} registryKey={part.id} meshName={meshName} node={nodes[meshName]} renderOrder={part.renderOrder} />
-        )),
+        part.meshNames.map((meshName) => {
+          const node = resolveMeshNode(meshName);
+          if (!node) return null;
+
+          return <GarmentPartMesh key={`${part.id}-${meshName}`} registryKey={part.id} meshName={meshName} node={node} renderOrder={part.renderOrder} />;
+        }),
       )}
       {product.staticMeshes?.flatMap((group) =>
-        group.meshNames.map((meshName) => (
-          <GarmentPartMesh
-            key={`static-${meshName}`}
-            registryKey={STATIC_REGISTRY_KEY}
-            meshName={meshName}
-            node={nodes[meshName]}
-            renderOrder={group.renderOrder}
-          />
-        )),
+        group.meshNames.map((meshName) => {
+          const node = resolveMeshNode(meshName);
+          if (!node) return null;
+
+          return <StaticGltfMesh key={`static-${meshName}`} meshName={meshName} node={node} renderOrder={group.renderOrder} />;
+        }),
       )}
-      {product.preserveGltfMeshes?.map((meshName) => (
-        <PreserveGltfMesh key={`preserve-${meshName}`} meshName={meshName} node={nodes[meshName]} />
-      ))}
+      {product.preserveGltfMeshes?.map((meshName) => {
+        const node = resolveMeshNode(meshName);
+        if (!node) return null;
+
+        const renderOrder = meshName === 'mans_shorts_laces' ? 2 : 0;
+
+        return <PreserveGltfMesh key={`preserve-${meshName}`} meshName={meshName} node={node} renderOrder={renderOrder} />;
+      })}
       <GarmentTextureLayer />
       <GarmentNameTextureLayer />
       <GarmentLogoTextureLayer />
       <PrintGizmoLayer />
-      <StaticColorLayer />
     </group>
   );
 };

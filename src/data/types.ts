@@ -103,6 +103,8 @@ interface GarmentStaticMeshConfig {
 interface GarmentConfig {
   name: string;
   type: string;
+  /** Path relative to product.path, used in the session sidebar and catalog popup. */
+  previewImage?: string;
   price: number;
   bonus_count: number;
   bonus_discount: number;

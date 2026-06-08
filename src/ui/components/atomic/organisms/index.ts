@@ -1,3 +1,4 @@
+export { CartConfigurationSync } from './CartConfigurationSync';
 export { AsideConfigurationUtility } from './AsideConfigurationUtility';
 export { FooterCoinfiguration } from './FooterCoinfiguration';
 export { HeaderConfiguration } from './HeaderConfiguration';

@@ -7,6 +7,11 @@ import type { GarmentConfig } from '@data';
 import { mapProductNamePositions } from './mapProductNames';
 import type { NameInstance, NamePosition, NamePreview } from './mapProductNames';
 
+interface GarmentNameSnapshot {
+  instances: NameInstance[];
+  selectedInstanceId: string | null;
+}
+
 interface GarmentNameState {
   productPath: string | null;
   positionsKey: string | null;
@@ -15,6 +20,7 @@ interface GarmentNameState {
   preview: NamePreview | null;
   selectedInstanceId: string | null;
   initForProduct: (product: GarmentConfig) => void;
+  restoreSnapshot: (product: GarmentConfig, snapshot: GarmentNameSnapshot) => void;
   addInstance: (instance: NameInstance) => void;
   removeInstance: (id: string) => void;
   duplicateInstance: (id: string) => void;
@@ -57,6 +63,18 @@ const useGarmentName = create<GarmentNameState>((set, get) => ({
       instances: [],
       preview: null,
       selectedInstanceId: null,
+    });
+  },
+  restoreSnapshot: (product, snapshot) => {
+    const positionsKey = buildPositionsKey(product);
+
+    set({
+      productPath: product.path,
+      positionsKey,
+      positions: mapProductNamePositions(product),
+      instances: snapshot.instances,
+      preview: null,
+      selectedInstanceId: snapshot.selectedInstanceId,
     });
   },
   addInstance: (instance) => {

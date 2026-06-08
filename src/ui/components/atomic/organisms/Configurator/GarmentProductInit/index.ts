@@ -1,1 +1,0 @@
-export { GarmentProductInit } from './GarmentProductInit';

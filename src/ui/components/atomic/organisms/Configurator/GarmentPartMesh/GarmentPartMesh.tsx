@@ -18,20 +18,55 @@ const GarmentPartMesh = memo(({ registryKey, meshName, node, renderOrder = 0 }: 
   const { register, unregister } = useGarmentMaterialRegistry();
 
   const source = node as Mesh;
-  const sourceMaterial = Array.isArray(source.material) ? source.material[0] : source.material;
+  const sourceMaterialList = 'isMesh' in source && source.isMesh ? source.material : null;
 
-  const material = useMemo(() => createGarmentMaterial(pbrMaps, sourceMaterial as MeshStandardMaterial, meshName), [meshName, pbrMaps, sourceMaterial]);
+  const isRenderable = 'isMesh' in source && source.isMesh && !!source.geometry;
+  const materials = useMemo(() => {
+    const sources = Array.isArray(sourceMaterialList) ? sourceMaterialList : sourceMaterialList ? [sourceMaterialList] : [];
+
+    return sources.length > 0
+      ? sources.map((sourceMaterial) => createGarmentMaterial(pbrMaps, sourceMaterial as MeshStandardMaterial, meshName))
+      : [createGarmentMaterial(pbrMaps, null, meshName)];
+  }, [meshName, pbrMaps, sourceMaterialList]);
+  const meshMaterial = materials.length === 1 ? materials[0] : materials;
 
   useLayoutEffect(() => {
-    register(registryKey, material);
-    return () => unregister(registryKey, material);
-  }, [material, registryKey, register, unregister]);
+    if (!isRenderable) return;
+
+    for (const material of materials) {
+      register(registryKey, material);
+    }
+
+    return () => {
+      for (const material of materials) {
+        unregister(registryKey, material);
+      }
+    };
+  }, [isRenderable, materials, registryKey, register, unregister]);
 
   useEffect(() => {
-    return () => material.dispose();
-  }, [material]);
+    if (!isRenderable) return;
 
-  return <mesh name={meshName} geometry={source.geometry} material={material} renderOrder={renderOrder} />;
+    return () => {
+      for (const material of materials) {
+        material.dispose();
+      }
+    };
+  }, [isRenderable, materials]);
+
+  if (!isRenderable) return null;
+
+  return (
+    <mesh
+      name={meshName}
+      geometry={source.geometry}
+      material={meshMaterial}
+      position={source.position}
+      quaternion={source.quaternion}
+      scale={source.scale}
+      renderOrder={renderOrder}
+    />
+  );
 });
 
 GarmentPartMesh.displayName = 'GarmentPartMesh';

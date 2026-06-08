@@ -8,6 +8,11 @@ import { loadCachedImage, LOGO_SLOT_COUNT, LOGO_UPLOAD_ROTATION_DEG } from '@uti
 import { createDefaultLogoInstances, createDynamicUserLogoPosition, createLogoInstance, mapProductLogoPositions } from './mapProductLogos';
 import type { LogoInstance, LogoPosition, LogoPreview } from './mapProductLogos';
 
+interface GarmentLogoSnapshot {
+  instances: LogoInstance[];
+  selectedInstanceId: string | null;
+}
+
 interface GarmentLogoState {
   productPath: string | null;
   positionsKey: string | null;
@@ -16,6 +21,7 @@ interface GarmentLogoState {
   preview: LogoPreview | null;
   selectedInstanceId: string | null;
   initForProduct: (product: GarmentConfig) => void;
+  restoreSnapshot: (product: GarmentConfig, snapshot: GarmentLogoSnapshot) => void;
   addUserInstance: (position: LogoPosition, src: string, fileName: string) => Promise<void>;
   addFreeUserInstance: (product: GarmentConfig, src: string, fileName: string) => Promise<void>;
   replaceInstanceImage: (id: string, src: string, fileName: string) => Promise<void>;
@@ -82,6 +88,19 @@ const useGarmentLogo = create<GarmentLogoState>((set, get) => ({
       instances: createDefaultLogoInstances(positions),
       preview: null,
       selectedInstanceId: null,
+    });
+  },
+  restoreSnapshot: (product, snapshot) => {
+    const positionsKey = buildPositionsKey(product);
+    const positions = mapProductLogoPositions(product);
+
+    set({
+      productPath: product.path,
+      positionsKey,
+      positions,
+      instances: snapshot.instances,
+      preview: null,
+      selectedInstanceId: snapshot.selectedInstanceId,
     });
   },
   addUserInstance: async (position, src, fileName) => {

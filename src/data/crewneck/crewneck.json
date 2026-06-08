@@ -4,6 +4,7 @@
     {
       "name": "Maglia Federer",
       "type": "shirt",
+      "previewImage": "designs/thumbs/crewneck_design_7.webp",
       "price": 100,
       "bonus_count": 10,
       "bonus_discount": 20,
@@ -301,6 +302,7 @@
     {
       "name": "Shorts Classic",
       "type": "shorts",
+      "previewImage": "designs/thumbs/mans_shorts_raw_pattern.webp",
       "price": 80,
       "bonus_count": 10,
       "bonus_discount": 15,
@@ -311,28 +313,22 @@
       "parts": [
         {
           "name": "Davanti",
-          "label": "Front",
-          "id": "front_shorts",
+          "label": "Left",
+          "id": "left_shorts",
           "meshNames": ["mans_shorts_left"],
           "renderOrder": 1,
           "uvBounds": { "minX": 0, "maxX": 0.5, "minY": 0, "maxY": 1 }
         },
         {
           "name": "Retro",
-          "label": "Back",
-          "id": "back_shorts",
+          "label": "Right",
+          "id": "right_shorts",
           "meshNames": ["mans_shorts_right"],
           "renderOrder": 1,
           "uvBounds": { "minX": 0.5, "maxX": 1, "minY": 0, "maxY": 1 }
         }
       ],
-      "staticMeshes": [
-        {
-          "meshNames": ["mans_shorts_laces"],
-          "renderOrder": 2
-        }
-      ],
-      "preserveGltfMeshes": ["mans_shorts_inside"],
+      "preserveGltfMeshes": ["mans_shorts_inside", "mans_shorts_laces"],
       "patterns": [],
       "default_pattern": [],
       "logoPositions": []

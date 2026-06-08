@@ -248,8 +248,8 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
   material.customProgramCacheKey = () => 'garment-pbr-print-v57-logo-gizmo-fixed';
 };
 
-const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMaterial, meshName = ''): MeshStandardMaterial => {
-  const material = source.clone();
+const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMaterial | null | undefined, meshName = ''): MeshStandardMaterial => {
+  const material = source ? source.clone() : new MeshStandardMaterial({ color: 0xffffff });
 
   if (isSleeveMesh(meshName)) {
     material.polygonOffset = true;

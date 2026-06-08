@@ -1,4 +1,6 @@
 export { useConfigurationControl } from './useConfigurationControl';
+export { applyGarmentConfiguration, captureGarmentConfiguration, useConfigurationCart } from './useConfigurationCart';
+export type { CartItem, CartItemConfiguration } from './useConfigurationCart';
 export { useConfiguratorProduct } from './useConfiguratorProduct';
 export { DEFAULT_COLOR, DEFAULT_PART_GRADIENT, DISABLED_PART_GRADIENT, resolveGradientColors, useGarmentColor } from './useGarmentColor';
 export type { PartGradient } from './useGarmentColor';

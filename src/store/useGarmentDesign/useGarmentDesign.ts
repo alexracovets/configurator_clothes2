@@ -21,6 +21,14 @@ interface DesignPatternItem {
   parts: DesignPatternPart[];
 }
 
+interface GarmentDesignSnapshot {
+  activePatternKey: string | null;
+  patternColors: Record<string, string>;
+  designLayerColors: Record<number, string>;
+  activeOpacity: number;
+  designOpacity: number;
+}
+
 interface UseGarmentDesignStore {
   productPath: string | null;
   patterns: DesignPatternItem[];
@@ -31,6 +39,7 @@ interface UseGarmentDesignStore {
   designOpacity: number;
   defaultPattern: DesignPatternItem | null;
   initForProduct: (product: GarmentConfig) => void;
+  restoreSnapshot: (product: GarmentConfig, snapshot: GarmentDesignSnapshot) => void;
   setPatterns: (patterns: DesignPatternItem[]) => void;
   setActivePattern: (pattern: DesignPatternItem | null) => void;
   setPartColor: (partKey: string, color: string) => void;
@@ -94,6 +103,23 @@ const useGarmentDesign = create<UseGarmentDesignStore>((set, get) => ({
       designLayerColors: {},
       activeOpacity: DEFAULT_OPACITY,
       designOpacity: DEFAULT_OPACITY,
+    });
+  },
+
+  restoreSnapshot: (product, snapshot) => {
+    const patterns = mapProductDesigns(product);
+    const defaultPattern = mapDefaultPattern(product);
+    const activePattern = snapshot.activePatternKey ? (patterns.find((pattern) => pattern.key === snapshot.activePatternKey) ?? null) : null;
+
+    set({
+      productPath: product.path,
+      patterns,
+      defaultPattern,
+      activePattern,
+      patternColors: snapshot.patternColors,
+      designLayerColors: snapshot.designLayerColors,
+      activeOpacity: snapshot.activeOpacity,
+      designOpacity: snapshot.designOpacity,
     });
   },
 
