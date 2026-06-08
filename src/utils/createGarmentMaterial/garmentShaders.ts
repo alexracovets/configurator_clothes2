@@ -57,6 +57,19 @@ uniform float uNameSlotActive[4];
 uniform vec4 uNamePartBounds[4];
 uniform vec3 uNameTextColors[4];
 uniform vec3 uNameStrokeColors[4];
+uniform sampler2D uNumberFillMask;
+uniform sampler2D uNumberStrokeMask;
+uniform vec2 uNumberStampSize;
+uniform vec2 uNumberAnchorUv[4];
+uniform float uNumberRotation[4];
+uniform float uNumberScale[4];
+uniform float uNumberSlotActive[4];
+uniform vec4 uNumberPartBounds[4];
+uniform vec3 uNumberTextColors[4];
+uniform vec3 uNumberStrokeColors[4];
+uniform float uNumberGizmoEnabled;
+uniform float uNumberGizmoFrameActive[4];
+uniform vec2 uNumberGizmoHalf[4];
 uniform float uNameGizmoEnabled;
 uniform float uNameGizmoFrameActive[4];
 uniform float uNameGizmoButtonsActive[4];
@@ -96,6 +109,14 @@ vec2 garmentNameToStampUv( vec2 worldUv, vec2 anchor, float rotation, float scal
   float s = sin( -rotation );
   vec2 localPx = vec2( c * deltaPx.x - s * deltaPx.y, s * deltaPx.x + c * deltaPx.y ) / max( scale, 0.001 );
   return vec2( 0.5 ) + localPx / uNameStampSize;
+}
+
+vec2 garmentNumberToStampUv( vec2 worldUv, vec2 anchor, float rotation, float scale ) {
+  vec2 deltaPx = ( worldUv - anchor ) * uPrintAtlasSize;
+  float c = cos( -rotation );
+  float s = sin( -rotation );
+  vec2 localPx = vec2( c * deltaPx.x - s * deltaPx.y, s * deltaPx.x + c * deltaPx.y ) / max( scale, 0.001 );
+  return vec2( 0.5 ) + localPx / uNumberStampSize;
 }
 
 float garmentNameFillChannel( sampler2D tex, vec2 uv, float channel ) {

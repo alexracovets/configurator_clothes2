@@ -114,6 +114,7 @@ interface GarmentConfig {
   default_pattern?: PatternConfig[];
   nameDefaults?: TextDefaultsConfig;
   namePositions?: NamePositionConfig[];
+  numberDefaults?: TextDefaultsConfig;
   numberPositions?: NumberPositionConfig[];
   logoPositions?: LogoPositionConfig[];
 }

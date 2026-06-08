@@ -16,7 +16,10 @@ interface GizmoFrameState {
 
 let pendingNameMasks: GarmentNameMaskState | null = null;
 let pendingNameStyle: NameStyleUniforms | null = null;
+let pendingNumberMasks: GarmentNameMaskState | null = null;
+let pendingNumberStyle: NameStyleUniforms | null = null;
 let pendingGizmoFrame: GizmoFrameState | null = null;
+let pendingNumberGizmoFrame: GizmoFrameState | null = null;
 let pendingGizmoIcons: Texture | null = null;
 
 const applyNameMasksToUniforms = (material: MeshStandardMaterial, state: GarmentNameMaskState) => {
@@ -93,6 +96,80 @@ const applyGarmentNameStyle = (material: MeshStandardMaterial, style: NameStyleU
   applyNameStyleToUniforms(material, style);
 };
 
+const applyNumberMasksToUniforms = (material: MeshStandardMaterial, state: GarmentNameMaskState) => {
+  const fillUniform = material.userData.uNumberFillMaskUniform as { value: Texture } | undefined;
+  if (fillUniform) fillUniform.value = state.fillMask;
+
+  const strokeUniform = material.userData.uNumberStrokeMaskUniform as { value: Texture } | undefined;
+  if (strokeUniform) strokeUniform.value = state.strokeMask;
+};
+
+const applyNumberStyleToUniforms = (material: MeshStandardMaterial, style: NameStyleUniforms) => {
+  const stampSizeUniform = material.userData.uNumberStampSizeUniform as { value: Vector2 } | undefined;
+  if (stampSizeUniform) stampSizeUniform.value.set(style.stampSize.width, style.stampSize.height);
+
+  const anchorUniform = material.userData.uNumberAnchorUvUniform as { value: Vector2[] } | undefined;
+  if (anchorUniform) {
+    style.anchorUv.forEach((anchor, index) => {
+      anchorUniform.value[index].set(anchor.x, anchor.y);
+    });
+  }
+
+  const rotationUniform = material.userData.uNumberRotationUniform as { value: number[] } | undefined;
+  if (rotationUniform) {
+    style.rotation.forEach((value, index) => {
+      rotationUniform.value[index] = value;
+    });
+  }
+
+  const scaleUniform = material.userData.uNumberScaleUniform as { value: number[] } | undefined;
+  if (scaleUniform) {
+    style.scale.forEach((value, index) => {
+      scaleUniform.value[index] = value;
+    });
+  }
+
+  const slotActiveUniform = material.userData.uNumberSlotActiveUniform as { value: number[] } | undefined;
+  if (slotActiveUniform) {
+    style.slotActive.forEach((value, index) => {
+      slotActiveUniform.value[index] = value;
+    });
+  }
+
+  const partBoundsUniform = material.userData.uNumberPartBoundsUniform as { value: Vector4[] } | undefined;
+  if (partBoundsUniform) {
+    style.partBounds.forEach((bounds, index) => {
+      partBoundsUniform.value[index].set(bounds.minX, bounds.minY, bounds.maxX, bounds.maxY);
+    });
+  }
+
+  const textUniforms = material.userData.uNumberTextColorsUniform as { value: Color[] } | undefined;
+  if (textUniforms) {
+    style.textColors.forEach((color, index) => {
+      textUniforms.value[index].set(color);
+    });
+  }
+
+  const strokeUniforms = material.userData.uNumberStrokeColorsUniform as { value: Color[] } | undefined;
+  if (strokeUniforms) {
+    style.strokeColors.forEach((color, index) => {
+      strokeUniforms.value[index].set(color);
+    });
+  }
+};
+
+const applyGarmentNumberMasks = (material: MeshStandardMaterial, state: GarmentNameMaskState) => {
+  pendingNumberMasks = state;
+  material.userData.garmentNumberMaskState = state;
+  applyNumberMasksToUniforms(material, state);
+};
+
+const applyGarmentNumberStyle = (material: MeshStandardMaterial, style: NameStyleUniforms) => {
+  pendingNumberStyle = style;
+  material.userData.garmentNumberStyleState = style;
+  applyNumberStyleToUniforms(material, style);
+};
+
 const applyGarmentPrintAtlasSize = (material: MeshStandardMaterial, width: number, height: number) => {
   const atlasUniform = material.userData.uPrintAtlasSizeUniform as { value: Vector2 } | undefined;
   if (atlasUniform) atlasUniform.value.set(width, height);
@@ -128,6 +205,31 @@ const applyGarmentGizmoFrame = (material: MeshStandardMaterial, state: GizmoFram
   pendingGizmoFrame = state;
   material.userData.garmentGizmoFrameState = state;
   applyGizmoFrameToUniforms(material, state);
+};
+
+const applyNumberGizmoFrameToUniforms = (material: MeshStandardMaterial, state: GizmoFrameState) => {
+  const enabledUniform = material.userData.uNumberGizmoEnabledUniform as { value: number } | undefined;
+  if (enabledUniform) enabledUniform.value = state.enabled;
+
+  const halfUniform = material.userData.uNumberGizmoHalfUniform as { value: Vector2[] } | undefined;
+  if (halfUniform) {
+    state.half.forEach((half, index) => {
+      halfUniform.value[index]?.set(half.x, half.y);
+    });
+  }
+
+  const frameActiveUniform = material.userData.uNumberGizmoFrameActiveUniform as { value: number[] } | undefined;
+  if (frameActiveUniform) {
+    state.frameActive.forEach((value, index) => {
+      frameActiveUniform.value[index] = value;
+    });
+  }
+};
+
+const applyGarmentNumberGizmoFrame = (material: MeshStandardMaterial, state: GizmoFrameState) => {
+  pendingNumberGizmoFrame = state;
+  material.userData.garmentNumberGizmoFrameState = state;
+  applyNumberGizmoFrameToUniforms(material, state);
 };
 
 const applyGarmentGizmoIcons = (material: MeshStandardMaterial, texture: Texture) => {
@@ -213,6 +315,56 @@ const hydrateGarmentNameUniforms = (
   }
 };
 
+const hydrateGarmentNumberUniforms = (
+  material: MeshStandardMaterial,
+  uniforms: {
+    uNumberFillMask: { value: Texture };
+    uNumberStrokeMask: { value: Texture };
+    uNumberStampSize: { value: Vector2 };
+    uNumberAnchorUv: { value: Vector2[] };
+    uNumberRotation: { value: number[] };
+    uNumberScale: { value: number[] };
+    uNumberSlotActive: { value: number[] };
+    uNumberPartBounds: { value: Vector4[] };
+    uNumberTextColors: { value: Color[] };
+    uNumberStrokeColors: { value: Color[] };
+    uNumberGizmoEnabled: { value: number };
+    uNumberGizmoHalf: { value: Vector2[] };
+  },
+) => {
+  const maskState = (material.userData.garmentNumberMaskState as GarmentNameMaskState | undefined) ?? pendingNumberMasks;
+  const styleState = (material.userData.garmentNumberStyleState as NameStyleUniforms | undefined) ?? pendingNumberStyle;
+  const gizmoState = (material.userData.garmentNumberGizmoFrameState as GizmoFrameState | undefined) ?? pendingNumberGizmoFrame;
+
+  if (maskState) {
+    uniforms.uNumberFillMask.value = maskState.fillMask;
+    uniforms.uNumberStrokeMask.value = maskState.strokeMask;
+    material.userData.garmentNumberMaskState = maskState;
+    material.userData.uNumberFillMaskUniform = uniforms.uNumberFillMask;
+    material.userData.uNumberStrokeMaskUniform = uniforms.uNumberStrokeMask;
+  }
+
+  if (styleState) {
+    applyNumberStyleToUniforms(material, styleState);
+    material.userData.garmentNumberStyleState = styleState;
+    material.userData.uNumberStampSizeUniform = uniforms.uNumberStampSize;
+    material.userData.uNumberAnchorUvUniform = uniforms.uNumberAnchorUv;
+    material.userData.uNumberRotationUniform = uniforms.uNumberRotation;
+    material.userData.uNumberScaleUniform = uniforms.uNumberScale;
+    material.userData.uNumberSlotActiveUniform = uniforms.uNumberSlotActive;
+    material.userData.uNumberPartBoundsUniform = uniforms.uNumberPartBounds;
+    material.userData.uNumberTextColorsUniform = uniforms.uNumberTextColors;
+    material.userData.uNumberStrokeColorsUniform = uniforms.uNumberStrokeColors;
+  }
+
+  material.userData.uNumberGizmoEnabledUniform = uniforms.uNumberGizmoEnabled;
+  material.userData.uNumberGizmoHalfUniform = uniforms.uNumberGizmoHalf;
+  if (gizmoState) {
+    applyNumberGizmoFrameToUniforms(material, gizmoState);
+    material.userData.garmentNumberGizmoFrameState = gizmoState;
+  }
+};
+
 export {
   applyGarmentGizmoButtonsReveal,
   applyGarmentGizmoFrame,
@@ -220,7 +372,11 @@ export {
   applyGarmentGizmoIcons,
   applyGarmentNameMasks,
   applyGarmentNameStyle,
+  applyGarmentNumberGizmoFrame,
+  applyGarmentNumberMasks,
+  applyGarmentNumberStyle,
   applyGarmentPrintAtlasSize,
   hydrateGarmentNameUniforms,
+  hydrateGarmentNumberUniforms,
 };
 export type { GarmentNameMaskState, GizmoFrameState };

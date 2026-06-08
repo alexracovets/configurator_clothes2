@@ -6,7 +6,7 @@ import { garmentGradientMapFragment } from '../garmentGradient/garmentGradientSh
 import type { GarmentPrintState } from '../garmentPrint/applyGarmentPrint';
 import { getEmptyPrintTexture } from '../garmentPrint/emptyPrintTexture';
 import { NAME_SLOT_COUNT } from '../garmentPrint/nameSlotConstants';
-import { hydrateGarmentNameUniforms } from '../garmentPrint/applyGarmentNames';
+import { hydrateGarmentNameUniforms, hydrateGarmentNumberUniforms } from '../garmentPrint/applyGarmentNames';
 import { garmentPrintMapFragment } from '../garmentPrint/garmentPrintShaders';
 
 import { applyPbrMaps } from './applyPbrMaps';
@@ -81,6 +81,19 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     shader.uniforms.uNameGizmoBtnFill = { value: new Color(NAME_GIZMO_BTN_FILL_COLOR) };
     shader.uniforms.uNameGizmoBtnFillActive = { value: new Color(NAME_GIZMO_BTN_ACTIVE_COLOR) };
     shader.uniforms.uNameGizmoIconColor = { value: new Color(NAME_GIZMO_ICON_COLOR) };
+    shader.uniforms.uNumberFillMask = { value: emptyPrint };
+    shader.uniforms.uNumberStrokeMask = { value: emptyPrint };
+    shader.uniforms.uNumberStampSize = { value: new Vector2(1, 1) };
+    shader.uniforms.uNumberAnchorUv = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Vector2()) };
+    shader.uniforms.uNumberRotation = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uNumberScale = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 1) };
+    shader.uniforms.uNumberSlotActive = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uNumberPartBounds = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Vector4(0, 0, 1, 1)) };
+    shader.uniforms.uNumberTextColors = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Color('#000000')) };
+    shader.uniforms.uNumberStrokeColors = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Color('#ffffff')) };
+    shader.uniforms.uNumberGizmoEnabled = { value: 0 };
+    shader.uniforms.uNumberGizmoFrameActive = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uNumberGizmoHalf = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Vector2(0, 0)) };
     shader.uniforms.uPatternMask0 = { value: printState?.patternMasks[0] ?? emptyPrint };
     shader.uniforms.uPatternMask1 = { value: printState?.patternMasks[1] ?? emptyPrint };
     shader.uniforms.uPatternColor0 = { value: new Color(printState?.patternColors[0] ?? '#000000') };
@@ -108,6 +121,19 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     material.userData.uNameGizmoHoverSlotUniform = shader.uniforms.uNameGizmoHoverSlot;
     material.userData.uNameGizmoHoverCornerUniform = shader.uniforms.uNameGizmoHoverCorner;
     material.userData.uNameGizmoHoverScaleUniform = shader.uniforms.uNameGizmoHoverScale;
+    material.userData.uNumberFillMaskUniform = shader.uniforms.uNumberFillMask;
+    material.userData.uNumberStrokeMaskUniform = shader.uniforms.uNumberStrokeMask;
+    material.userData.uNumberStampSizeUniform = shader.uniforms.uNumberStampSize;
+    material.userData.uNumberAnchorUvUniform = shader.uniforms.uNumberAnchorUv;
+    material.userData.uNumberRotationUniform = shader.uniforms.uNumberRotation;
+    material.userData.uNumberScaleUniform = shader.uniforms.uNumberScale;
+    material.userData.uNumberSlotActiveUniform = shader.uniforms.uNumberSlotActive;
+    material.userData.uNumberPartBoundsUniform = shader.uniforms.uNumberPartBounds;
+    material.userData.uNumberTextColorsUniform = shader.uniforms.uNumberTextColors;
+    material.userData.uNumberStrokeColorsUniform = shader.uniforms.uNumberStrokeColors;
+    material.userData.uNumberGizmoEnabledUniform = shader.uniforms.uNumberGizmoEnabled;
+    material.userData.uNumberGizmoFrameActiveUniform = shader.uniforms.uNumberGizmoFrameActive;
+    material.userData.uNumberGizmoHalfUniform = shader.uniforms.uNumberGizmoHalf;
     material.userData.uPatternMask0Uniform = shader.uniforms.uPatternMask0;
     material.userData.uPatternMask1Uniform = shader.uniforms.uPatternMask1;
     material.userData.uPatternColor0Uniform = shader.uniforms.uPatternColor0;
@@ -130,6 +156,21 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       uNameGizmoIcons: shader.uniforms.uNameGizmoIcons,
     });
 
+    hydrateGarmentNumberUniforms(material, {
+      uNumberFillMask: shader.uniforms.uNumberFillMask,
+      uNumberStrokeMask: shader.uniforms.uNumberStrokeMask,
+      uNumberStampSize: shader.uniforms.uNumberStampSize,
+      uNumberAnchorUv: shader.uniforms.uNumberAnchorUv,
+      uNumberRotation: shader.uniforms.uNumberRotation,
+      uNumberScale: shader.uniforms.uNumberScale,
+      uNumberSlotActive: shader.uniforms.uNumberSlotActive,
+      uNumberPartBounds: shader.uniforms.uNumberPartBounds,
+      uNumberTextColors: shader.uniforms.uNumberTextColors,
+      uNumberStrokeColors: shader.uniforms.uNumberStrokeColors,
+      uNumberGizmoEnabled: shader.uniforms.uNumberGizmoEnabled,
+      uNumberGizmoHalf: shader.uniforms.uNumberGizmoHalf,
+    });
+
     shader.vertexShader = shader.vertexShader.replace('#include <uv_pars_vertex>', garmentVertexUvPars).replace('#include <uv_vertex>', garmentVertexUv);
 
     shader.fragmentShader = shader.fragmentShader
@@ -140,7 +181,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       .replace('#include <tonemapping_fragment>', `#include <tonemapping_fragment>\n${garmentGizmoLightsFragment}`);
   };
 
-  material.customProgramCacheKey = () => 'garment-pbr-print-v46-show-frame-gizmo';
+  material.customProgramCacheKey = () => 'garment-pbr-print-v47-number-layer';
 };
 
 const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMaterial, meshName = ''): MeshStandardMaterial => {

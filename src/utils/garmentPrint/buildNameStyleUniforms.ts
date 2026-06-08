@@ -1,5 +1,5 @@
 import type { GarmentPartConfig } from '@data';
-import type { NameInstance } from '@store';
+import type { GarmentTextRenderInstance } from '@store';
 
 import type { StampPixelSize } from '../drawNameOnAtlas/measureNameStampBounds';
 import { FULL_UV_BOUNDS, resolvePartUvBounds } from '../resolveProductRenderConfig/resolveProductRenderConfig';
@@ -32,7 +32,12 @@ const DEFAULT_NAME_STROKE = '#ffffff';
 const DEFAULT_STAMP_SIZE: StampPixelSize = { width: 1, height: 1 };
 const DEFAULT_PART_BOUNDS = FULL_UV_BOUNDS;
 
-const buildNameStyleUniforms = (instances: NameInstance[], parts: GarmentPartConfig[], stampSize: StampPixelSize, meshPartId: string): NameStyleUniforms => {
+const buildNameStyleUniforms = (
+  instances: GarmentTextRenderInstance[],
+  parts: GarmentPartConfig[],
+  stampSize: StampPixelSize,
+  meshPartId: string,
+): NameStyleUniforms => {
   const partsById = Object.fromEntries(parts.map((part) => [part.id, part]));
   const anchorUv: NameSlotVec2 = [
     { x: 0, y: 0 },

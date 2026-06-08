@@ -20,8 +20,12 @@ export {
   applyGarmentGizmoIcons,
   applyGarmentNameMasks,
   applyGarmentNameStyle,
+  applyGarmentNumberGizmoFrame,
+  applyGarmentNumberMasks,
+  applyGarmentNumberStyle,
   applyGarmentPrintAtlasSize,
   hydrateGarmentNameUniforms,
+  hydrateGarmentNumberUniforms,
 } from './garmentPrint/applyGarmentNames';
 export type { GarmentNameMaskState, GizmoFrameState } from './garmentPrint/applyGarmentNames';
 export { buildGizmoFrameUniforms } from './garmentPrint/buildGizmoFrameUniforms';

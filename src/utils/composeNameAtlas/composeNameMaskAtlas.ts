@@ -1,4 +1,4 @@
-import type { NameInstance } from '@store';
+import type { GarmentTextRenderInstance } from '@store';
 
 import { drawNameMaskGeometry } from '../drawNameOnAtlas/drawNameMaskGeometry';
 import { drawNameStrokeMaskGeometry } from '../drawNameOnAtlas/drawNameStrokeMaskGeometry';
@@ -8,7 +8,7 @@ import { NAME_SLOT_COUNT } from '../garmentPrint/nameSlotConstants';
 import { mergeMaskChannel } from './mergeMaskChannel';
 
 interface ComposeNameMaskAtlasInput {
-  instances: NameInstance[];
+  instances: GarmentTextRenderInstance[];
   fillCanvas?: HTMLCanvasElement;
   strokeCanvas?: HTMLCanvasElement;
   redrawFill?: boolean;
@@ -35,7 +35,7 @@ const ensureCanvasSize = (canvas: HTMLCanvasElement, width: number, height: numb
   }
 };
 
-const resolveNameStampSize = (instances: NameInstance[]): StampPixelSize => {
+const resolveNameStampSize = (instances: GarmentTextRenderInstance[]): StampPixelSize => {
   const measureCanvas = document.createElement('canvas');
   const measureCtx = measureCanvas.getContext('2d');
   if (!measureCtx) return { width: 1, height: 1 };
