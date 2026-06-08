@@ -1,14 +1,15 @@
 'use client';
 
-import { Flex } from '@atoms';
+import { Flex, Text } from '@atoms';
 import { ColorControl, RangeControl, ToggleControl } from '@molecules';
-import { DISABLED_PART_GRADIENT, useGarmentColor } from '@store';
+import { DEFAULT_COLOR, DISABLED_PART_GRADIENT, useGarmentColor } from '@store';
 
 interface ShedingControlProps {
   partId: string;
 }
 
 const ShedingControl = ({ partId }: ShedingControlProps) => {
+  const baseColor = useGarmentColor((state) => state.byPart[partId] ?? DEFAULT_COLOR);
   const gradient = useGarmentColor((state) => state.gradientsByPart[partId] ?? DISABLED_PART_GRADIENT);
   const setPartGradientEnabled = useGarmentColor((state) => state.setPartGradientEnabled);
   const setPartGradientColor2 = useGarmentColor((state) => state.setPartGradientColor2);
@@ -23,6 +24,10 @@ const ShedingControl = ({ partId }: ShedingControlProps) => {
 
       {gradient.enabled && (
         <>
+          <Flex className="gap-2 items-start flex-col">
+            <Text variant="configurator_part_label">Colore primario</Text>
+            <div className="w-10 h-10 rounded-[3px] shrink-0 border-[.3px] border-gray-30 transition-colors duration-150" style={{ background: baseColor }} />
+          </Flex>
           <ColorControl
             label="Colore sfumatura"
             color={gradient.color2}

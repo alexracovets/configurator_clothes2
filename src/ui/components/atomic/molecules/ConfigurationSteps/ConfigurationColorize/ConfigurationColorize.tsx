@@ -1,9 +1,9 @@
 'use client';
 
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 
-import { AccordionAtom, Flex, Text } from '@atoms';
-import { ColorControl } from '@molecules';
+import { AccordionAtom, Flex } from '@atoms';
+import { ColorControl, PartColorSwitch } from '@molecules';
 
 import { DEFAULT_COLOR, useConfiguratorProduct, useGarmentColor } from '@store';
 
@@ -22,22 +22,24 @@ PartColorControl.displayName = 'PartColorControl';
 
 const ConfigurationColorize = () => {
   const product = useConfiguratorProduct((state) => state.product);
+  const byPart = useGarmentColor((state) => state.byPart);
   const parts = product.parts;
+
+  const items = useMemo(
+    () =>
+      parts.map((part) => ({
+        value: part.id,
+        trigger: <PartColorSwitch color={byPart[part.id] ?? DEFAULT_COLOR} label={part.label} />,
+        content: <PartColorControl partId={part.id} />,
+      })),
+    [byPart, parts],
+  );
 
   if (parts.length === 0) return null;
 
   return (
     <Flex variant="step_design">
-      <AccordionAtom
-        key={product.path}
-        items={parts.map((part) => ({
-          value: part.id,
-          trigger: <Text>{part.label}</Text>,
-          content: <PartColorControl partId={part.id} />,
-        }))}
-        defaultValue={[parts[0].id]}
-        multiple
-      />
+      <AccordionAtom key={product.path} items={items} defaultValue={[parts[0].id]} multiple className="gap-3" />
     </Flex>
   );
 };
