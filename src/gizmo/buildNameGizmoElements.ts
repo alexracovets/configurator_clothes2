@@ -21,7 +21,7 @@ const buildNameGizmoElements = ({ product, instances, fontSizeMin, fontSizeMax }
   const partsById = Object.fromEntries(product.parts.map((part) => [part.id, part]));
 
   return instances.flatMap((instance) => {
-    if (!instance.text.trim()) return [];
+    if (!instance.showGizmo || !instance.text.trim()) return [];
 
     const slotIndex = instances.slice(0, NAME_SLOT_COUNT).findIndex((item) => item.id === instance.id);
     if (slotIndex < 0) return [];

@@ -239,8 +239,8 @@
           "uv": { "x": 0.36, "y": 0.36 },
           "rotation": 90,
           "fontSize": 80,
-          "interactive": true,
-          "interactive_show": true
+          "show_frame": true,
+          "show_gizmo": true
         },
         {
           "label": "Bottom Back",
@@ -248,8 +248,8 @@
           "uv": { "x": 0.1, "y": 0.35 },
           "rotation": 90,
           "fontSize": 80,
-          "interactive": true,
-          "interactive_show": true
+          "show_frame": true,
+          "show_gizmo": false
         }
       ],
       "numberPositions": [
@@ -259,7 +259,8 @@
           "uv": { "x": 0.4, "y": 0.5 },
           "rotation": -90,
           "fontSize": 128,
-          "interactive": false
+          "show_frame": true,
+          "show_gizmo": false
         },
         {
           "label": "Front Right",
@@ -267,7 +268,8 @@
           "uv": { "x": 0.32, "y": 0.72 },
           "rotation": -90,
           "fontSize": 128,
-          "interactive": false
+          "show_frame": true,
+          "show_gizmo": false
         },
         {
           "label": "Back",
@@ -275,7 +277,8 @@
           "uv": { "x": 0.5, "y": 0.5 },
           "rotation": 90,
           "fontSize": 420,
-          "interactive": false
+          "show_frame": true,
+          "show_gizmo": false
         }
       ],
       "logoPositions": [
@@ -285,8 +288,8 @@
           "src": "/logo/logo_short.png",
           "rotation": -90,
           "scale": 1,
-          "default": true,
-          "interactive": false
+          "show_frame": true,
+          "show_gizmo": false
         },
         {
           "label": "Logo Back",
@@ -294,8 +297,8 @@
           "src": "/logo/logo_vertical.png",
           "rotation": -90,
           "scale": 1,
-          "default": true,
-          "interactive": false
+          "show_frame": true,
+          "show_gizmo": false
         }
       ]
     },

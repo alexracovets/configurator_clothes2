@@ -10,6 +10,8 @@ interface GarmentNameMaskState {
 interface GizmoFrameState {
   enabled: number;
   half: Array<{ x: number; y: number }>;
+  frameActive: number[];
+  gizmoActive: number[];
 }
 
 let pendingNameMasks: GarmentNameMaskState | null = null;
@@ -104,6 +106,20 @@ const applyGizmoFrameToUniforms = (material: MeshStandardMaterial, state: GizmoF
   if (halfUniform) {
     state.half.forEach((half, index) => {
       halfUniform.value[index]?.set(half.x, half.y);
+    });
+  }
+
+  const frameActiveUniform = material.userData.uNameGizmoFrameActiveUniform as { value: number[] } | undefined;
+  if (frameActiveUniform) {
+    state.frameActive.forEach((value, index) => {
+      frameActiveUniform.value[index] = value;
+    });
+  }
+
+  const gizmoActiveUniform = material.userData.uNameGizmoButtonsActiveUniform as { value: number[] } | undefined;
+  if (gizmoActiveUniform) {
+    state.gizmoActive.forEach((value, index) => {
+      gizmoActiveUniform.value[index] = value;
     });
   }
 };

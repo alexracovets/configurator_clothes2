@@ -48,7 +48,9 @@ interface TextPositionConfig {
   uv: UvPoint;
   rotation: number;
   fontSize: number;
-  interactive: boolean;
+  interactive?: boolean;
+  show_frame?: boolean;
+  show_gizmo?: boolean;
 }
 
 interface TextDefaultsConfig {

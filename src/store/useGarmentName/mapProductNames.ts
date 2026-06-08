@@ -7,6 +7,8 @@ interface NamePosition {
   uv: { x: number; y: number };
   rotation: number;
   fontSize: number;
+  showFrame: boolean;
+  showGizmo: boolean;
   interactive: boolean;
 }
 
@@ -23,6 +25,8 @@ interface NameInstance {
   textColor: string;
   strokeColor: string;
   strokeWidth: number;
+  showFrame: boolean;
+  showGizmo: boolean;
 }
 
 interface NamePreview {
@@ -64,7 +68,9 @@ const mapProductNamePositions = (product: GarmentConfig): NamePosition[] =>
     uv: position.uv,
     rotation: position.rotation,
     fontSize: position.fontSize,
-    interactive: position.interactive,
+    showFrame: position.show_frame ?? true,
+    showGizmo: position.show_gizmo ?? position.interactive === true,
+    interactive: position.interactive ?? true,
   }));
 
 const createNameInstance = (product: GarmentConfig, position: NamePosition, id: string): NameInstance => {
@@ -83,6 +89,8 @@ const createNameInstance = (product: GarmentConfig, position: NamePosition, id: 
     textColor: defaults.textColor,
     strokeColor: defaults.strokeColor,
     strokeWidth: defaults.strokeWidth,
+    showFrame: position.showFrame,
+    showGizmo: position.showGizmo,
   };
 };
 

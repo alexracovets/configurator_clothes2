@@ -58,6 +58,8 @@ uniform vec4 uNamePartBounds[4];
 uniform vec3 uNameTextColors[4];
 uniform vec3 uNameStrokeColors[4];
 uniform float uNameGizmoEnabled;
+uniform float uNameGizmoFrameActive[4];
+uniform float uNameGizmoButtonsActive[4];
 uniform float uNameGizmoButtonsReveal[4];
 uniform vec2 uNameGizmoHalf[4];
 uniform sampler2D uNameGizmoIcons;
