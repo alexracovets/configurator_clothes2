@@ -19,6 +19,7 @@ const useGizmoSelection = ({ elements, atlasSize }: UseGizmoSelectionOptions) =>
   const selectedInstanceId = useGarmentName((state) => state.selectedInstanceId);
   const setSelectedInstance = useGarmentName((state) => state.setSelectedInstance);
   const clearSelectedInstance = useGarmentName((state) => state.clearSelectedInstance);
+  const bringInstanceToFront = useGarmentName((state) => state.bringInstanceToFront);
 
   const raycaster = useThree((state) => state.raycaster);
   const camera = useThree((state) => state.camera);
@@ -41,6 +42,7 @@ const useGizmoSelection = ({ elements, atlasSize }: UseGizmoSelectionOptions) =>
     scene,
     setSelectedInstance,
     clearSelectedInstance,
+    bringInstanceToFront,
     invalidate,
   });
 
@@ -56,6 +58,7 @@ const useGizmoSelection = ({ elements, atlasSize }: UseGizmoSelectionOptions) =>
       scene,
       setSelectedInstance,
       clearSelectedInstance,
+      bringInstanceToFront,
       invalidate,
     };
   });
@@ -73,15 +76,25 @@ const useGizmoSelection = ({ elements, atlasSize }: UseGizmoSelectionOptions) =>
       if (event.button !== 0) return;
       if (ctx.current.activeStep !== NAME_STEP) return;
 
-      const target = resolveGizmoPointerTarget(event.clientX, event.clientY, ctx.current.elements, {
-        raycaster: ctx.current.raycaster,
-        camera: ctx.current.camera,
-        scene: ctx.current.scene,
-        domElement: ctx.current.gl.domElement,
-        atlasSize: ctx.current.atlasSize,
-      });
+      const target = resolveGizmoPointerTarget(
+        event.clientX,
+        event.clientY,
+        ctx.current.elements,
+        {
+          raycaster: ctx.current.raycaster,
+          camera: ctx.current.camera,
+          scene: ctx.current.scene,
+          domElement: ctx.current.gl.domElement,
+          atlasSize: ctx.current.atlasSize,
+        },
+        {
+          selectedInstanceId: ctx.current.selectedInstanceId,
+          requireVisibleButtons: true,
+        },
+      );
 
       if (target?.onFrame) {
+        ctx.current.bringInstanceToFront(target.element.id);
         ctx.current.setSelectedInstance(target.element.id);
         ctx.current.invalidate();
         return;

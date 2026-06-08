@@ -44,7 +44,7 @@ const ensureRevealAnimation = () => {
   rafId = requestAnimationFrame(stepRevealAnimation);
 };
 
-const setGizmoButtonsRevealTarget = (slotIndex: number) => {
+const setGizmoButtonsRevealTarget = (slotIndex: number, snap = false) => {
   let changed = false;
 
   for (let index = 0; index < NAME_SLOT_COUNT; index += 1) {
@@ -53,9 +53,19 @@ const setGizmoButtonsRevealTarget = (slotIndex: number) => {
       revealTarget[index] = next;
       changed = true;
     }
+    if (snap && revealCurrent[index] !== next) {
+      revealCurrent[index] = next;
+      changed = true;
+    }
   }
 
   if (!changed) return;
+
+  if (snap) {
+    notify();
+    return;
+  }
+
   ensureRevealAnimation();
 };
 

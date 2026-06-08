@@ -2,10 +2,17 @@
 
 import { useEffect, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
-import { Vector2 } from 'three';
 
 import type { PrintGizmoElement } from '@gizmo';
-import { clearGizmoButtonHover, getGizmoButtonReveal, getGizmoHoverCursor, hitTestGizmoButton, isGizmoButtonDragActive, setGizmoButtonHover } from '@gizmo';
+import {
+  clearGizmoButtonHover,
+  getGizmoButtonReveal,
+  getGizmoHoverCursor,
+  isGizmoButtonDragActive,
+  resolveGizmoPointerTarget,
+  setGizmoButtonHover,
+  toWorldPx,
+} from '@gizmo';
 import { useGarmentName } from '@store';
 
 interface UseGizmoButtonHoverOptions {
@@ -19,51 +26,67 @@ const useGizmoButtonHover = ({ elements, atlasSize }: UseGizmoButtonHoverOptions
   const camera = useThree((state) => state.camera);
   const gl = useThree((state) => state.gl);
   const scene = useThree((state) => state.scene);
+  const invalidate = useThree((state) => state.invalidate);
 
-  const ctx = useRef({ elements, atlasSize, selectedInstanceId, raycaster, camera, gl, scene });
+  const ctx = useRef({
+    elements,
+    atlasSize,
+    selectedInstanceId,
+    raycaster,
+    camera,
+    gl,
+    scene,
+    invalidate,
+  });
+
   useEffect(() => {
-    ctx.current = { elements, atlasSize, selectedInstanceId, raycaster, camera, gl, scene };
+    ctx.current = {
+      elements,
+      atlasSize,
+      selectedInstanceId,
+      raycaster,
+      camera,
+      gl,
+      scene,
+      invalidate,
+    };
   });
 
   useEffect(() => {
     const dom = gl.domElement;
 
-    const raycastUv = (clientX: number, clientY: number) => {
-      const c = ctx.current;
-      const rect = c.gl.domElement.getBoundingClientRect();
-      const x = ((clientX - rect.left) / rect.width) * 2 - 1;
-      const y = -((clientY - rect.top) / rect.height) * 2 + 1;
-      c.raycaster.setFromCamera(new Vector2(x, y), c.camera);
-      const hits = c.raycaster.intersectObject(c.scene, true).filter((item) => item.uv);
-
-      for (const element of c.elements) {
-        const hit = hits.find((item) => element.meshNames.includes(item.object.name));
-        if (hit?.uv) return { uv: { x: hit.uv.x, y: hit.uv.y }, element };
-      }
-
-      return null;
-    };
-
-    const uvToWorldPx = (uv: { x: number; y: number }, element: PrintGizmoElement) => ({
-      x: (uv.x - element.uv.x) * ctx.current.atlasSize.width,
-      y: (uv.y - element.uv.y) * ctx.current.atlasSize.height,
-    });
-
     const onPointerMove = (event: PointerEvent) => {
       if (isGizmoButtonDragActive()) return;
 
-      const result = raycastUv(event.clientX, event.clientY);
-      if (!result) {
+      const c = ctx.current;
+      const target = resolveGizmoPointerTarget(
+        event.clientX,
+        event.clientY,
+        c.elements,
+        {
+          raycaster: c.raycaster,
+          camera: c.camera,
+          scene: c.scene,
+          domElement: c.gl.domElement,
+          atlasSize: c.atlasSize,
+        },
+        {
+          selectedInstanceId: c.selectedInstanceId,
+          requireVisibleButtons: true,
+        },
+      );
+
+      if (!target) {
         dom.style.cursor = '';
         clearGizmoButtonHover();
         return;
       }
 
-      const world = uvToWorldPx(result.uv, result.element);
-      const buttonsVisible = ctx.current.selectedInstanceId === result.element.id && getGizmoButtonReveal(result.element.slotIndex) > 0.5;
-      const buttonHit = buttonsVisible ? hitTestGizmoButton(world, result.element) : null;
-      dom.style.cursor = getGizmoHoverCursor(world, result.element, buttonsVisible) ?? '';
-      setGizmoButtonHover(buttonHit);
+      const world = toWorldPx(target.uv, target.element, c.atlasSize);
+      const buttonsVisible = c.selectedInstanceId === target.element.id && getGizmoButtonReveal(target.element.slotIndex) > 0.5;
+
+      dom.style.cursor = getGizmoHoverCursor(world, target.element, buttonsVisible) ?? '';
+      setGizmoButtonHover(target.buttonHit);
     };
 
     const onPointerLeave = () => {

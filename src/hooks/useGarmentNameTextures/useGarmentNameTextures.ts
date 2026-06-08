@@ -85,6 +85,8 @@ const useGarmentNameTextures = () => {
   const stampSizeRef = useRef<StampPixelSize>(DEFAULT_STAMP_SIZE);
   const maskGenerationRef = useRef(0);
   const prevFillSignatureRef = useRef('');
+  const prevSelectedSlotRef = useRef(-1);
+  const prevSelectedIdRef = useRef<string | null>(null);
 
   const instancesForRender = useMemo(() => resolveInstancesForRender(nameInstances, namePreview), [nameInstances, namePreview]);
   const selectedSlotIndex = useMemo(() => {
@@ -174,8 +176,17 @@ const useGarmentNameTextures = () => {
   }, [activeStep, getMaterials, gizmoIcons, instancesForRender, invalidate, product.parts]);
 
   useEffect(() => {
-    setGizmoButtonsRevealTarget(selectedSlotIndex);
-  }, [selectedSlotIndex]);
+    const snap =
+      prevSelectedIdRef.current === selectedInstanceId &&
+      prevSelectedSlotRef.current !== selectedSlotIndex &&
+      prevSelectedSlotRef.current >= 0 &&
+      selectedSlotIndex >= 0;
+
+    prevSelectedIdRef.current = selectedInstanceId;
+    prevSelectedSlotRef.current = selectedSlotIndex;
+
+    setGizmoButtonsRevealTarget(selectedSlotIndex, snap);
+  }, [selectedInstanceId, selectedSlotIndex]);
 
   useEffect(() => {
     if (activeStep !== NAME_STEP) {

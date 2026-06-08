@@ -32,7 +32,7 @@ const PrintGizmoLayer = memo(() => {
   return (
     <group>
       {elements.map((element) => (
-        <PrintGizmoInstance key={element.id} element={element} />
+        <PrintGizmoInstance key={element.id} element={element} elements={elements} />
       ))}
     </group>
   );

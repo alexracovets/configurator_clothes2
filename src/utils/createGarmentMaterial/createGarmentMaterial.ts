@@ -136,7 +136,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       .replace('#include <tonemapping_fragment>', `#include <tonemapping_fragment>\n${garmentGizmoLightsFragment}`);
   };
 
-  material.customProgramCacheKey = () => 'garment-pbr-print-v43-gizmo-buttons-reveal';
+  material.customProgramCacheKey = () => 'garment-pbr-print-v45-gizmo-slot-z-order';
 };
 
 const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMaterial, meshName = ''): MeshStandardMaterial => {

@@ -9,7 +9,7 @@ export {
 } from './gizmoButtonHover';
 export { getGizmoButtonReveal, getGizmoButtonsRevealUniforms, setGizmoButtonsRevealTarget, subscribeGizmoButtonReveal } from './gizmoButtonReveal';
 export { GIZMO_CORNERS, getGizmoHoverCursor, hitTestGizmoButton, hitTestGizmoFrame } from './hitTestGizmoButton';
-export { resolveGizmoPointerTarget } from './resolveGizmoPointerTarget';
+export { raycastGizmoUv, resolveGizmoPointerTarget, toWorldPx } from './resolveGizmoPointerTarget';
 export { useGizmoIconAtlas } from './useGizmoIconAtlas';
 export type { GizmoButtonHoverTarget } from './gizmoButtonHover';
 export type { GizmoButtonHit } from './hitTestGizmoButton';

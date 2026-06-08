@@ -21,6 +21,7 @@ interface GarmentNameState {
   updateInstance: (id: string, patch: Partial<NameInstance>) => void;
   setSelectedInstance: (id: string | null) => void;
   clearSelectedInstance: () => void;
+  bringInstanceToFront: (id: string) => void;
   setPreview: (instanceId: string, patch: NamePreview['patch']) => void;
   clearPreview: () => void;
   getInstancesForRender: () => NameInstance[];
@@ -87,6 +88,18 @@ const useGarmentName = create<GarmentNameState>((set, get) => ({
   },
   clearSelectedInstance: () => {
     set({ selectedInstanceId: null });
+  },
+  bringInstanceToFront: (id) => {
+    set((state) => {
+      const index = state.instances.findIndex((instance) => instance.id === id);
+      if (index < 0 || index === state.instances.length - 1) return state;
+
+      const next = [...state.instances];
+      const [instance] = next.splice(index, 1);
+      next.push(instance);
+
+      return { instances: next };
+    });
   },
   updateInstance: (id, patch) => {
     set((state) => ({
