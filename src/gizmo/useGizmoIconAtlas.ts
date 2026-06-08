@@ -8,7 +8,10 @@ import { CanvasTexture, SRGBColorSpace, type Texture } from 'three';
 const ICON_ORDER = ['duplicate', 'delete', 'rotate', 'scale'] as const;
 const CELL = 128;
 const CX = CELL / 2;
-const RADIUS = 52;
+// Radius 62 → local-px radius = 62 * (GIZMO_BTN_HALF/CX) = 62*120/64 ≈ 116 local-px.
+// The frame corner sits √(80²+80²) ≈ 113 local-px from the button centre, so the disc
+// naturally covers the frame corner without any frame suppression needed.
+const RADIUS = 62;
 
 const drawCircle = (ctx: CanvasRenderingContext2D, ox: number) => {
   ctx.beginPath();

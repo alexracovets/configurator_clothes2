@@ -123,8 +123,14 @@ vec2 garmentNameToLocalPxNoRot( vec2 worldUv, vec2 anchor, float scale ) {
   return deltaPx / max( scale, 0.001 );
 }
 
+// Half button size + outset in reference px. Must match BUTTON_STAMP_PX/2 and HANDLE_OUTSET_PX in PrintGizmoInstance.
+// Button center is placed GIZMO_BTN_OUTSET px past the frame corner so the circle sits right on the corner.
+const float GIZMO_BTN_HALF = 120.0;
+const float GIZMO_BTN_OUTSET = 80.0;
+
 // Frame is drawn in world UV space (no rotation) so it acts as an AABB around the rotated text.
 // Border alternates black / white with no transparent gap.
+// The button disc (radius GIZMO_BTN_DISC_R) is composited on top and naturally covers the frame corner.
 vec4 garmentGizmoFrameColor( vec2 worldUv, vec2 anchor, float scale, vec2 halfPx, float enabled, float insidePart ) {
   if ( enabled < 0.5 || insidePart < 0.5 ) return vec4( 0.0 );
   vec2 localPx = garmentNameToLocalPxNoRot( worldUv, anchor, scale );
@@ -134,10 +140,6 @@ vec4 garmentGizmoFrameColor( vec2 worldUv, vec2 anchor, float scale, vec2 halfPx
   vec3 col = mix( vec3( 1.0 ), vec3( 0.10, 0.11, 0.13 ), dash );
   return vec4( col, border );
 }
-
-// Half button size + outset in reference px. Must match BUTTON_STAMP_PX/2 and HANDLE_OUTSET_PX in PrintGizmoInstance.
-const float GIZMO_BTN_HALF = 120.0;
-const float GIZMO_BTN_OUTSET = 34.0;
 
 vec4 garmentGizmoIconCell( sampler2D icons, vec2 localPx, vec2 cornerCenter, float cell ) {
   vec2 d = ( localPx - cornerCenter ) / ( 2.0 * GIZMO_BTN_HALF ) + 0.5;

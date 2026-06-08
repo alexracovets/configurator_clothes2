@@ -16,7 +16,7 @@ interface UsePrintGizmoDragOptions {
 
 // Must match the shader constants in garmentShaders.ts (GIZMO_BTN_HALF / GIZMO_BTN_OUTSET).
 const BUTTON_HALF_PX = 120;
-const BUTTON_OUTSET_PX = 34;
+const BUTTON_OUTSET_PX = 80;
 
 // Corner sign → tool. Matches the icon cells painted by the shader.
 const CORNERS = [
@@ -118,10 +118,14 @@ const usePrintGizmoDrag = ({ element, atlasSize }: UsePrintGizmoDragOptions) => 
 
       const local = uvToLocalPx(uv);
       const el = ctx.current.element;
-      const extX = el.half.x + BUTTON_OUTSET_PX;
-      const extY = el.half.y + BUTTON_OUTSET_PX;
 
-      const corner = CORNERS.find(({ sx, sy }) => Math.hypot(local.x - sx * extX, local.y - sy * extY) <= BUTTON_HALF_PX);
+      // Hit-test is centred at the button position (frame corner + outset in each axis).
+      // ±BUTTON_HALF_PX square matches the visual icon cell drawn by the shader.
+      const corner = CORNERS.find(({ sx, sy }) => {
+        const cx = Math.abs(local.x - sx * (el.half.x + BUTTON_OUTSET_PX));
+        const cy = Math.abs(local.y - sy * (el.half.y + BUTTON_OUTSET_PX));
+        return cx <= BUTTON_HALF_PX && cy <= BUTTON_HALF_PX;
+      });
       const onBody = Math.abs(local.x) <= el.half.x && Math.abs(local.y) <= el.half.y;
       if (!corner && !onBody) return;
 
