@@ -240,7 +240,7 @@
           "rotation": 90,
           "fontSize": 80,
           "show_frame": true,
-          "show_gizmo": true
+          "show_gizmo": false
         },
         {
           "label": "Bottom Back",
