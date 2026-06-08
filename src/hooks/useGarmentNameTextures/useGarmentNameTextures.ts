@@ -79,20 +79,6 @@ const buildStyleSignature = (instances: GarmentTextRenderInstance[]) =>
     })),
   );
 
-const buildGizmoSignature = (instances: GarmentTextRenderInstance[]) =>
-  JSON.stringify(
-    instances.map((instance) => ({
-      text: instance.text,
-      font: instance.font,
-      fontSize: instance.fontSize,
-      rotation: instance.rotation,
-      placementRotation: instance.placementRotation,
-      showGizmo: instance.showGizmo,
-      showFrame: instance.showFrame,
-      partId: instance.partId,
-    })),
-  );
-
 const stampSizeChanged = (previous: StampPixelSize, next: StampPixelSize) => previous.width !== next.width || previous.height !== next.height;
 
 const useGarmentNameTextures = () => {
@@ -150,12 +136,10 @@ const useGarmentNameTextures = () => {
   const nameFillSignature = useMemo(() => buildFillSignature(nameInstancesForRender), [nameInstancesForRender]);
   const nameStrokeSignature = useMemo(() => buildStrokeSignature(nameInstancesForRender), [nameInstancesForRender]);
   const nameStyleSignature = useMemo(() => buildStyleSignature(nameInstancesForRender), [nameInstancesForRender]);
-  const nameGizmoSignature = useMemo(() => buildGizmoSignature(nameInstancesForRender), [nameInstancesForRender]);
 
   const numberFillSignature = useMemo(() => buildFillSignature(numberInstancesForRender), [numberInstancesForRender]);
   const numberStrokeSignature = useMemo(() => buildStrokeSignature(numberInstancesForRender), [numberInstancesForRender]);
   const numberStyleSignature = useMemo(() => buildStyleSignature(numberInstancesForRender), [numberInstancesForRender]);
-  const numberGizmoSignature = useMemo(() => buildGizmoSignature(numberInstancesForRender), [numberInstancesForRender]);
 
   const atlasSize = useMemo(() => resolvePrintAtlasSize(product), [product]);
 
@@ -295,17 +279,7 @@ const useGarmentNameTextures = () => {
     }
 
     invalidate();
-  }, [
-    activeStep,
-    getMaterials,
-    gizmoIcons,
-    nameGizmoSignature,
-    nameInstancesForRender,
-    numberGizmoSignature,
-    numberInstancesForRender,
-    invalidate,
-    product.parts,
-  ]);
+  }, [activeStep, getMaterials, gizmoIcons, nameInstancesForRender, numberInstancesForRender, invalidate, product.parts]);
 
   useEffect(() => {
     if (activeStep !== NAME_STEP) return;
@@ -369,7 +343,7 @@ const useGarmentNameTextures = () => {
       applyNameMasksToMaterials(nameFillTextureRef.current!, nameStrokeTextureRef.current!);
       applyNameStyleToMaterials(stampSize);
     },
-    [applyNameMasksToMaterials, applyNameStyleToMaterials, ensureMaskResources, isNameReady, nameInstancesForRender, product.path],
+    [applyNameMasksToMaterials, applyNameStyleToMaterials, ensureMaskResources, isNameReady, nameInstancesForRender],
   );
 
   const updateNumberMasks = useCallback(
@@ -414,7 +388,7 @@ const useGarmentNameTextures = () => {
       applyNumberMasksToMaterials(numberFillTextureRef.current!, numberStrokeTextureRef.current!);
       applyNumberStyleToMaterials(stampSize);
     },
-    [applyNumberMasksToMaterials, applyNumberStyleToMaterials, ensureMaskResources, isNumberReady, numberInstancesForRender, product.path],
+    [applyNumberMasksToMaterials, applyNumberStyleToMaterials, ensureMaskResources, isNumberReady, numberInstancesForRender],
   );
 
   useEffect(() => {
