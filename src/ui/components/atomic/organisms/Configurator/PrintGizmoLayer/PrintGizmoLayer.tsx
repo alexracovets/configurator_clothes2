@@ -3,7 +3,9 @@
 import { memo, useMemo } from 'react';
 
 import { buildNameGizmoElements } from '@gizmo';
+import { useGizmoButtonHover } from '@hooks';
 import { resolveNameLimits, useConfigurationControl, useConfiguratorProduct, useGarmentName } from '@store';
+import { resolvePrintAtlasSize } from '@utils';
 
 import { PrintGizmoInstance } from './PrintGizmoInstance';
 
@@ -20,6 +22,9 @@ const PrintGizmoLayer = memo(() => {
     if (activeStep !== NAME_STEP || !limits) return [];
     return buildNameGizmoElements({ product, instances, fontSizeMin: limits.fontSizeMin, fontSizeMax: limits.fontSizeMax });
   }, [activeStep, instances, limits, product]);
+
+  const atlasSize = useMemo(() => resolvePrintAtlasSize(product), [product]);
+  useGizmoButtonHover({ elements, atlasSize });
 
   if (elements.length === 0) return null;
 

@@ -121,6 +121,16 @@ const applyGarmentGizmoIcons = (material: MeshStandardMaterial, texture: Texture
   if (iconsUniform) iconsUniform.value = texture;
 };
 
+const applyGarmentGizmoHover = (material: MeshStandardMaterial, hover: { slot: number; corner: number; scale: number }) => {
+  const slotUniform = material.userData.uNameGizmoHoverSlotUniform as { value: number } | undefined;
+  const cornerUniform = material.userData.uNameGizmoHoverCornerUniform as { value: number } | undefined;
+  const scaleUniform = material.userData.uNameGizmoHoverScaleUniform as { value: number } | undefined;
+
+  if (slotUniform) slotUniform.value = hover.slot;
+  if (cornerUniform) cornerUniform.value = hover.corner;
+  if (scaleUniform) scaleUniform.value = hover.scale;
+};
+
 const hydrateGarmentNameUniforms = (
   material: MeshStandardMaterial,
   uniforms: {
@@ -178,5 +188,13 @@ const hydrateGarmentNameUniforms = (
   }
 };
 
-export { applyGarmentGizmoFrame, applyGarmentGizmoIcons, applyGarmentNameMasks, applyGarmentNameStyle, applyGarmentPrintAtlasSize, hydrateGarmentNameUniforms };
+export {
+  applyGarmentGizmoFrame,
+  applyGarmentGizmoHover,
+  applyGarmentGizmoIcons,
+  applyGarmentNameMasks,
+  applyGarmentNameStyle,
+  applyGarmentPrintAtlasSize,
+  hydrateGarmentNameUniforms,
+};
 export type { GarmentNameMaskState, GizmoFrameState };

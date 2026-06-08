@@ -3,6 +3,7 @@ import type { NameInstance } from '@store';
 
 import { measureNameGizmoHalf } from '../utils/drawNameOnAtlas/measureNameStampBounds';
 import { NAME_REFERENCE_FONT_SIZE } from '../utils/garmentPrint/nameStampConstants';
+import { NAME_SLOT_COUNT } from '../utils/garmentPrint/nameSlotConstants';
 
 import type { PrintGizmoElement } from './types';
 
@@ -22,6 +23,9 @@ const buildNameGizmoElements = ({ product, instances, fontSizeMin, fontSizeMax }
   return instances.flatMap((instance) => {
     if (!instance.text.trim()) return [];
 
+    const slotIndex = instances.slice(0, NAME_SLOT_COUNT).findIndex((item) => item.id === instance.id);
+    if (slotIndex < 0) return [];
+
     const part = partsById[instance.partId];
     if (!part) return [];
 
@@ -37,6 +41,7 @@ const buildNameGizmoElements = ({ product, instances, fontSizeMin, fontSizeMax }
       {
         id: instance.id,
         partId: instance.partId,
+        slotIndex,
         meshNames: part.meshNames,
         uv: instance.uv,
         rotation: instance.rotation,

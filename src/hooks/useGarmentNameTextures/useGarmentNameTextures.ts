@@ -5,12 +5,13 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 import type { Texture } from 'three';
 
-import { useGizmoIconAtlas } from '@gizmo';
+import { getGizmoHoverUniforms, subscribeGizmoButtonHover, useGizmoIconAtlas } from '@gizmo';
 import { useGarmentMaterialRegistry } from '@providers';
 import { resolveInstancesForRender, useConfigurationControl, useConfiguratorProduct, useGarmentName } from '@store';
 import type { NameInstance } from '@store';
 import {
   applyGarmentGizmoFrame,
+  applyGarmentGizmoHover,
   applyGarmentGizmoIcons,
   applyGarmentNameMasks,
   applyGarmentNameStyle,
@@ -220,6 +221,21 @@ const useGarmentNameTextures = () => {
 
     applyGizmoFrame();
   }, [applyGizmoFrame, nameProductPath, product.path]);
+
+  useEffect(() => {
+    const applyHover = () => {
+      const hover = getGizmoHoverUniforms();
+      for (const part of product.parts) {
+        for (const material of getMaterials(part.id)) {
+          applyGarmentGizmoHover(material, hover);
+        }
+      }
+      invalidate();
+    };
+
+    applyHover();
+    return subscribeGizmoButtonHover(applyHover);
+  }, [getMaterials, invalidate, product.parts]);
 
   useEffect(() => () => clearRuntime(), [clearRuntime]);
 };

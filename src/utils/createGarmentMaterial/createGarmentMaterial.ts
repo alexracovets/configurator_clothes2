@@ -64,6 +64,9 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     shader.uniforms.uNameGizmoEnabled = { value: 0 };
     shader.uniforms.uNameGizmoHalf = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Vector2(0, 0)) };
     shader.uniforms.uNameGizmoIcons = { value: emptyPrint };
+    shader.uniforms.uNameGizmoHoverSlot = { value: -1 };
+    shader.uniforms.uNameGizmoHoverCorner = { value: -1 };
+    shader.uniforms.uNameGizmoHoverScale = { value: 1 };
     shader.uniforms.uPatternMask0 = { value: printState?.patternMasks[0] ?? emptyPrint };
     shader.uniforms.uPatternMask1 = { value: printState?.patternMasks[1] ?? emptyPrint };
     shader.uniforms.uPatternColor0 = { value: new Color(printState?.patternColors[0] ?? '#000000') };
@@ -85,6 +88,9 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     material.userData.uNameGizmoEnabledUniform = shader.uniforms.uNameGizmoEnabled;
     material.userData.uNameGizmoHalfUniform = shader.uniforms.uNameGizmoHalf;
     material.userData.uNameGizmoIconsUniform = shader.uniforms.uNameGizmoIcons;
+    material.userData.uNameGizmoHoverSlotUniform = shader.uniforms.uNameGizmoHoverSlot;
+    material.userData.uNameGizmoHoverCornerUniform = shader.uniforms.uNameGizmoHoverCorner;
+    material.userData.uNameGizmoHoverScaleUniform = shader.uniforms.uNameGizmoHoverScale;
     material.userData.uPatternMask0Uniform = shader.uniforms.uPatternMask0;
     material.userData.uPatternMask1Uniform = shader.uniforms.uPatternMask1;
     material.userData.uPatternColor0Uniform = shader.uniforms.uPatternColor0;
@@ -116,7 +122,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       .replace('#include <roughnessmap_fragment>', garmentRoughnessFragment);
   };
 
-  material.customProgramCacheKey = () => 'garment-pbr-print-v35-gizmo-stroke-match';
+  material.customProgramCacheKey = () => 'garment-pbr-print-v38-gizmo-icon-alpha';
 };
 
 const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMaterial, meshName = ''): MeshStandardMaterial => {

@@ -4,9 +4,8 @@ import { useEffect, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 import { Vector2 } from 'three';
 
-import type { PrintGizmoElement } from '@gizmo';
+import { GIZMO_CORNERS, type GizmoButtonHit, hitTestGizmoButton, type PrintGizmoElement, setGizmoButtonDragActive } from '@gizmo';
 import { useGarmentName } from '@store';
-import { NAME_GIZMO_BTN_HALF_ATLAS, NAME_GIZMO_BTN_OUTSET_ATLAS } from '@utils';
 
 type DragMode = 'move' | 'rotate' | 'scale';
 
@@ -14,14 +13,6 @@ interface UsePrintGizmoDragOptions {
   element: PrintGizmoElement;
   atlasSize: { width: number; height: number };
 }
-
-// Corner sign → tool. Matches the icon cells painted by the shader.
-const CORNERS = [
-  { kind: 'duplicate', sx: -1, sy: 1 },
-  { kind: 'delete', sx: -1, sy: -1 },
-  { kind: 'rotate', sx: 1, sy: 1 },
-  { kind: 'scale', sx: 1, sy: -1 },
-] as const;
 
 const usePrintGizmoDrag = ({ element, atlasSize }: UsePrintGizmoDragOptions) => {
   const raycaster = useThree((state) => state.raycaster);
@@ -64,7 +55,7 @@ const usePrintGizmoDrag = ({ element, atlasSize }: UsePrintGizmoDragOptions) => 
       if (ctx.current.controls) ctx.current.controls.enabled = enabled;
     };
 
-    const startDrag = (mode: DragMode, clientX: number, clientY: number) => {
+    const startDrag = (mode: DragMode, clientX: number, clientY: number, buttonHit: GizmoButtonHit | null) => {
       const el = ctx.current.element;
       const instance = useGarmentName.getState().instances.find((item) => item.id === el.id);
       if (!instance) return;
@@ -78,6 +69,9 @@ const usePrintGizmoDrag = ({ element, atlasSize }: UsePrintGizmoDragOptions) => 
       const startAngle = grab ? Math.atan2(grab.y - centerUv.y, grab.x - centerUv.x) : 0;
 
       setControls(false);
+      if (buttonHit && (mode === 'rotate' || mode === 'scale')) {
+        setGizmoButtonDragActive(buttonHit);
+      }
 
       const onMove = (moveEvent: PointerEvent) => {
         const uv = raycastUv(moveEvent.clientX, moveEvent.clientY);
@@ -101,12 +95,15 @@ const usePrintGizmoDrag = ({ element, atlasSize }: UsePrintGizmoDragOptions) => 
       const onUp = () => {
         window.removeEventListener('pointermove', onMove);
         window.removeEventListener('pointerup', onUp);
+        window.removeEventListener('pointercancel', onUp);
+        setGizmoButtonDragActive(null);
         setControls(true);
         ctx.current.invalidate();
       };
 
       window.addEventListener('pointermove', onMove);
       window.addEventListener('pointerup', onUp);
+      window.addEventListener('pointercancel', onUp);
     };
 
     const onPointerDown = (event: PointerEvent) => {
@@ -114,17 +111,11 @@ const usePrintGizmoDrag = ({ element, atlasSize }: UsePrintGizmoDragOptions) => 
       const uv = raycastUv(event.clientX, event.clientY);
       if (!uv) return;
 
-      const world = uvToWorldPx(uv);
       const el = ctx.current.element;
+      const world = uvToWorldPx(uv);
+      const buttonHit = hitTestGizmoButton(world, el);
       const halfWorld = { x: el.half.x * el.scale, y: el.half.y * el.scale };
-
-      // Hit-test is centred at the button position (frame corner + fixed outset in atlas px).
-      // ±NAME_GIZMO_BTN_HALF_ATLAS square matches the visual icon cell drawn by the shader.
-      const corner = CORNERS.find(({ sx, sy }) => {
-        const cx = Math.abs(world.x - sx * (halfWorld.x + NAME_GIZMO_BTN_OUTSET_ATLAS));
-        const cy = Math.abs(world.y - sy * (halfWorld.y + NAME_GIZMO_BTN_OUTSET_ATLAS));
-        return cx <= NAME_GIZMO_BTN_HALF_ATLAS && cy <= NAME_GIZMO_BTN_HALF_ATLAS;
-      });
+      const corner = buttonHit ? GIZMO_CORNERS.find((item) => item.cornerIndex === buttonHit.cornerIndex) : undefined;
       const onBody = Math.abs(world.x) <= halfWorld.x && Math.abs(world.y) <= halfWorld.y;
       if (!corner && !onBody) return;
 
@@ -142,7 +133,7 @@ const usePrintGizmoDrag = ({ element, atlasSize }: UsePrintGizmoDragOptions) => 
         ctx.current.invalidate();
         return;
       }
-      startDrag(corner ? corner.kind : 'move', event.clientX, event.clientY);
+      startDrag(corner ? corner.kind : 'move', event.clientX, event.clientY, buttonHit ?? null);
     };
 
     dom.addEventListener('pointerdown', onPointerDown, { capture: true });

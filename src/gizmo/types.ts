@@ -3,6 +3,7 @@ type GizmoHandleKind = 'duplicate' | 'delete' | 'rotate' | 'scale';
 interface PrintGizmoElement {
   id: string;
   partId: string;
+  slotIndex: number;
   meshNames: string[];
   uv: { x: number; y: number };
   rotation: number;

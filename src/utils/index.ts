@@ -15,6 +15,7 @@ export { buildNameStyleUniforms } from './garmentPrint/buildNameStyleUniforms';
 export type { NameStyleUniforms } from './garmentPrint/buildNameStyleUniforms';
 export {
   applyGarmentGizmoFrame,
+  applyGarmentGizmoHover,
   applyGarmentGizmoIcons,
   applyGarmentNameMasks,
   applyGarmentNameStyle,
