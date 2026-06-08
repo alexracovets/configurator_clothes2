@@ -7,7 +7,7 @@ interface PrintGizmoElement {
   uv: { x: number; y: number };
   rotation: number;
   scale: number;
-  /** Half-size of the text box, in reference-font pixels (matches the shader frame). */
+  /** Half-size of the text box at reference font size; multiply by scale for atlas-px hit tests. */
   half: { x: number; y: number };
   fontSize: number;
   fontSizeMin: number;

@@ -116,7 +116,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       .replace('#include <roughnessmap_fragment>', garmentRoughnessFragment);
   };
 
-  material.customProgramCacheKey = () => 'garment-pbr-print-v32-gizmo-btn';
+  material.customProgramCacheKey = () => 'garment-pbr-print-v35-gizmo-stroke-match';
 };
 
 const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMaterial, meshName = ''): MeshStandardMaterial => {

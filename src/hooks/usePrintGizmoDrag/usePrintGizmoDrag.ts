@@ -6,6 +6,7 @@ import { Vector2 } from 'three';
 
 import type { PrintGizmoElement } from '@gizmo';
 import { useGarmentName } from '@store';
+import { NAME_GIZMO_BTN_HALF_ATLAS, NAME_GIZMO_BTN_OUTSET_ATLAS } from '@utils';
 
 type DragMode = 'move' | 'rotate' | 'scale';
 
@@ -13,10 +14,6 @@ interface UsePrintGizmoDragOptions {
   element: PrintGizmoElement;
   atlasSize: { width: number; height: number };
 }
-
-// Must match the shader constants in garmentShaders.ts (GIZMO_BTN_HALF / GIZMO_BTN_OUTSET).
-const BUTTON_HALF_PX = 120;
-const BUTTON_OUTSET_PX = 80;
 
 // Corner sign → tool. Matches the icon cells painted by the shader.
 const CORNERS = [
@@ -54,12 +51,13 @@ const usePrintGizmoDrag = ({ element, atlasSize }: UsePrintGizmoDragOptions) => 
       return hit?.uv ? { x: hit.uv.x, y: hit.uv.y } : null;
     };
 
-    // Convert a print-UV hit to the name's local px without rotation (matches the AABB frame in the shader).
-    const uvToLocalPx = (uv: { x: number; y: number }) => {
+    // Print-atlas px from anchor (matches garmentNameToWorldPx in the shader).
+    const uvToWorldPx = (uv: { x: number; y: number }) => {
       const el = ctx.current.element;
-      const dx = (uv.x - el.uv.x) * ctx.current.atlasSize.width;
-      const dy = (uv.y - el.uv.y) * ctx.current.atlasSize.height;
-      return { x: dx / el.scale, y: dy / el.scale };
+      return {
+        x: (uv.x - el.uv.x) * ctx.current.atlasSize.width,
+        y: (uv.y - el.uv.y) * ctx.current.atlasSize.height,
+      };
     };
 
     const setControls = (enabled: boolean) => {
@@ -116,17 +114,18 @@ const usePrintGizmoDrag = ({ element, atlasSize }: UsePrintGizmoDragOptions) => 
       const uv = raycastUv(event.clientX, event.clientY);
       if (!uv) return;
 
-      const local = uvToLocalPx(uv);
+      const world = uvToWorldPx(uv);
       const el = ctx.current.element;
+      const halfWorld = { x: el.half.x * el.scale, y: el.half.y * el.scale };
 
-      // Hit-test is centred at the button position (frame corner + outset in each axis).
-      // ±BUTTON_HALF_PX square matches the visual icon cell drawn by the shader.
+      // Hit-test is centred at the button position (frame corner + fixed outset in atlas px).
+      // ±NAME_GIZMO_BTN_HALF_ATLAS square matches the visual icon cell drawn by the shader.
       const corner = CORNERS.find(({ sx, sy }) => {
-        const cx = Math.abs(local.x - sx * (el.half.x + BUTTON_OUTSET_PX));
-        const cy = Math.abs(local.y - sy * (el.half.y + BUTTON_OUTSET_PX));
-        return cx <= BUTTON_HALF_PX && cy <= BUTTON_HALF_PX;
+        const cx = Math.abs(world.x - sx * (halfWorld.x + NAME_GIZMO_BTN_OUTSET_ATLAS));
+        const cy = Math.abs(world.y - sy * (halfWorld.y + NAME_GIZMO_BTN_OUTSET_ATLAS));
+        return cx <= NAME_GIZMO_BTN_HALF_ATLAS && cy <= NAME_GIZMO_BTN_HALF_ATLAS;
       });
-      const onBody = Math.abs(local.x) <= el.half.x && Math.abs(local.y) <= el.half.y;
+      const onBody = Math.abs(world.x) <= halfWorld.x && Math.abs(world.y) <= halfWorld.y;
       if (!corner && !onBody) return;
 
       // This pointer belongs to the gizmo — keep OrbitControls and other handlers out of it.

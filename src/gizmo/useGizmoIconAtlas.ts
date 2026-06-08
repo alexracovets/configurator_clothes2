@@ -8,18 +8,7 @@ import { CanvasTexture, SRGBColorSpace, type Texture } from 'three';
 const ICON_ORDER = ['duplicate', 'delete', 'rotate', 'scale'] as const;
 const CELL = 128;
 const CX = CELL / 2;
-// Radius 62 → local-px radius = 62 * (GIZMO_BTN_HALF/CX) = 62*120/64 ≈ 116 local-px.
-// The frame corner sits √(80²+80²) ≈ 113 local-px from the button centre, so the disc
-// naturally covers the frame corner without any frame suppression needed.
-const RADIUS = 62;
-
-const drawCircle = (ctx: CanvasRenderingContext2D, ox: number) => {
-  ctx.beginPath();
-  ctx.arc(ox + CX, CX, RADIUS, 0, Math.PI * 2);
-  ctx.fillStyle = '#ffffff';
-  ctx.fill();
-};
-
+// Icons only — white fill and dashed ring are painted in the garment shader (same stroke as text frame).
 const drawDuplicate = (ctx: CanvasRenderingContext2D, ox: number) => {
   ctx.strokeStyle = '#1a1a1a';
   ctx.lineWidth = 4.5;
@@ -83,9 +72,7 @@ const buildGizmoIconAtlas = (): Texture | null => {
   if (!ctx) return null;
 
   ICON_ORDER.forEach((kind, index) => {
-    const ox = index * CELL;
-    drawCircle(ctx, ox);
-    DRAWERS[kind](ctx, ox);
+    DRAWERS[kind](ctx, index * CELL);
   });
 
   const texture = new CanvasTexture(canvas);

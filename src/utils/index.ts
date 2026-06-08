@@ -23,6 +23,7 @@ export {
 } from './garmentPrint/applyGarmentNames';
 export type { GarmentNameMaskState, GizmoFrameState } from './garmentPrint/applyGarmentNames';
 export { buildGizmoFrameUniforms } from './garmentPrint/buildGizmoFrameUniforms';
+export { NAME_GIZMO_BTN_HALF_ATLAS, NAME_GIZMO_BTN_OUTSET_ATLAS } from './garmentPrint/nameStampConstants';
 export { applyGarmentPatternTints, applyGarmentPrint, emptyMaskPair, PATTERN_LAYER_COUNT } from './garmentPrint/applyGarmentPrint';
 export { getEmptyPrintTexture } from './garmentPrint/emptyPrintTexture';
 export type { GarmentPrintState, PatternColorPair, PatternMaskPair } from './garmentPrint/applyGarmentPrint';
