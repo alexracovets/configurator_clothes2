@@ -36,11 +36,14 @@ const resolveLogoDisplayScale = (instance: LogoInstance, naturalWidth: number, n
   return display.width / Math.max(reference.width, 1);
 };
 
-const resolveLogoGizmoHalf = (width: number, height: number, uploadRotationDeg: number) => {
-  const normalized = Math.abs(((uploadRotationDeg % 360) + 360) % 360);
+const resolveRotatedGizmoHalf = (half: { x: number; y: number }, contentRotationDeg: number) => {
+  const normalized = Math.abs(((contentRotationDeg % 360) + 360) % 360);
   const swap = normalized === 90 || normalized === 270;
-  return swap ? { x: height / 2, y: width / 2 } : { x: width / 2, y: height / 2 };
+  return swap ? { x: half.y, y: half.x } : half;
 };
+
+const resolveLogoGizmoHalf = (width: number, height: number, uploadRotationDeg: number) =>
+  resolveRotatedGizmoHalf({ x: width / 2, y: height / 2 }, uploadRotationDeg);
 
 const drawLogoInstance = (ctx: CanvasRenderingContext2D, image: HTMLImageElement, instance: LogoInstance, atlasWidth: number, atlasHeight: number) => {
   const naturalWidth = instance.naturalWidth || image.naturalWidth;
@@ -79,4 +82,4 @@ const composeLogoPrintAtlas = async ({ instances, canvas, atlasWidth, atlasHeigh
   }
 };
 
-export { composeLogoPrintAtlas, resolveLogoDisplayScale, resolveLogoDrawSize, resolveLogoGizmoHalf, resolveLogoReferenceDrawSize };
+export { composeLogoPrintAtlas, resolveLogoDisplayScale, resolveLogoDrawSize, resolveLogoGizmoHalf, resolveLogoReferenceDrawSize, resolveRotatedGizmoHalf };

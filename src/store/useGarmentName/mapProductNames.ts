@@ -19,6 +19,8 @@ interface NameInstance {
   partId: string;
   uv: { x: number; y: number };
   rotation: number;
+  /** Position default orientation; affects text only, not gizmo. */
+  placementRotation?: number;
   text: string;
   font: string;
   fontSize: number;
@@ -82,7 +84,8 @@ const createNameInstance = (product: GarmentConfig, position: NamePosition, id: 
     label: position.label,
     partId: position.partId,
     uv: position.uv,
-    rotation: position.rotation,
+    rotation: 0,
+    placementRotation: position.rotation,
     text: defaults.text,
     font: defaults.font,
     fontSize: position.fontSize,

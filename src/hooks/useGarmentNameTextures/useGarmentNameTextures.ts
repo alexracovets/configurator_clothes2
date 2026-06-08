@@ -39,6 +39,7 @@ import {
   canvasToMaskTexture,
   composeNameMaskAtlas,
   getEmptyPrintTexture,
+  repairPrintInstancePlacement,
   resolveNameStampSize,
   resolvePrintAtlasSize,
 } from '@utils';
@@ -46,6 +47,7 @@ import { NAME_SLOT_COUNT } from '../../utils/garmentPrint/nameSlotConstants';
 
 const NAME_STEP = 4;
 const NUMBER_STEP = 5;
+const LOGO_STEP = 6;
 import type { NameMaskAtlas } from '@utils';
 
 type StampPixelSize = NameMaskAtlas['stampSize'];
@@ -73,6 +75,20 @@ const buildStyleSignature = (instances: GarmentTextRenderInstance[]) =>
       fontSize: instance.fontSize,
       uv: instance.uv,
       rotation: instance.rotation,
+      partId: instance.partId,
+    })),
+  );
+
+const buildGizmoSignature = (instances: GarmentTextRenderInstance[]) =>
+  JSON.stringify(
+    instances.map((instance) => ({
+      text: instance.text,
+      font: instance.font,
+      fontSize: instance.fontSize,
+      rotation: instance.rotation,
+      placementRotation: instance.placementRotation,
+      showGizmo: instance.showGizmo,
+      showFrame: instance.showFrame,
       partId: instance.partId,
     })),
   );
@@ -112,10 +128,16 @@ const useGarmentNameTextures = () => {
   const prevSelectedSlotRef = useRef(-1);
   const prevSelectedIdRef = useRef<string | null>(null);
 
-  const nameInstancesForRender = useMemo(() => resolveInstancesForRender(nameInstances, namePreview), [nameInstances, namePreview]);
+  const nameInstancesForRender = useMemo(
+    () => resolveInstancesForRender(nameInstances, namePreview).map((instance) => repairPrintInstancePlacement(instance, product.parts)),
+    [nameInstances, namePreview, product.parts],
+  );
   const numberInstancesForRender = useMemo(
-    () => resolveNumberInstancesForRender(numberInstances, numberPreview).slice(0, NAME_SLOT_COUNT),
-    [numberInstances, numberPreview],
+    () =>
+      resolveNumberInstancesForRender(numberInstances, numberPreview)
+        .slice(0, NAME_SLOT_COUNT)
+        .map((instance) => repairPrintInstancePlacement(instance, product.parts)),
+    [numberInstances, numberPreview, product.parts],
   );
 
   const selectedSlotIndex = useMemo(() => {
@@ -126,10 +148,12 @@ const useGarmentNameTextures = () => {
   const nameFillSignature = useMemo(() => buildFillSignature(nameInstancesForRender), [nameInstancesForRender]);
   const nameStrokeSignature = useMemo(() => buildStrokeSignature(nameInstancesForRender), [nameInstancesForRender]);
   const nameStyleSignature = useMemo(() => buildStyleSignature(nameInstancesForRender), [nameInstancesForRender]);
+  const nameGizmoSignature = useMemo(() => buildGizmoSignature(nameInstancesForRender), [nameInstancesForRender]);
 
   const numberFillSignature = useMemo(() => buildFillSignature(numberInstancesForRender), [numberInstancesForRender]);
   const numberStrokeSignature = useMemo(() => buildStrokeSignature(numberInstancesForRender), [numberInstancesForRender]);
   const numberStyleSignature = useMemo(() => buildStyleSignature(numberInstancesForRender), [numberInstancesForRender]);
+  const numberGizmoSignature = useMemo(() => buildGizmoSignature(numberInstancesForRender), [numberInstancesForRender]);
 
   const atlasSize = useMemo(() => resolvePrintAtlasSize(product), [product]);
 
@@ -265,9 +289,21 @@ const useGarmentNameTextures = () => {
     }
 
     invalidate();
-  }, [activeStep, getMaterials, gizmoIcons, nameInstancesForRender, numberInstancesForRender, invalidate, product.parts]);
+  }, [
+    activeStep,
+    getMaterials,
+    gizmoIcons,
+    nameGizmoSignature,
+    nameInstancesForRender,
+    numberGizmoSignature,
+    numberInstancesForRender,
+    invalidate,
+    product.parts,
+  ]);
 
   useEffect(() => {
+    if (activeStep !== NAME_STEP) return;
+
     const snap =
       prevSelectedIdRef.current === selectedInstanceId &&
       prevSelectedSlotRef.current !== selectedSlotIndex &&
@@ -278,12 +314,11 @@ const useGarmentNameTextures = () => {
     prevSelectedSlotRef.current = selectedSlotIndex;
 
     setGizmoButtonsRevealTarget(selectedSlotIndex, snap);
-  }, [selectedInstanceId, selectedSlotIndex]);
+  }, [activeStep, selectedInstanceId, selectedSlotIndex]);
 
   useEffect(() => {
-    if (activeStep !== NAME_STEP) {
-      setGizmoButtonsRevealTarget(-1);
-    }
+    if (activeStep === NAME_STEP || activeStep === LOGO_STEP) return;
+    setGizmoButtonsRevealTarget(-1);
   }, [activeStep]);
 
   const updateNameMasks = useCallback(

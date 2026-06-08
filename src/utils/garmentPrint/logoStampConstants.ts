@@ -1,6 +1,8 @@
 const LOGO_SLOT_COUNT = 4;
+import { PRINT_UPLOAD_ROTATION_DEG } from './nameStampConstants';
+
 /** Corrects uploaded image orientation relative to the print UV space on the garment. */
-const LOGO_UPLOAD_ROTATION_DEG = 90;
+const LOGO_UPLOAD_ROTATION_DEG = PRINT_UPLOAD_ROTATION_DEG;
 const LOGO_SCALE_MIN = 0.25;
 const LOGO_SCALE_MAX = 3;
 const LOGO_MARK_REF_WIDTH = 283;

@@ -4,6 +4,7 @@ import { measureNameGizmoHalf } from '../drawNameOnAtlas/measureNameStampBounds'
 
 import type { GizmoFrameState } from './applyGarmentNames';
 import { NAME_SLOT_COUNT } from './nameSlotConstants';
+import { resolveTextGizmoHalf } from './resolveTextGizmoHalf';
 
 const measureCanvas = typeof document !== 'undefined' ? document.createElement('canvas') : null;
 const measureCtx = measureCanvas?.getContext('2d') ?? null;
@@ -24,7 +25,7 @@ const buildGizmoFrameUniforms = (instances: GarmentTextRenderInstance[], meshPar
 
       const measured = measureNameGizmoHalf(instance.text, instance.font, measureCtx);
       if (measured) {
-        half[index] = measured;
+        half[index] = resolveTextGizmoHalf(measured, instance);
       }
     });
   }

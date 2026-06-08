@@ -1,8 +1,8 @@
 const garmentNameMapFragment = /* glsl */ `
-  vec2 nameStampUv0 = garmentNameToStampUv( vPrintUv, uNameAnchorUv[0], uNameRotation[0], uNamePartRotation[0], uNameScale[0] );
-  vec2 nameStampUv1 = garmentNameToStampUv( vPrintUv, uNameAnchorUv[1], uNameRotation[1], uNamePartRotation[1], uNameScale[1] );
-  vec2 nameStampUv2 = garmentNameToStampUv( vPrintUv, uNameAnchorUv[2], uNameRotation[2], uNamePartRotation[2], uNameScale[2] );
-  vec2 nameStampUv3 = garmentNameToStampUv( vPrintUv, uNameAnchorUv[3], uNameRotation[3], uNamePartRotation[3], uNameScale[3] );
+  vec2 nameStampUv0 = garmentNameToStampUv( vPrintUv, uNameAnchorUv[0], uNameRotation[0], uNamePlacementRotation[0], uNameUploadRotation[0], uNamePartRotation[0], uNameScale[0] );
+  vec2 nameStampUv1 = garmentNameToStampUv( vPrintUv, uNameAnchorUv[1], uNameRotation[1], uNamePlacementRotation[1], uNameUploadRotation[1], uNamePartRotation[1], uNameScale[1] );
+  vec2 nameStampUv2 = garmentNameToStampUv( vPrintUv, uNameAnchorUv[2], uNameRotation[2], uNamePlacementRotation[2], uNameUploadRotation[2], uNamePartRotation[2], uNameScale[2] );
+  vec2 nameStampUv3 = garmentNameToStampUv( vPrintUv, uNameAnchorUv[3], uNameRotation[3], uNamePlacementRotation[3], uNameUploadRotation[3], uNamePartRotation[3], uNameScale[3] );
 
   vec4 nameFillMasks = vec4(
     garmentNameSampleFillChannel( uNameFillMask, nameStampUv0, 0.0 ),
@@ -44,8 +44,6 @@ const garmentNameMapFragment = /* glsl */ `
   slotName3 = garmentCompositeNameLayer( slotName3, uNameTextColors[3], nameFillMasks.a * nameInside3 );
   printColor = garmentCompositeUiLayer( printColor, slotName3 );
   printColor = garmentCompositeUiLayer( printColor, garmentGizmoFrameColor( vPrintUv, uNameAnchorUv[3], uNameScale[3], uNameGizmoHalf[3], uNameRotation[3], uNamePartRotation[3], uNameGizmoEnabled * uNameGizmoFrameActive[3], nameInside3 ) );
-
-  garmentGizmoUiColor = vec4( 0.0 );
 
   vec4 gbtn0 = garmentGizmoButtons( vPrintUv, uNameAnchorUv[0], uNameScale[0], uNameGizmoHalf[0], uNameRotation[0], uNamePartRotation[0], uNameGizmoEnabled * uNameGizmoButtonsActive[0], uNameGizmoButtonsReveal[0], nameInside0, uNameGizmoIcons, 0.0 );
   vec4 gbtn1 = garmentGizmoButtons( vPrintUv, uNameAnchorUv[1], uNameScale[1], uNameGizmoHalf[1], uNameRotation[1], uNamePartRotation[1], uNameGizmoEnabled * uNameGizmoButtonsActive[1], uNameGizmoButtonsReveal[1], nameInside1, uNameGizmoIcons, 1.0 );

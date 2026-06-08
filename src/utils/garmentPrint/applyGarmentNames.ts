@@ -48,6 +48,20 @@ const applyNameStyleToUniforms = (material: MeshStandardMaterial, style: NameSty
     });
   }
 
+  const placementRotationUniform = material.userData.uNamePlacementRotationUniform as { value: number[] } | undefined;
+  if (placementRotationUniform) {
+    style.placementRotation.forEach((value, index) => {
+      placementRotationUniform.value[index] = value;
+    });
+  }
+
+  const uploadRotationUniform = material.userData.uNameUploadRotationUniform as { value: number[] } | undefined;
+  if (uploadRotationUniform) {
+    style.uploadRotation.forEach((value, index) => {
+      uploadRotationUniform.value[index] = value;
+    });
+  }
+
   const partRotationUniform = material.userData.uNamePartRotationUniform as { value: number[] } | undefined;
   if (partRotationUniform) {
     style.partRotation.forEach((value, index) => {
@@ -126,6 +140,20 @@ const applyNumberStyleToUniforms = (material: MeshStandardMaterial, style: NameS
   if (rotationUniform) {
     style.rotation.forEach((value, index) => {
       rotationUniform.value[index] = value;
+    });
+  }
+
+  const placementRotationUniform = material.userData.uNumberPlacementRotationUniform as { value: number[] } | undefined;
+  if (placementRotationUniform) {
+    style.placementRotation.forEach((value, index) => {
+      placementRotationUniform.value[index] = value;
+    });
+  }
+
+  const uploadRotationUniform = material.userData.uNumberUploadRotationUniform as { value: number[] } | undefined;
+  if (uploadRotationUniform) {
+    style.uploadRotation.forEach((value, index) => {
+      uploadRotationUniform.value[index] = value;
     });
   }
 
@@ -280,6 +308,8 @@ const hydrateGarmentNameUniforms = (
     uNameStampSize: { value: Vector2 };
     uNameAnchorUv: { value: Vector2[] };
     uNameRotation: { value: number[] };
+    uNamePlacementRotation: { value: number[] };
+    uNameUploadRotation: { value: number[] };
     uNamePartRotation: { value: number[] };
     uNameScale: { value: number[] };
     uNameSlotActive: { value: number[] };
@@ -309,6 +339,8 @@ const hydrateGarmentNameUniforms = (
     material.userData.uNameStampSizeUniform = uniforms.uNameStampSize;
     material.userData.uNameAnchorUvUniform = uniforms.uNameAnchorUv;
     material.userData.uNameRotationUniform = uniforms.uNameRotation;
+    material.userData.uNamePlacementRotationUniform = uniforms.uNamePlacementRotation;
+    material.userData.uNameUploadRotationUniform = uniforms.uNameUploadRotation;
     material.userData.uNamePartRotationUniform = uniforms.uNamePartRotation;
     material.userData.uNameScaleUniform = uniforms.uNameScale;
     material.userData.uNameSlotActiveUniform = uniforms.uNameSlotActive;
@@ -339,6 +371,8 @@ const hydrateGarmentNumberUniforms = (
     uNumberStampSize: { value: Vector2 };
     uNumberAnchorUv: { value: Vector2[] };
     uNumberRotation: { value: number[] };
+    uNumberPlacementRotation: { value: number[] };
+    uNumberUploadRotation: { value: number[] };
     uNumberPartRotation: { value: number[] };
     uNumberScale: { value: number[] };
     uNumberSlotActive: { value: number[] };
@@ -367,6 +401,8 @@ const hydrateGarmentNumberUniforms = (
     material.userData.uNumberStampSizeUniform = uniforms.uNumberStampSize;
     material.userData.uNumberAnchorUvUniform = uniforms.uNumberAnchorUv;
     material.userData.uNumberRotationUniform = uniforms.uNumberRotation;
+    material.userData.uNumberPlacementRotationUniform = uniforms.uNumberPlacementRotation;
+    material.userData.uNumberUploadRotationUniform = uniforms.uNumberUploadRotation;
     material.userData.uNumberPartRotationUniform = uniforms.uNumberPartRotation;
     material.userData.uNumberScaleUniform = uniforms.uNumberScale;
     material.userData.uNumberSlotActiveUniform = uniforms.uNumberSlotActive;

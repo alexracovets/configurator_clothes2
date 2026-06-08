@@ -56,7 +56,8 @@ export {
   LOGO_UPLOAD_ROTATION_DEG,
   LOGO_VERTICAL_REF_HEIGHT,
 } from './garmentPrint/logoStampConstants';
-export { NAME_GIZMO_BTN_HALF_ATLAS, NAME_GIZMO_BTN_OUTSET_ATLAS } from './garmentPrint/nameStampConstants';
+export { NAME_GIZMO_BTN_HALF_ATLAS, NAME_GIZMO_BTN_OUTSET_ATLAS, PRINT_UPLOAD_ROTATION_DEG } from './garmentPrint/nameStampConstants';
+export { resolveRotatedGizmoHalf } from './composeLogoAtlas/composeLogoPrintAtlas';
 export { applyGarmentPatternTints, applyGarmentPrint, emptyMaskPair, PATTERN_LAYER_COUNT } from './garmentPrint/applyGarmentPrint';
 export { getEmptyPrintTexture } from './garmentPrint/emptyPrintTexture';
 export type { GarmentPrintState, PatternColorPair, PatternMaskPair } from './garmentPrint/applyGarmentPrint';
@@ -66,6 +67,9 @@ export { clearImageTextureCache, imageToTexture } from './garmentPrint/imageToTe
 export { loadCachedImage } from './loadCachedImage/loadCachedImage';
 export { loadImage } from './loadImage/loadImage';
 export {
+  clampUvToPartBounds,
+  isUvInsidePartBounds,
+  repairPrintInstancePlacement,
   resolvePartPrintRotation,
   resolvePartTextureSize,
   resolvePartUvBounds,

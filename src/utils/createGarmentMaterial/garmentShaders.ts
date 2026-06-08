@@ -51,6 +51,8 @@ uniform sampler2D uNameFillMask;
 uniform vec2 uNameStampSize;
 uniform vec2 uNameAnchorUv[4];
 uniform float uNameRotation[4];
+uniform float uNamePlacementRotation[4];
+uniform float uNameUploadRotation[4];
 uniform float uNamePartRotation[4];
 uniform float uNameScale[4];
 uniform sampler2D uNameStrokeMask;
@@ -63,6 +65,8 @@ uniform sampler2D uNumberStrokeMask;
 uniform vec2 uNumberStampSize;
 uniform vec2 uNumberAnchorUv[4];
 uniform float uNumberRotation[4];
+uniform float uNumberPlacementRotation[4];
+uniform float uNumberUploadRotation[4];
 uniform float uNumberPartRotation[4];
 uniform float uNumberScale[4];
 uniform float uNumberSlotActive[4];
@@ -130,15 +134,15 @@ vec2 garmentPrintToLocalPx( vec2 worldUv, vec2 anchor, float partRotation ) {
   return garmentPrintRotateLocalPx( deltaPx, partRotation );
 }
 
-vec2 garmentNameToStampUv( vec2 worldUv, vec2 anchor, float rotation, float partRotation, float scale ) {
+vec2 garmentNameToStampUv( vec2 worldUv, vec2 anchor, float rotation, float placementRotation, float uploadRotation, float partRotation, float scale ) {
   vec2 localPx = garmentPrintToLocalPx( worldUv, anchor, partRotation );
-  localPx = garmentPrintRotateLocalPx( localPx, rotation ) / max( scale, 0.001 );
+  localPx = garmentPrintRotateLocalPx( localPx, rotation + placementRotation + uploadRotation ) / max( scale, 0.001 );
   return vec2( 0.5 ) + localPx / uNameStampSize;
 }
 
-vec2 garmentNumberToStampUv( vec2 worldUv, vec2 anchor, float rotation, float partRotation, float scale ) {
+vec2 garmentNumberToStampUv( vec2 worldUv, vec2 anchor, float rotation, float placementRotation, float uploadRotation, float partRotation, float scale ) {
   vec2 localPx = garmentPrintToLocalPx( worldUv, anchor, partRotation );
-  localPx = garmentPrintRotateLocalPx( localPx, rotation ) / max( scale, 0.001 );
+  localPx = garmentPrintRotateLocalPx( localPx, rotation + placementRotation + uploadRotation ) / max( scale, 0.001 );
   return vec2( 0.5 ) + localPx / uNumberStampSize;
 }
 

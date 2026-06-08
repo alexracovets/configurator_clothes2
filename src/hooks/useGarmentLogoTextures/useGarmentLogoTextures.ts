@@ -30,9 +30,11 @@ import {
   getEmptyPrintTexture,
   loadCachedImage,
   LOGO_SLOT_COUNT,
+  repairPrintInstancePlacement,
   resolvePrintAtlasSize,
 } from '@utils';
 
+const NAME_STEP = 4;
 const LOGO_STEP = 6;
 
 const buildLogoStampSignature = (instances: ReturnType<typeof resolveLogoInstancesForRender>) =>
@@ -79,7 +81,13 @@ const useGarmentLogoTextures = () => {
   const prevSelectedIdRef = useRef<string | null>(null);
   const prevSelectedSlotRef = useRef(-1);
 
-  const instancesForRender = useMemo(() => resolveLogoInstancesForRender(logoInstances, logoPreview).slice(0, LOGO_SLOT_COUNT), [logoInstances, logoPreview]);
+  const instancesForRender = useMemo(
+    () =>
+      resolveLogoInstancesForRender(logoInstances, logoPreview)
+        .slice(0, LOGO_SLOT_COUNT)
+        .map((instance) => repairPrintInstancePlacement(instance, product.parts)),
+    [logoInstances, logoPreview, product.parts],
+  );
   const stampSignature = useMemo(() => buildLogoStampSignature(instancesForRender), [instancesForRender]);
   const styleSignature = useMemo(() => buildLogoStyleSignature(instancesForRender), [instancesForRender]);
   const atlasSize = useMemo(() => resolvePrintAtlasSize(product), [product]);
@@ -214,6 +222,8 @@ const useGarmentLogoTextures = () => {
   }, [applyLogoStyleAndFrame, logoProductPath, product.path, styleSignature]);
 
   useEffect(() => {
+    if (activeStep !== LOGO_STEP) return;
+
     const snap =
       prevSelectedIdRef.current === selectedInstanceId &&
       prevSelectedSlotRef.current !== selectedSlotIndex &&
@@ -224,12 +234,11 @@ const useGarmentLogoTextures = () => {
     prevSelectedSlotRef.current = selectedSlotIndex;
 
     setGizmoButtonsRevealTarget(selectedSlotIndex, snap);
-  }, [selectedInstanceId, selectedSlotIndex]);
+  }, [activeStep, selectedInstanceId, selectedSlotIndex]);
 
   useEffect(() => {
-    if (activeStep !== LOGO_STEP) {
-      setGizmoButtonsRevealTarget(-1);
-    }
+    if (activeStep === NAME_STEP || activeStep === LOGO_STEP) return;
+    setGizmoButtonsRevealTarget(-1);
   }, [activeStep]);
 
   useEffect(() => {

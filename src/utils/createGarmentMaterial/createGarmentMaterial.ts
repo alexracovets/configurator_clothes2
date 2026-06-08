@@ -66,6 +66,8 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     shader.uniforms.uNameStampSize = { value: new Vector2(1, 1) };
     shader.uniforms.uNameAnchorUv = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Vector2()) };
     shader.uniforms.uNameRotation = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uNamePlacementRotation = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uNameUploadRotation = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
     shader.uniforms.uNamePartRotation = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
     shader.uniforms.uNameScale = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 1) };
     shader.uniforms.uNameSlotActive = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
@@ -89,6 +91,8 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     shader.uniforms.uNumberStampSize = { value: new Vector2(1, 1) };
     shader.uniforms.uNumberAnchorUv = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Vector2()) };
     shader.uniforms.uNumberRotation = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uNumberPlacementRotation = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uNumberUploadRotation = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
     shader.uniforms.uNumberPartRotation = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
     shader.uniforms.uNumberScale = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 1) };
     shader.uniforms.uNumberSlotActive = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
@@ -125,6 +129,8 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     material.userData.uNameStampSizeUniform = shader.uniforms.uNameStampSize;
     material.userData.uNameAnchorUvUniform = shader.uniforms.uNameAnchorUv;
     material.userData.uNameRotationUniform = shader.uniforms.uNameRotation;
+    material.userData.uNamePlacementRotationUniform = shader.uniforms.uNamePlacementRotation;
+    material.userData.uNameUploadRotationUniform = shader.uniforms.uNameUploadRotation;
     material.userData.uNamePartRotationUniform = shader.uniforms.uNamePartRotation;
     material.userData.uNameScaleUniform = shader.uniforms.uNameScale;
     material.userData.uNameSlotActiveUniform = shader.uniforms.uNameSlotActive;
@@ -145,6 +151,8 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     material.userData.uNumberStampSizeUniform = shader.uniforms.uNumberStampSize;
     material.userData.uNumberAnchorUvUniform = shader.uniforms.uNumberAnchorUv;
     material.userData.uNumberRotationUniform = shader.uniforms.uNumberRotation;
+    material.userData.uNumberPlacementRotationUniform = shader.uniforms.uNumberPlacementRotation;
+    material.userData.uNumberUploadRotationUniform = shader.uniforms.uNumberUploadRotation;
     material.userData.uNumberPartRotationUniform = shader.uniforms.uNumberPartRotation;
     material.userData.uNumberScaleUniform = shader.uniforms.uNumberScale;
     material.userData.uNumberSlotActiveUniform = shader.uniforms.uNumberSlotActive;
@@ -180,6 +188,8 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       uNameStampSize: shader.uniforms.uNameStampSize,
       uNameAnchorUv: shader.uniforms.uNameAnchorUv,
       uNameRotation: shader.uniforms.uNameRotation,
+      uNamePlacementRotation: shader.uniforms.uNamePlacementRotation,
+      uNameUploadRotation: shader.uniforms.uNameUploadRotation,
       uNamePartRotation: shader.uniforms.uNamePartRotation,
       uNameScale: shader.uniforms.uNameScale,
       uNameSlotActive: shader.uniforms.uNameSlotActive,
@@ -197,6 +207,8 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       uNumberStampSize: shader.uniforms.uNumberStampSize,
       uNumberAnchorUv: shader.uniforms.uNumberAnchorUv,
       uNumberRotation: shader.uniforms.uNumberRotation,
+      uNumberPlacementRotation: shader.uniforms.uNumberPlacementRotation,
+      uNumberUploadRotation: shader.uniforms.uNumberUploadRotation,
       uNumberPartRotation: shader.uniforms.uNumberPartRotation,
       uNumberScale: shader.uniforms.uNumberScale,
       uNumberSlotActive: shader.uniforms.uNumberSlotActive,
@@ -231,7 +243,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       .replace('#include <tonemapping_fragment>', `#include <tonemapping_fragment>\n${garmentGizmoLightsFragment}`);
   };
 
-  material.customProgramCacheKey = () => 'garment-pbr-print-v53-logo-upload-rotation';
+  material.customProgramCacheKey = () => 'garment-pbr-print-v56-text-upload-rotation';
 };
 
 const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMaterial, meshName = ''): MeshStandardMaterial => {

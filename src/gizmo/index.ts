@@ -11,6 +11,8 @@ export {
 export { getGizmoButtonReveal, getGizmoButtonsRevealUniforms, setGizmoButtonsRevealTarget, subscribeGizmoButtonReveal } from './gizmoButtonReveal';
 export { GIZMO_CORNERS, getGizmoHoverCursor, hitTestGizmoButton, hitTestGizmoFrame } from './hitTestGizmoButton';
 export { buildPrintablePartMeshes, raycastGizmoUv, raycastPrintUv, resolveGizmoPointerTarget, toLocalPx } from './resolveGizmoPointerTarget';
+export { resolvePrintDragMove } from './printDragMove';
+export type { PrintDragMoveState } from './printDragMove';
 export { toPrintLocalPx } from './printLocalSpace';
 export { useGizmoIconAtlas } from './useGizmoIconAtlas';
 export type { GizmoButtonHoverTarget } from './gizmoButtonHover';

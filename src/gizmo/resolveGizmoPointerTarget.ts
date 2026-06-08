@@ -2,7 +2,7 @@ import type { GarmentPartConfig } from '@data';
 import type { Camera, Object3D, Raycaster, Scene } from 'three';
 import { Vector2 } from 'three';
 
-import { resolvePartPrintRotation } from '../utils/resolveProductRenderConfig/resolveProductRenderConfig';
+import { resolvePartPrintRotation, resolvePartUvBounds } from '../utils/resolveProductRenderConfig/resolveProductRenderConfig';
 
 import { getGizmoButtonReveal } from './gizmoButtonReveal';
 import { hitTestGizmoButton, hitTestGizmoFrame } from './hitTestGizmoButton';
@@ -14,6 +14,7 @@ interface PrintablePartMeshes {
   partId: string;
   meshNames: string[];
   printRotation: number;
+  uvBounds: { minX: number; maxX: number; minY: number; maxY: number };
 }
 
 interface PrintUvHit {
@@ -49,6 +50,7 @@ const buildPrintablePartMeshes = (parts: GarmentPartConfig[]): PrintablePartMesh
     partId: part.id,
     meshNames: part.meshNames,
     printRotation: resolvePartPrintRotation(part),
+    uvBounds: resolvePartUvBounds(part),
   }));
 
 const resolvePartIdFromMeshName = (meshName: string, printableParts: PrintablePartMeshes[]) => {

@@ -1,4 +1,4 @@
-import type { GarmentConfig, GarmentPartConfig, PrintAtlasConfig, UvBounds } from '@data';
+import type { GarmentConfig, GarmentPartConfig, PrintAtlasConfig, UvBounds, UvPoint } from '@data';
 
 const DEFAULT_PART_TEXTURE_SIZE = 2048;
 const DEFAULT_PRINT_ATLAS: PrintAtlasConfig = {
@@ -15,4 +15,37 @@ const resolvePartUvBounds = (part: GarmentPartConfig): UvBounds => part.uvBounds
 
 const resolvePartPrintRotation = (part: GarmentPartConfig): number => part.printRotation ?? part.gradient?.rotation ?? 0;
 
-export { FULL_UV_BOUNDS, resolvePartPrintRotation, resolvePartTextureSize, resolvePartUvBounds, resolvePrintAtlasSize };
+const isUvInsidePartBounds = (uv: UvPoint, bounds: UvBounds = FULL_UV_BOUNDS): boolean =>
+  uv.x >= bounds.minX && uv.x <= bounds.maxX && uv.y >= bounds.minY && uv.y <= bounds.maxY;
+
+const clampUvToPartBounds = (uv: UvPoint, bounds: UvBounds = FULL_UV_BOUNDS): UvPoint => ({
+  x: Math.min(bounds.maxX, Math.max(bounds.minX, uv.x)),
+  y: Math.min(bounds.maxY, Math.max(bounds.minY, uv.y)),
+});
+
+const repairPrintInstancePlacement = <T extends { partId: string; uv: UvPoint }>(instance: T, parts: GarmentPartConfig[]): T => {
+  const assignedPart = parts.find((part) => part.id === instance.partId);
+  const assignedBounds = assignedPart ? resolvePartUvBounds(assignedPart) : FULL_UV_BOUNDS;
+
+  if (isUvInsidePartBounds(instance.uv, assignedBounds)) {
+    return instance;
+  }
+
+  const containingPart = parts.find((part) => isUvInsidePartBounds(instance.uv, resolvePartUvBounds(part)));
+  if (containingPart) {
+    return { ...instance, partId: containingPart.id };
+  }
+
+  return { ...instance, uv: clampUvToPartBounds(instance.uv, assignedBounds) };
+};
+
+export {
+  clampUvToPartBounds,
+  FULL_UV_BOUNDS,
+  isUvInsidePartBounds,
+  repairPrintInstancePlacement,
+  resolvePartPrintRotation,
+  resolvePartTextureSize,
+  resolvePartUvBounds,
+  resolvePrintAtlasSize,
+};

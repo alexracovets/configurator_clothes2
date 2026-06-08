@@ -20,6 +20,7 @@ interface NumberInstance {
   partId: string;
   uv: { x: number; y: number };
   rotation: number;
+  placementRotation?: number;
   text: string;
   font: string;
   fontSize: number;
@@ -115,7 +116,8 @@ const createNumberInstance = (product: GarmentConfig, position: NumberPosition, 
     label: position.label,
     partId: position.partId,
     uv: position.uv,
-    rotation: position.rotation,
+    rotation: 0,
+    placementRotation: position.rotation,
     text: sanitizeNumberText(defaults.text),
     font: defaults.font,
     fontSize: position.fontSize,

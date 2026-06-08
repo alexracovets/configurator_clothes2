@@ -5,6 +5,7 @@ import { garmentNumberMapFragment } from './garmentNumberShaders';
 const garmentPrintMapFragment = /* glsl */ `
 #ifdef USE_PRINT
   vec4 printColor = vec4( 0.0 );
+  garmentGizmoUiColor = vec4( 0.0 );
 
   vec4 layer0 = vec4(
     uPatternColor0,
@@ -19,15 +20,15 @@ const garmentPrintMapFragment = /* glsl */ `
   printColor.rgb = layer1.rgb * layer1.a + printColor.rgb * ( 1.0 - layer1.a );
   printColor.a = layer1.a + printColor.a * ( 1.0 - layer1.a );
 
-  vec4 logos = texture2D( uDefaultLogos, vPrintUv );
-  printColor.rgb = logos.rgb * logos.a + printColor.rgb * ( 1.0 - logos.a );
-  printColor.a = logos.a + printColor.a * ( 1.0 - logos.a );
+${garmentLogoMapFragment}
 
 ${garmentNameMapFragment}
 
 ${garmentNumberMapFragment}
 
-${garmentLogoMapFragment}
+  vec4 defaultDesign = texture2D( uDefaultLogos, vPrintUv );
+  printColor.rgb = defaultDesign.rgb * defaultDesign.a + printColor.rgb * ( 1.0 - defaultDesign.a );
+  printColor.a = defaultDesign.a + printColor.a * ( 1.0 - defaultDesign.a );
 
   diffuseColor.rgb = printColor.rgb * printColor.a + diffuseColor.rgb * ( 1.0 - printColor.a );
 #endif

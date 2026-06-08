@@ -3,7 +3,7 @@ import type { GarmentTextRenderInstance } from '@store';
 
 import type { StampPixelSize } from '../drawNameOnAtlas/measureNameStampBounds';
 import { FULL_UV_BOUNDS, resolvePartPrintRotation, resolvePartUvBounds } from '../resolveProductRenderConfig/resolveProductRenderConfig';
-import { NAME_REFERENCE_FONT_SIZE } from './nameStampConstants';
+import { NAME_REFERENCE_FONT_SIZE, PRINT_UPLOAD_ROTATION_DEG } from './nameStampConstants';
 import { NAME_SLOT_COUNT } from './nameSlotConstants';
 
 type NameSlotFloat4 = [number, number, number, number];
@@ -20,6 +20,8 @@ interface NameStyleUniforms {
   stampSize: StampPixelSize;
   anchorUv: NameSlotVec2;
   rotation: NameSlotFloat4;
+  placementRotation: NameSlotFloat4;
+  uploadRotation: NameSlotFloat4;
   partRotation: NameSlotFloat4;
   scale: NameSlotFloat4;
   slotActive: NameSlotFloat4;
@@ -47,6 +49,9 @@ const buildNameStyleUniforms = (
     { x: 0, y: 0 },
   ];
   const rotation: NameSlotFloat4 = [0, 0, 0, 0];
+  const placementRotation: NameSlotFloat4 = [0, 0, 0, 0];
+  const uploadRotation: NameSlotFloat4 = [0, 0, 0, 0];
+  const uploadRotationRad = (PRINT_UPLOAD_ROTATION_DEG * Math.PI) / 180;
   const partRotation: NameSlotFloat4 = [0, 0, 0, 0];
   const scale: NameSlotFloat4 = [1, 1, 1, 1];
   const slotActive: NameSlotFloat4 = [0, 0, 0, 0];
@@ -62,7 +67,14 @@ const buildNameStyleUniforms = (
 
     slotActive[index] = 1;
     anchorUv[index] = instance.uv;
-    rotation[index] = (instance.rotation * Math.PI) / 180;
+    if (instance.placementRotation !== undefined) {
+      rotation[index] = (instance.rotation * Math.PI) / 180;
+      placementRotation[index] = (instance.placementRotation * Math.PI) / 180;
+    } else {
+      rotation[index] = 0;
+      placementRotation[index] = (instance.rotation * Math.PI) / 180;
+    }
+    uploadRotation[index] = uploadRotationRad;
     partRotation[index] = part ? (resolvePartPrintRotation(part) * Math.PI) / 180 : 0;
     scale[index] = instance.fontSize / NAME_REFERENCE_FONT_SIZE;
     partBounds[index] = bounds;
@@ -74,6 +86,8 @@ const buildNameStyleUniforms = (
     stampSize: stampSize.width > 0 && stampSize.height > 0 ? stampSize : DEFAULT_STAMP_SIZE,
     anchorUv,
     rotation,
+    placementRotation,
+    uploadRotation,
     partRotation,
     scale,
     slotActive,
