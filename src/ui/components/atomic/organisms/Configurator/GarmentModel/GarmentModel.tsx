@@ -24,7 +24,7 @@ const GarmentModel = () => {
   const scene = <GarmentMeshes key={modelUrl} />;
 
   return (
-    <GarmentMaterialRegistryProvider>
+    <GarmentMaterialRegistryProvider key={modelUrl}>
       <PbrMapsLoader paths={pbrPaths}>{scene}</PbrMapsLoader>
     </GarmentMaterialRegistryProvider>
   );

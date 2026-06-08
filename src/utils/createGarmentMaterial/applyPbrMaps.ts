@@ -24,6 +24,19 @@ const createDummyNormal = () => {
   return tex;
 };
 
+const applyGarmentPrintBase = (material: MeshStandardMaterial) => {
+  material.color.set('#ffffff');
+  material.metalness = 0;
+  material.roughness = material.roughness > 0 ? material.roughness : 0.92;
+  material.envMapIntensity = 0.48;
+  material.normalMap = material.normalMap ?? createDummyNormal();
+  material.normalMapType = TangentSpaceNormalMap;
+  material.normalScale = material.normalScale ?? new Vector2(0.5, 0.5);
+  material.userData.pbrBakeNormal = createDummyNormal();
+  material.side = FrontSide;
+  material.needsUpdate = true;
+};
+
 const applyPbrMaps = (material: MeshStandardMaterial, maps: PbrMaps) => {
   material.map = null;
   material.color.set('#ffffff');
@@ -49,4 +62,4 @@ const applyPbrMaps = (material: MeshStandardMaterial, maps: PbrMaps) => {
   material.needsUpdate = true;
 };
 
-export { applyPbrMaps };
+export { applyGarmentPrintBase, applyPbrMaps, createDummyNormal };

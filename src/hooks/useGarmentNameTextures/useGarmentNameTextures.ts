@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 
 import { useThree } from '@react-three/fiber';
 import type { Texture } from 'three';
@@ -13,7 +13,7 @@ import {
   subscribeGizmoButtonReveal,
   useGizmoIconAtlas,
 } from '@gizmo';
-import { useGarmentMaterialRegistry } from '@providers';
+import { useGarmentMaterialRegistry, useMaterialRegistryRevision } from '@providers';
 import {
   resolveInstancesForRender,
   resolveNumberInstancesForRender,
@@ -97,6 +97,7 @@ const stampSizeChanged = (previous: StampPixelSize, next: StampPixelSize) => pre
 
 const useGarmentNameTextures = () => {
   const product = useConfiguratorProduct((state) => state.product);
+  const partIds = useMemo(() => product.parts.map((part) => part.id), [product.parts]);
   const activeStep = useConfigurationControl((state) => state.activeStep);
   const gizmoIcons = useGizmoIconAtlas();
   const nameProductPath = useGarmentName((state) => state.productPath);
@@ -106,7 +107,8 @@ const useGarmentNameTextures = () => {
   const numberProductPath = useGarmentNumber((state) => state.productPath);
   const numberInstances = useGarmentNumber((state) => state.instances);
   const numberPreview = useGarmentNumber((state) => state.preview);
-  const { getMaterials } = useGarmentMaterialRegistry();
+  const { getMaterials, hasMaterialsForParts } = useGarmentMaterialRegistry();
+  const materialRevision = useMaterialRegistryRevision();
   const invalidate = useThree((state) => state.invalidate);
 
   const nameFillCanvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -157,7 +159,11 @@ const useGarmentNameTextures = () => {
 
   const atlasSize = useMemo(() => resolvePrintAtlasSize(product), [product]);
 
-  const isProductReady = nameProductPath === product.path || numberProductPath === product.path;
+  const isNameSynced = nameProductPath === product.path;
+  const isNumberSynced = numberProductPath === product.path;
+  const sceneReady = hasMaterialsForParts(partIds);
+  const isNameReady = isNameSynced && sceneReady;
+  const isNumberReady = isNumberSynced && sceneReady;
 
   const clearNameRuntime = useCallback(() => {
     nameFillTextureRef.current?.dispose();
@@ -323,7 +329,7 @@ const useGarmentNameTextures = () => {
 
   const updateNameMasks = useCallback(
     async (redrawFill: boolean, redrawStroke: boolean) => {
-      if (nameProductPath !== product.path) return;
+      if (!isNameReady) return;
 
       const generation = ++nameMaskGenerationRef.current;
       const empty = getEmptyPrintTexture();
@@ -363,12 +369,12 @@ const useGarmentNameTextures = () => {
       applyNameMasksToMaterials(nameFillTextureRef.current!, nameStrokeTextureRef.current!);
       applyNameStyleToMaterials(stampSize);
     },
-    [applyNameMasksToMaterials, applyNameStyleToMaterials, ensureMaskResources, nameInstancesForRender, nameProductPath, product.path],
+    [applyNameMasksToMaterials, applyNameStyleToMaterials, ensureMaskResources, isNameReady, nameInstancesForRender, product.path],
   );
 
   const updateNumberMasks = useCallback(
     async (redrawFill: boolean, redrawStroke: boolean) => {
-      if (numberProductPath !== product.path) return;
+      if (!isNumberReady) return;
 
       const generation = ++numberMaskGenerationRef.current;
       const empty = getEmptyPrintTexture();
@@ -408,13 +414,14 @@ const useGarmentNameTextures = () => {
       applyNumberMasksToMaterials(numberFillTextureRef.current!, numberStrokeTextureRef.current!);
       applyNumberStyleToMaterials(stampSize);
     },
-    [applyNumberMasksToMaterials, applyNumberStyleToMaterials, ensureMaskResources, numberInstancesForRender, numberProductPath, product.path],
+    [applyNumberMasksToMaterials, applyNumberStyleToMaterials, ensureMaskResources, isNumberReady, numberInstancesForRender, product.path],
   );
 
   useEffect(() => {
-    if (!isProductReady) {
-      clearNameRuntime();
-      clearNumberRuntime();
+    if (!isNameReady) {
+      if (nameProductPath !== product.path) {
+        clearNameRuntime();
+      }
       return;
     }
 
@@ -422,31 +429,58 @@ const useGarmentNameTextures = () => {
     prevNameFillSignatureRef.current = nameFillSignature;
 
     void updateNameMasks(fillChanged, true);
-  }, [clearNameRuntime, clearNumberRuntime, isProductReady, nameFillSignature, nameStrokeSignature, updateNameMasks]);
+  }, [clearNameRuntime, isNameReady, nameFillSignature, nameProductPath, nameStrokeSignature, product.path, updateNameMasks]);
 
   useEffect(() => {
-    if (!isProductReady) return;
+    if (!isNumberReady) {
+      if (numberProductPath !== product.path) {
+        clearNumberRuntime();
+      }
+      return;
+    }
 
     const fillChanged = prevNumberFillSignatureRef.current !== numberFillSignature;
     prevNumberFillSignatureRef.current = numberFillSignature;
 
     void updateNumberMasks(fillChanged, true);
-  }, [isProductReady, numberFillSignature, numberStrokeSignature, updateNumberMasks]);
+  }, [clearNumberRuntime, isNumberReady, numberFillSignature, numberProductPath, numberStrokeSignature, product.path, updateNumberMasks]);
 
-  useEffect(() => {
-    if (!isProductReady) return;
-    applyNameStyleToMaterials();
-  }, [applyNameStyleToMaterials, isProductReady, nameStyleSignature]);
+  useLayoutEffect(() => {
+    if (!hasMaterialsForParts(partIds)) return;
 
-  useEffect(() => {
-    if (!isProductReady) return;
-    applyNumberStyleToMaterials();
-  }, [applyNumberStyleToMaterials, isProductReady, numberStyleSignature]);
+    if (isNameSynced) {
+      applyNameStyleToMaterials();
 
-  useEffect(() => {
-    if (!isProductReady) return;
-    applyGizmoFrames();
-  }, [applyGizmoFrames, isProductReady]);
+      if (nameFillTextureRef.current && nameStrokeTextureRef.current) {
+        applyNameMasksToMaterials(nameFillTextureRef.current, nameStrokeTextureRef.current);
+      }
+    }
+
+    if (isNumberSynced) {
+      applyNumberStyleToMaterials();
+
+      if (numberFillTextureRef.current && numberStrokeTextureRef.current) {
+        applyNumberMasksToMaterials(numberFillTextureRef.current, numberStrokeTextureRef.current);
+      }
+    }
+
+    if (isNameSynced || isNumberSynced) {
+      applyGizmoFrames();
+    }
+  }, [
+    applyGizmoFrames,
+    applyNameMasksToMaterials,
+    applyNameStyleToMaterials,
+    applyNumberMasksToMaterials,
+    applyNumberStyleToMaterials,
+    hasMaterialsForParts,
+    isNameSynced,
+    isNumberSynced,
+    materialRevision,
+    nameStyleSignature,
+    numberStyleSignature,
+    partIds,
+  ]);
 
   useEffect(() => {
     const applyHover = () => {

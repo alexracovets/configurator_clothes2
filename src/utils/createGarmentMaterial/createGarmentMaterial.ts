@@ -13,7 +13,7 @@ import { hydrateGarmentNameUniforms, hydrateGarmentNumberUniforms } from '../gar
 import { LOGO_SLOT_COUNT } from '../garmentPrint/logoStampConstants';
 import { garmentPrintMapFragment } from '../garmentPrint/garmentPrintShaders';
 
-import { applyPbrMaps } from './applyPbrMaps';
+import { applyGarmentPrintBase, applyPbrMaps, createDummyNormal } from './applyPbrMaps';
 import { NAME_GIZMO_BTN_ACTIVE_COLOR, NAME_GIZMO_BTN_FILL_COLOR, NAME_GIZMO_ICON_COLOR } from '../garmentPrint/nameStampConstants';
 import {
   garmentFragmentUvPars,
@@ -31,20 +31,28 @@ const isSleeveMesh = (meshName: string) => {
   return name.includes('sleeve_left') || name.includes('sleeve_right');
 };
 
+type GarmentGradientState = {
+  color2: string;
+  rotation: number;
+  position: number;
+  softness: number;
+  opacity: number;
+  enabled: boolean;
+};
+
 const configureGarmentShader = (material: MeshStandardMaterial) => {
   if (material.userData.garmentShaderConfigured) return;
 
   material.userData.garmentShaderConfigured = true;
 
-  const bakeNormal = material.userData.pbrBakeNormal as Texture;
-  const printState = material.userData.garmentPrintState as GarmentPrintState | undefined;
-  const gradient = material.userData.garmentGradient as
-    | { color2: string; rotation: number; position: number; softness: number; opacity: number; enabled: boolean }
-    | undefined;
   const emptyPrint = getEmptyPrintTexture();
   material.userData.uPartUvBounds = material.userData.uPartUvBounds ?? new Vector4(0, 0, 1, 1);
 
   material.onBeforeCompile = (shader) => {
+    const bakeNormal = (material.userData.pbrBakeNormal as Texture | undefined) ?? createDummyNormal();
+    const printState = material.userData.garmentPrintState as GarmentPrintState | undefined;
+    const gradient = material.userData.garmentGradient as GarmentGradientState | undefined;
+
     shader.defines = { ...shader.defines, USE_UV1: '', USE_GRADIENT: '', USE_PRINT: '' };
     shader.uniforms.uBakeNormal = { value: bakeNormal };
     shader.uniforms.uPartUvBounds = { value: material.userData.uPartUvBounds };
@@ -257,12 +265,12 @@ const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMate
     material.polygonOffsetUnits = SLEEVE_POLYGON_OFFSET.units;
   }
 
-  if (!pbrMaps) {
-    material.needsUpdate = true;
-    return material;
+  if (pbrMaps) {
+    applyPbrMaps(material, pbrMaps);
+  } else {
+    applyGarmentPrintBase(material);
   }
 
-  applyPbrMaps(material, pbrMaps);
   configureGarmentShader(material);
   material.needsUpdate = true;
 

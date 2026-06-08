@@ -17,6 +17,7 @@ export { composePrintAtlasFbo } from './composePrintAtlasFbo/composePrintAtlasFb
 export type { ComposePrintAtlasFboInput } from './composePrintAtlasFbo/PrintAtlasFbo';
 export { PrintAtlasFbo } from './composePrintAtlasFbo/PrintAtlasFbo';
 export { createGarmentMaterial } from './createGarmentMaterial';
+export { getProductAppearanceTextures, readProductAppearanceTextures, syncProductAppearanceTextures } from './garmentAppearance/garmentProductAppearanceCache';
 export { createPartAlbedoTexture } from './createPartAlbedoTexture/createPartAlbedoTexture';
 export { applyGarmentGradient, applyGarmentPartUvBounds } from './garmentGradient/applyGarmentGradient';
 export { buildNameStyleUniforms } from './garmentPrint/buildNameStyleUniforms';
@@ -64,6 +65,7 @@ export type { GarmentPrintState, PatternColorPair, PatternMaskPair } from './gar
 export { canvasToMaskTexture } from './garmentPrint/canvasToMaskTexture';
 export { canvasToTexture } from './garmentPrint/canvasToTexture';
 export { clearImageTextureCache, imageToTexture } from './garmentPrint/imageToTexture';
+export { resolveRasterDesignSrc } from './garmentPrint/resolveRasterDesignSrc';
 export { loadCachedImage } from './loadCachedImage/loadCachedImage';
 export { loadImage } from './loadImage/loadImage';
 export {

@@ -1,26 +1,36 @@
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 
-import { useThree } from '@react-three/fiber';
+import { useFrame, useThree } from '@react-three/fiber';
 import type { Texture } from 'three';
 
-import { useGarmentMaterialRegistry } from '@providers';
-import type { DesignPatternItem } from '@store';
-import { DEFAULT_COLOR, DISABLED_PART_GRADIENT, resolveGradientColors, useConfiguratorProduct, useGarmentColor, useGarmentDesign } from '@store';
+import { useGarmentMaterialRegistry, useMaterialRegistryRevision } from '@providers';
+import {
+  DEFAULT_COLOR,
+  type DesignPatternItem,
+  DISABLED_PART_GRADIENT,
+  resolveGradientColors,
+  useConfigurationCart,
+  useConfiguratorProduct,
+  useGarmentColor,
+  useGarmentDesign,
+} from '@store';
 import {
   applyGarmentGradient,
   applyGarmentPartUvBounds,
   applyGarmentPatternTints,
   applyGarmentPrint,
-  clearImageTextureCache,
   emptyMaskPair,
   type GarmentPrintState,
   imageToTexture,
   PATTERN_LAYER_COUNT,
   type PatternColorPair,
   type PatternMaskPair,
+  readProductAppearanceTextures,
   resolvePartUvBounds,
+  resolveRasterDesignSrc,
+  syncProductAppearanceTextures,
 } from '@utils';
 
 const DEFAULT_PATTERN_COLOR = '#000000';
@@ -39,6 +49,7 @@ const buildPatternColors = (pattern: DesignPatternItem | null, patternColors: Re
 
 const useGarmentTextures = () => {
   const product = useConfiguratorProduct((state) => state.product);
+  const partIds = useMemo(() => product.parts.map((part) => part.id), [product.parts]);
   const byPart = useGarmentColor((state) => state.byPart);
   const gradientsByPart = useGarmentColor((state) => state.gradientsByPart);
   const productPath = useGarmentDesign((state) => state.productPath);
@@ -46,7 +57,9 @@ const useGarmentTextures = () => {
   const patternColors = useGarmentDesign((state) => state.patternColors);
   const activeOpacity = useGarmentDesign((state) => state.activeOpacity);
   const defaultPattern = useGarmentDesign((state) => state.defaultPattern);
-  const { getMaterials } = useGarmentMaterialRegistry();
+  const activeItemId = useConfigurationCart((state) => state.activeItemId);
+  const { getMaterials, hasMaterialsForParts } = useGarmentMaterialRegistry();
+  const materialRevision = useMaterialRegistryRevision();
   const gl = useThree((state) => state.gl);
   const invalidate = useThree((state) => state.invalidate);
   const textureAnisotropy = gl.capabilities.getMaxAnisotropy();
@@ -54,15 +67,23 @@ const useGarmentTextures = () => {
   const logosTextureRef = useRef<Texture | null>(null);
   const maskTexturesRef = useRef<PatternMaskPair>(emptyMaskPair());
   const masksPatternKeyRef = useRef<string | null>(null);
-  const logosProductPathRef = useRef<string | null>(null);
+  const loadSessionRef = useRef(0);
+  const pendingFrameReapplyRef = useRef(false);
 
-  const clearRuntime = useCallback(() => {
-    logosTextureRef.current = null;
-    maskTexturesRef.current = emptyMaskPair();
-    masksPatternKeyRef.current = null;
-    logosProductPathRef.current = null;
-    clearImageTextureCache();
+  const syncAppearanceCache = useCallback((targetPath: string) => {
+    syncProductAppearanceTextures(targetPath, {
+      logosTexture: logosTextureRef.current,
+      maskTextures: maskTexturesRef.current,
+      masksPatternKey: masksPatternKeyRef.current,
+    });
   }, []);
+
+  const isLoadSessionActive = useCallback(
+    (session: number, targetPath: string) => {
+      return session === loadSessionRef.current && useGarmentDesign.getState().productPath === targetPath && targetPath === product.path;
+    },
+    [product.path],
+  );
 
   const buildPrintState = useCallback((): GarmentPrintState => {
     return {
@@ -100,7 +121,9 @@ const useGarmentTextures = () => {
         material.needsUpdate = true;
       }
     }
-  }, [byPart, getMaterials, gradientsByPart, product.parts]);
+
+    invalidate();
+  }, [byPart, getMaterials, gradientsByPart, invalidate, product.parts]);
 
   const applyPatternTints = useCallback(() => {
     const colors = buildPatternColors(activePattern, patternColors);
@@ -114,89 +137,119 @@ const useGarmentTextures = () => {
     invalidate();
   }, [activeOpacity, activePattern, getMaterials, invalidate, patternColors, product.parts]);
 
-  useEffect(() => {
-    if (productPath !== product.path) {
-      clearRuntime();
+  const reapplyAppearance = useCallback(() => {
+    if (!hasMaterialsForParts(partIds)) {
+      pendingFrameReapplyRef.current = true;
       return;
     }
 
-    const logosSrc = defaultPattern?.parts[0]?.src;
+    pendingFrameReapplyRef.current = false;
+    applyPartColors();
+
+    if (productPath !== product.path) return;
+
+    applyPatternTints();
+    applyPrintState(buildPrintState());
+  }, [applyPartColors, applyPatternTints, applyPrintState, buildPrintState, hasMaterialsForParts, partIds, product.path, productPath]);
+
+  const reapplyAppearanceRef = useRef(reapplyAppearance);
+
+  useEffect(() => {
+    reapplyAppearanceRef.current = reapplyAppearance;
+  }, [reapplyAppearance]);
+
+  const activePatternKey = activePattern?.key ?? null;
+
+  useEffect(() => {
+    const cached = readProductAppearanceTextures(product.path);
+    logosTextureRef.current = cached.logosTexture;
+    maskTexturesRef.current = cached.maskTextures;
+    masksPatternKeyRef.current = cached.masksPatternKey;
+    pendingFrameReapplyRef.current = true;
+  }, [activeItemId, product.path]);
+
+  useEffect(() => {
+    loadSessionRef.current += 1;
+
+    return () => {
+      loadSessionRef.current += 1;
+    };
+  }, [product.path]);
+
+  useLayoutEffect(() => {
+    reapplyAppearance();
+  }, [activeItemId, activeOpacity, activePatternKey, byPart, gradientsByPart, materialRevision, patternColors, reapplyAppearance]);
+
+  useFrame(() => {
+    if (!pendingFrameReapplyRef.current) return;
+    reapplyAppearanceRef.current();
+  });
+
+  useEffect(() => {
+    if (productPath !== product.path) return;
+
+    const logosSrc = defaultPattern?.parts[0]?.src ? resolveRasterDesignSrc(defaultPattern.parts[0].src) : null;
     if (!logosSrc) return;
 
-    if (logosProductPathRef.current === product.path && logosTextureRef.current) {
-      applyPrintState(buildPrintState());
-      return;
-    }
+    if (logosTextureRef.current) return;
 
+    const session = loadSessionRef.current;
+    const targetPath = product.path;
     let cancelled = false;
 
-    imageToTexture(logosSrc, { anisotropy: textureAnisotropy }).then((texture) => {
-      if (cancelled) return;
+    void imageToTexture(logosSrc, { anisotropy: textureAnisotropy }).then((texture) => {
+      if (cancelled || !isLoadSessionActive(session, targetPath)) return;
 
       logosTextureRef.current = texture;
-      logosProductPathRef.current = product.path;
-      applyPrintState(buildPrintState());
+      syncAppearanceCache(targetPath);
+      reapplyAppearanceRef.current();
     });
 
     return () => {
       cancelled = true;
     };
-  }, [applyPrintState, buildPrintState, clearRuntime, defaultPattern, product.path, productPath, textureAnisotropy]);
+  }, [defaultPattern, isLoadSessionActive, product.path, productPath, syncAppearanceCache, textureAnisotropy]);
 
   useEffect(() => {
     if (productPath !== product.path) return;
 
-    if (!activePattern) {
+    if (!activePatternKey) {
       maskTexturesRef.current = emptyMaskPair();
       masksPatternKeyRef.current = null;
-      applyPrintState(buildPrintState());
+      syncAppearanceCache(product.path);
+      reapplyAppearanceRef.current();
       return;
     }
 
-    if (masksPatternKeyRef.current === activePattern.key) {
-      applyPrintState(buildPrintState());
-      return;
-    }
+    if (masksPatternKeyRef.current === activePatternKey && maskTexturesRef.current[0]) return;
 
+    const session = loadSessionRef.current;
+    const targetPath = product.path;
     let cancelled = false;
 
     const loadMasks = async () => {
       const masks = emptyMaskPair();
 
       await Promise.all(
-        activePattern.parts.slice(0, PATTERN_LAYER_COUNT).map(async (part, index) => {
-          masks[index] = await imageToTexture(part.src, { anisotropy: textureAnisotropy });
+        activePattern!.parts.slice(0, PATTERN_LAYER_COUNT).map(async (part, index) => {
+          masks[index] = await imageToTexture(resolveRasterDesignSrc(part.src), { anisotropy: textureAnisotropy });
         }),
       );
 
-      if (cancelled) return;
+      if (cancelled || !isLoadSessionActive(session, targetPath)) return;
 
       maskTexturesRef.current = masks;
-      masksPatternKeyRef.current = activePattern.key;
-      applyPrintState(buildPrintState());
+      masksPatternKeyRef.current = activePatternKey;
+      syncAppearanceCache(targetPath);
+      reapplyAppearanceRef.current();
     };
 
-    loadMasks();
+    void loadMasks();
 
     return () => {
       cancelled = true;
     };
-  }, [activePattern, applyPrintState, buildPrintState, product.path, productPath, textureAnisotropy]);
-
-  useEffect(() => {
-    if (productPath !== product.path) return;
-
-    applyPatternTints();
-  }, [activeOpacity, applyPatternTints, patternColors, product.path, productPath]);
-
-  useEffect(() => {
-    if (productPath !== product.path) return;
-
-    applyPartColors();
-    invalidate();
-  }, [applyPartColors, byPart, gradientsByPart, invalidate, product.path, productPath]);
-
-  useEffect(() => () => clearRuntime(), [clearRuntime]);
+  }, [activePattern, activePatternKey, isLoadSessionActive, product.path, productPath, syncAppearanceCache, textureAnisotropy]);
 };
 
 export { useGarmentTextures };

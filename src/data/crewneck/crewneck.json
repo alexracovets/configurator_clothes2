@@ -330,7 +330,17 @@
       ],
       "preserveGltfMeshes": ["mans_shorts_inside", "mans_shorts_laces"],
       "patterns": [],
-      "default_pattern": [],
+      "default_pattern": [
+        {
+          "name": "default_0",
+          "parts": [
+            {
+              "path_name": "mans_shorts_logo.svg",
+              "id": 0
+            }
+          ]
+        }
+      ],
       "logoPositions": []
     }
   ]

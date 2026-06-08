@@ -2,9 +2,16 @@
 
 import { create } from 'zustand';
 
-import type { StyleId } from '@data';
+import { getProduct, type StyleId } from '@data';
 
-import type { CartItemConfiguration } from './cartItemConfiguration';
+import { activateCartItem } from './activateCartItem';
+import {
+  captureGarmentConfiguration,
+  type CartItemConfiguration,
+  cloneCartItemConfiguration,
+  createDefaultCartItemConfiguration,
+} from './cartItemConfiguration';
+import { inheritCartItemConfiguration } from './inheritCartItemConfiguration';
 import { type CartItem, createCartItem, createDefaultCartItem } from './mapCartItems';
 
 interface ConfigurationCartState {
@@ -27,18 +34,42 @@ const useConfigurationCart = create<ConfigurationCartState>((set, get) => ({
   configurations: {},
 
   addItem: (styleId, productIndex) => {
+    const { items, activeItemId, configurations } = get();
     const item = createCartItem(styleId, productIndex);
+    const newProduct = getProduct(styleId, productIndex);
+    if (!newProduct) return;
 
-    set((state) => ({
-      items: [...state.items, item],
+    const nextConfigurations: Record<string, CartItemConfiguration> = {
+      ...configurations,
+      [activeItemId]: captureGarmentConfiguration(),
+    };
+
+    const firstItem = items[0];
+    const firstProduct = getProduct(firstItem.styleId, firstItem.productIndex);
+    const referenceConfiguration =
+      nextConfigurations[firstItem.id] ?? (firstProduct ? createDefaultCartItemConfiguration(firstProduct) : createDefaultCartItemConfiguration(newProduct));
+
+    const inheritedConfiguration = firstProduct
+      ? inheritCartItemConfiguration(referenceConfiguration, firstProduct, newProduct)
+      : createDefaultCartItemConfiguration(newProduct);
+
+    set({
+      items: [...items, item],
       activeItemId: item.id,
-    }));
+      configurations: {
+        ...nextConfigurations,
+        [item.id]: inheritedConfiguration,
+      },
+    });
+
+    activateCartItem(get, item.id);
   },
 
   selectItem: (id) => {
-    const exists = get().items.some((item) => item.id === id);
-    if (!exists) return;
+    const { items, activeItemId } = get();
+    if (!items.some((item) => item.id === id) || activeItemId === id) return;
 
+    activateCartItem(get, id, { savePreviousId: activeItemId });
     set({ activeItemId: id });
   },
 
@@ -49,12 +80,17 @@ const useConfigurationCart = create<ConfigurationCartState>((set, get) => ({
     const nextItems = items.filter((item) => item.id !== id);
     const nextActiveId = activeItemId === id ? nextItems[0].id : activeItemId;
     const nextConfigurations = Object.fromEntries(Object.entries(configurations).filter(([itemId]) => itemId !== id));
+    const wasActive = activeItemId === id;
 
     set({
       items: nextItems,
       activeItemId: nextActiveId,
       configurations: nextConfigurations,
     });
+
+    if (wasActive) {
+      activateCartItem(get, nextActiveId);
+    }
   },
 
   getActiveItemIndex: () => {
@@ -66,7 +102,7 @@ const useConfigurationCart = create<ConfigurationCartState>((set, get) => ({
     set((state) => ({
       configurations: {
         ...state.configurations,
-        [itemId]: configuration,
+        [itemId]: cloneCartItemConfiguration(configuration),
       },
     }));
   },

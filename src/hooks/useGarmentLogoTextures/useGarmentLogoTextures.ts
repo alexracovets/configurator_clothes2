@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 
 import { useThree } from '@react-three/fiber';
 import type { Texture } from 'three';
@@ -13,7 +13,7 @@ import {
   subscribeGizmoButtonReveal,
   useGizmoIconAtlas,
 } from '@gizmo';
-import { useGarmentMaterialRegistry } from '@providers';
+import { useGarmentMaterialRegistry, useMaterialRegistryRevision } from '@providers';
 import { resolveLogoInstancesForRender, useConfigurationControl, useConfiguratorProduct, useGarmentLogo } from '@store';
 import {
   applyGarmentGizmoHover,
@@ -64,14 +64,17 @@ const buildLogoStyleSignature = (instances: ReturnType<typeof resolveLogoInstanc
 
 const useGarmentLogoTextures = () => {
   const product = useConfiguratorProduct((state) => state.product);
+  const partIds = useMemo(() => product.parts.map((part) => part.id), [product.parts]);
   const activeStep = useConfigurationControl((state) => state.activeStep);
   const logoProductPath = useGarmentLogo((state) => state.productPath);
   const logoInstances = useGarmentLogo((state) => state.instances);
   const logoPreview = useGarmentLogo((state) => state.preview);
   const selectedInstanceId = useGarmentLogo((state) => state.selectedInstanceId);
   const gizmoIcons = useGizmoIconAtlas();
-  const { getMaterials } = useGarmentMaterialRegistry();
+  const { getMaterials, hasMaterialsForParts } = useGarmentMaterialRegistry();
+  const materialRevision = useMaterialRegistryRevision();
   const invalidate = useThree((state) => state.invalidate);
+  const isLogoSynced = logoProductPath === product.path;
 
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const textureRef = useRef<Texture | null>(null);
@@ -158,9 +161,10 @@ const useGarmentLogoTextures = () => {
   );
 
   const updateLogoStamp = useCallback(async () => {
-    if (logoProductPath !== product.path) return;
+    if (!isLogoSynced) return;
 
     const generation = ++generationRef.current;
+    const targetPath = product.path;
     const empty = getEmptyPrintTexture();
 
     if (instancesForRender.length === 0) {
@@ -171,7 +175,7 @@ const useGarmentLogoTextures = () => {
     }
 
     await ensureNaturalSizes();
-    if (generation !== generationRef.current) return;
+    if (generation !== generationRef.current || useGarmentLogo.getState().productPath !== targetPath) return;
 
     if (!canvasRef.current) {
       canvasRef.current = document.createElement('canvas');
@@ -187,7 +191,7 @@ const useGarmentLogoTextures = () => {
       atlasHeight: atlasSize.height,
     });
 
-    if (generation !== generationRef.current) return;
+    if (generation !== generationRef.current || useGarmentLogo.getState().productPath !== targetPath) return;
 
     stampCellSizeRef.current = cellSize;
     textureRef.current!.needsUpdate = true;
@@ -200,26 +204,33 @@ const useGarmentLogoTextures = () => {
     atlasSize.width,
     ensureNaturalSizes,
     instancesForRender.length,
-    logoProductPath,
+    isLogoSynced,
     product.path,
   ]);
 
   useEffect(() => {
-    if (logoProductPath !== product.path) {
+    if (!isLogoSynced) {
       clearRuntime();
       return;
     }
+
+    if (!hasMaterialsForParts(partIds)) return;
 
     if (prevStampSignatureRef.current === stampSignature) return;
     prevStampSignatureRef.current = stampSignature;
 
     void updateLogoStamp();
-  }, [clearRuntime, logoProductPath, product.path, stampSignature, updateLogoStamp]);
+  }, [clearRuntime, hasMaterialsForParts, isLogoSynced, partIds, stampSignature, updateLogoStamp]);
 
-  useEffect(() => {
-    if (logoProductPath !== product.path) return;
+  useLayoutEffect(() => {
+    if (!isLogoSynced || !hasMaterialsForParts(partIds)) return;
+
     applyLogoStyleAndFrame();
-  }, [applyLogoStyleAndFrame, logoProductPath, product.path, styleSignature]);
+
+    if (textureRef.current) {
+      applyStampToMaterials(textureRef.current, stampCellSizeRef.current);
+    }
+  }, [applyLogoStyleAndFrame, applyStampToMaterials, hasMaterialsForParts, isLogoSynced, materialRevision, partIds, styleSignature]);
 
   useEffect(() => {
     if (activeStep !== LOGO_STEP) return;
