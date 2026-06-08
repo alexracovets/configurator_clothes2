@@ -1,0 +1,37 @@
+'use client';
+
+import { memo, useMemo } from 'react';
+
+import { buildNameGizmoElements } from '@gizmo';
+import { resolveNameLimits, useConfigurationControl, useConfiguratorProduct, useGarmentName } from '@store';
+
+import { PrintGizmoInstance } from './PrintGizmoInstance';
+
+const NAME_STEP = 4;
+
+const PrintGizmoLayer = memo(() => {
+  const product = useConfiguratorProduct((state) => state.product);
+  const activeStep = useConfigurationControl((state) => state.activeStep);
+  const instances = useGarmentName((state) => state.instances);
+
+  const limits = useMemo(() => (product.nameDefaults ? resolveNameLimits(product) : null), [product]);
+
+  const elements = useMemo(() => {
+    if (activeStep !== NAME_STEP || !limits) return [];
+    return buildNameGizmoElements({ product, instances, fontSizeMin: limits.fontSizeMin, fontSizeMax: limits.fontSizeMax });
+  }, [activeStep, instances, limits, product]);
+
+  if (elements.length === 0) return null;
+
+  return (
+    <group>
+      {elements.map((element) => (
+        <PrintGizmoInstance key={element.id} element={element} />
+      ))}
+    </group>
+  );
+});
+
+PrintGizmoLayer.displayName = 'PrintGizmoLayer';
+
+export { PrintGizmoLayer };

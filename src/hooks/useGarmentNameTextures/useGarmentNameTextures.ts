@@ -5,13 +5,17 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 import type { Texture } from 'three';
 
+import { useGizmoIconAtlas } from '@gizmo';
 import { useGarmentMaterialRegistry } from '@providers';
-import { resolveInstancesForRender, useConfiguratorProduct, useGarmentName } from '@store';
+import { resolveInstancesForRender, useConfigurationControl, useConfiguratorProduct, useGarmentName } from '@store';
 import type { NameInstance } from '@store';
 import {
+  applyGarmentGizmoFrame,
+  applyGarmentGizmoIcons,
   applyGarmentNameMasks,
   applyGarmentNameStyle,
   applyGarmentPrintAtlasSize,
+  buildGizmoFrameUniforms,
   buildNameStyleUniforms,
   canvasToMaskTexture,
   composeNameMaskAtlas,
@@ -19,6 +23,8 @@ import {
   resolveNameStampSize,
   resolvePrintAtlasSize,
 } from '@utils';
+
+const NAME_STEP = 4;
 import type { NameMaskAtlas } from '@utils';
 
 type StampPixelSize = NameMaskAtlas['stampSize'];
@@ -53,6 +59,8 @@ const stampSizeChanged = (previous: StampPixelSize, next: StampPixelSize) => pre
 
 const useGarmentNameTextures = () => {
   const product = useConfiguratorProduct((state) => state.product);
+  const activeStep = useConfigurationControl((state) => state.activeStep);
+  const gizmoIcons = useGizmoIconAtlas();
   const nameProductPath = useGarmentName((state) => state.productPath);
   const nameInstances = useGarmentName((state) => state.instances);
   const namePreview = useGarmentName((state) => state.preview);
@@ -136,6 +144,20 @@ const useGarmentNameTextures = () => {
     [atlasSize.height, atlasSize.width, getMaterials, instancesForRender, invalidate, product.parts],
   );
 
+  const applyGizmoFrame = useCallback(() => {
+    const enabled = activeStep === NAME_STEP;
+
+    for (const part of product.parts) {
+      const frame = buildGizmoFrameUniforms(instancesForRender, part.id, enabled);
+      for (const material of getMaterials(part.id)) {
+        applyGarmentGizmoFrame(material, frame);
+        if (gizmoIcons) applyGarmentGizmoIcons(material, gizmoIcons);
+      }
+    }
+
+    invalidate();
+  }, [activeStep, getMaterials, gizmoIcons, instancesForRender, invalidate, product.parts]);
+
   const updateNameMasks = useCallback(
     async (redrawFill: boolean, redrawStroke: boolean) => {
       if (nameProductPath !== product.path) return;
@@ -192,6 +214,12 @@ const useGarmentNameTextures = () => {
 
     applyNameStyle();
   }, [applyNameStyle, nameProductPath, product.path, styleSignature]);
+
+  useEffect(() => {
+    if (nameProductPath !== product.path) return;
+
+    applyGizmoFrame();
+  }, [applyGizmoFrame, nameProductPath, product.path]);
 
   useEffect(() => () => clearRuntime(), [clearRuntime]);
 };

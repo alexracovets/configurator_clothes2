@@ -31,6 +31,25 @@ const measureNameStampPixelSize = (text: string, font: string, measureCtx: Canva
   };
 };
 
+// Half-size (in reference-font px) of the selection frame for one name: the raw glyph box plus a small gap.
+const GIZMO_FRAME_PADDING = 12;
+
+const measureNameGizmoHalf = (text: string, font: string, measureCtx: CanvasRenderingContext2D): { x: number; y: number } | null => {
+  if (!text.trim()) return null;
+
+  const fontFamily = resolveFontFamily(font);
+  measureCtx.font = `${NAME_REFERENCE_FONT_SIZE}px ${fontFamily}`;
+
+  const metrics = measureCtx.measureText(text);
+  const ascent = metrics.actualBoundingBoxAscent ?? NAME_REFERENCE_FONT_SIZE * 0.8;
+  const descent = metrics.actualBoundingBoxDescent ?? NAME_REFERENCE_FONT_SIZE * 0.2;
+
+  return {
+    x: metrics.width / 2 + GIZMO_FRAME_PADDING,
+    y: (ascent + descent) / 2 + GIZMO_FRAME_PADDING,
+  };
+};
+
 const unionStampPixelSize = (sizes: StampPixelSize[]): StampPixelSize => {
   if (sizes.length === 0) {
     return { width: 1, height: 1 };
@@ -42,5 +61,5 @@ const unionStampPixelSize = (sizes: StampPixelSize[]): StampPixelSize => {
   };
 };
 
-export { measureNameStampPixelSize, unionStampPixelSize };
+export { measureNameGizmoHalf, measureNameStampPixelSize, unionStampPixelSize };
 export type { StampPixelSize };

@@ -16,6 +16,7 @@ interface GarmentNameState {
   initForProduct: (product: GarmentConfig) => void;
   addInstance: (instance: NameInstance) => void;
   removeInstance: (id: string) => void;
+  duplicateInstance: (id: string) => void;
   updateInstance: (id: string, patch: Partial<NameInstance>) => void;
   setPreview: (instanceId: string, patch: NamePreview['patch']) => void;
   clearPreview: () => void;
@@ -60,6 +61,20 @@ const useGarmentName = create<GarmentNameState>((set, get) => ({
       instances: state.instances.filter((instance) => instance.id !== id),
       preview: state.preview?.instanceId === id ? null : state.preview,
     }));
+  },
+  duplicateInstance: (id) => {
+    set((state) => {
+      const source = state.instances.find((instance) => instance.id === id);
+      if (!source) return state;
+
+      const copy: NameInstance = {
+        ...source,
+        id: `${source.id}-copy-${Date.now()}`,
+        uv: { x: source.uv.x, y: Math.min(0.98, source.uv.y + 0.04) },
+      };
+
+      return { instances: [...state.instances, copy] };
+    });
   },
   updateInstance: (id, patch) => {
     set((state) => ({

@@ -33,7 +33,14 @@ const drawNameStrokeMaskGeometry = (ctx: CanvasRenderingContext2D, instance: Dra
   ctx.miterLimit = 2;
   ctx.lineWidth = lineWidth;
   ctx.strokeStyle = '#ffffff';
-  ctx.strokeText(instance.text, 0, 0);
+
+  // Match the fill draw: center the ink box so stroke + fill + frame stay aligned.
+  const metrics = ctx.measureText(instance.text);
+  const ascent = metrics.actualBoundingBoxAscent ?? NAME_REFERENCE_FONT_SIZE * 0.8;
+  const descent = metrics.actualBoundingBoxDescent ?? NAME_REFERENCE_FONT_SIZE * 0.2;
+  const inkCenterOffset = (ascent - descent) / 2;
+
+  ctx.strokeText(instance.text, 0, inkCenterOffset);
   ctx.restore();
 };
 

@@ -57,6 +57,9 @@ uniform float uNameSlotActive[4];
 uniform vec4 uNamePartBounds[4];
 uniform vec3 uNameTextColors[4];
 uniform vec3 uNameStrokeColors[4];
+uniform float uNameGizmoEnabled;
+uniform vec2 uNameGizmoHalf[4];
+uniform sampler2D uNameGizmoIcons;
 uniform sampler2D uPatternMask0;
 uniform sampler2D uPatternMask1;
 uniform vec3 uPatternColor0;
@@ -97,6 +100,58 @@ float garmentNameSampleFillChannel( sampler2D tex, vec2 stampUv, float channel )
 float garmentNameInsidePart( vec2 worldUv, vec4 bounds ) {
   vec2 partUv = ( worldUv - bounds.xy ) / ( bounds.zw - bounds.xy );
   return step( 0.0, partUv.x ) * step( partUv.x, 1.0 ) * step( 0.0, partUv.y ) * step( partUv.y, 1.0 );
+}
+
+// Distance to a rounded rectangle border, antialiased in stamp-pixel space.
+float garmentGizmoRectBorder( vec2 localPx, vec2 halfPx, float lineHalfPx ) {
+  vec2 q = abs( localPx ) - halfPx;
+  float dist = min( max( q.x, q.y ), 0.0 ) + length( max( q, 0.0 ) );
+  float aa = max( fwidth( dist ), 0.0001 );
+  return 1.0 - smoothstep( lineHalfPx - aa, lineHalfPx + aa, abs( dist ) );
+}
+
+// 1D parameter along the rectangle perimeter, used to cut the border into dashes.
+float garmentGizmoDash( vec2 localPx, vec2 halfPx, float period ) {
+  vec2 d = abs( localPx ) - halfPx;
+  float t = ( d.x > d.y ) ? ( localPx.y + halfPx.y ) : ( localPx.x + halfPx.x );
+  return step( period * 0.5, mod( t, period ) );
+}
+
+vec4 garmentGizmoFrameColor( vec2 stampUv, vec2 halfPx, float enabled, float insidePart ) {
+  if ( enabled < 0.5 || insidePart < 0.5 ) return vec4( 0.0 );
+  vec2 localPx = ( stampUv - vec2( 0.5 ) ) * uNameStampSize;
+  float border = garmentGizmoRectBorder( localPx, halfPx, 3.0 );
+  if ( border < 0.01 ) return vec4( 0.0 );
+  float dash = garmentGizmoDash( localPx, halfPx, 46.0 );
+  return vec4( vec3( 0.10, 0.11, 0.13 ), border * dash );
+}
+
+// Half button size + outset in reference px. Must match BUTTON_STAMP_PX/2 and HANDLE_OUTSET_PX in PrintGizmoInstance.
+const float GIZMO_BTN_HALF = 120.0;
+const float GIZMO_BTN_OUTSET = 34.0;
+
+vec4 garmentGizmoIconCell( sampler2D icons, vec2 localPx, vec2 cornerCenter, float cell ) {
+  vec2 d = ( localPx - cornerCenter ) / ( 2.0 * GIZMO_BTN_HALF ) + 0.5;
+  if ( d.x < 0.0 || d.x > 1.0 || d.y < 0.0 || d.y > 1.0 ) return vec4( 0.0 );
+  return texture2D( icons, vec2( ( cell + d.x ) * 0.25, 1.0 - d.y ) );
+}
+
+vec4 garmentGizmoButtons( vec2 stampUv, vec2 halfPx, float enabled, float insidePart, sampler2D icons ) {
+  if ( enabled < 0.5 || insidePart < 0.5 ) return vec4( 0.0 );
+  vec2 localPx = ( stampUv - vec2( 0.5 ) ) * uNameStampSize;
+  vec2 ext = halfPx + vec2( GIZMO_BTN_OUTSET );
+
+  vec4 c0 = garmentGizmoIconCell( icons, localPx, vec2( -ext.x,  ext.y ), 0.0 ); // top-left: duplicate
+  vec4 c1 = garmentGizmoIconCell( icons, localPx, vec2( -ext.x, -ext.y ), 1.0 ); // bottom-left: delete
+  vec4 c2 = garmentGizmoIconCell( icons, localPx, vec2(  ext.x,  ext.y ), 2.0 ); // top-right: rotate
+  vec4 c3 = garmentGizmoIconCell( icons, localPx, vec2(  ext.x, -ext.y ), 3.0 ); // bottom-right: scale
+
+  vec4 col = vec4( 0.0 );
+  col.rgb = c0.rgb * c0.a + col.rgb * ( 1.0 - c0.a ); col.a = c0.a + col.a * ( 1.0 - c0.a );
+  col.rgb = c1.rgb * c1.a + col.rgb * ( 1.0 - c1.a ); col.a = c1.a + col.a * ( 1.0 - c1.a );
+  col.rgb = c2.rgb * c2.a + col.rgb * ( 1.0 - c2.a ); col.a = c2.a + col.a * ( 1.0 - c2.a );
+  col.rgb = c3.rgb * c3.a + col.rgb * ( 1.0 - c3.a ); col.a = c3.a + col.a * ( 1.0 - c3.a );
+  return col;
 }
 
 #endif

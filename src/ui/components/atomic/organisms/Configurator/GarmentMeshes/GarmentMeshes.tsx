@@ -7,6 +7,7 @@ import { useConfiguratorProduct } from '@store';
 
 import { GarmentPartMesh } from '../GarmentPartMesh';
 import { GarmentNameTextureLayer } from '../GarmentNameTextureLayer';
+import { PrintGizmoLayer } from '../PrintGizmoLayer';
 import { GarmentTextureLayer } from '../GarmentTextureLayer';
 import { PreserveGltfMesh } from '../PreserveGltfMesh';
 import { STATIC_REGISTRY_KEY, StaticColorLayer } from '../StaticColorLayer';
@@ -39,6 +40,7 @@ const GarmentMeshes = () => {
       ))}
       <GarmentTextureLayer />
       <GarmentNameTextureLayer />
+      <PrintGizmoLayer />
       <StaticColorLayer />
     </group>
   );

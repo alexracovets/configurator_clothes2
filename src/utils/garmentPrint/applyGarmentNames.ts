@@ -7,8 +7,15 @@ interface GarmentNameMaskState {
   strokeMask: Texture;
 }
 
+interface GizmoFrameState {
+  enabled: number;
+  half: Array<{ x: number; y: number }>;
+}
+
 let pendingNameMasks: GarmentNameMaskState | null = null;
 let pendingNameStyle: NameStyleUniforms | null = null;
+let pendingGizmoFrame: GizmoFrameState | null = null;
+let pendingGizmoIcons: Texture | null = null;
 
 const applyNameMasksToUniforms = (material: MeshStandardMaterial, state: GarmentNameMaskState) => {
   const fillUniform = material.userData.uNameFillMaskUniform as { value: Texture } | undefined;
@@ -89,6 +96,31 @@ const applyGarmentPrintAtlasSize = (material: MeshStandardMaterial, width: numbe
   if (atlasUniform) atlasUniform.value.set(width, height);
 };
 
+const applyGizmoFrameToUniforms = (material: MeshStandardMaterial, state: GizmoFrameState) => {
+  const enabledUniform = material.userData.uNameGizmoEnabledUniform as { value: number } | undefined;
+  if (enabledUniform) enabledUniform.value = state.enabled;
+
+  const halfUniform = material.userData.uNameGizmoHalfUniform as { value: Vector2[] } | undefined;
+  if (halfUniform) {
+    state.half.forEach((half, index) => {
+      halfUniform.value[index]?.set(half.x, half.y);
+    });
+  }
+};
+
+const applyGarmentGizmoFrame = (material: MeshStandardMaterial, state: GizmoFrameState) => {
+  pendingGizmoFrame = state;
+  material.userData.garmentGizmoFrameState = state;
+  applyGizmoFrameToUniforms(material, state);
+};
+
+const applyGarmentGizmoIcons = (material: MeshStandardMaterial, texture: Texture) => {
+  pendingGizmoIcons = texture;
+  material.userData.garmentGizmoIcons = texture;
+  const iconsUniform = material.userData.uNameGizmoIconsUniform as { value: Texture } | undefined;
+  if (iconsUniform) iconsUniform.value = texture;
+};
+
 const hydrateGarmentNameUniforms = (
   material: MeshStandardMaterial,
   uniforms: {
@@ -102,10 +134,14 @@ const hydrateGarmentNameUniforms = (
     uNamePartBounds: { value: Vector4[] };
     uNameTextColors: { value: Color[] };
     uNameStrokeColors: { value: Color[] };
+    uNameGizmoEnabled: { value: number };
+    uNameGizmoHalf: { value: Vector2[] };
+    uNameGizmoIcons: { value: Texture };
   },
 ) => {
   const maskState = (material.userData.garmentNameMaskState as GarmentNameMaskState | undefined) ?? pendingNameMasks;
   const styleState = (material.userData.garmentNameStyleState as NameStyleUniforms | undefined) ?? pendingNameStyle;
+  const gizmoState = (material.userData.garmentGizmoFrameState as GizmoFrameState | undefined) ?? pendingGizmoFrame;
 
   if (maskState) {
     uniforms.uNameFillMask.value = maskState.fillMask;
@@ -127,7 +163,20 @@ const hydrateGarmentNameUniforms = (
     material.userData.uNameTextColorsUniform = uniforms.uNameTextColors;
     material.userData.uNameStrokeColorsUniform = uniforms.uNameStrokeColors;
   }
+
+  material.userData.uNameGizmoEnabledUniform = uniforms.uNameGizmoEnabled;
+  material.userData.uNameGizmoHalfUniform = uniforms.uNameGizmoHalf;
+  material.userData.uNameGizmoIconsUniform = uniforms.uNameGizmoIcons;
+  if (gizmoState) {
+    applyGizmoFrameToUniforms(material, gizmoState);
+    material.userData.garmentGizmoFrameState = gizmoState;
+  }
+  const iconsState = (material.userData.garmentGizmoIcons as Texture | undefined) ?? pendingGizmoIcons;
+  if (iconsState) {
+    uniforms.uNameGizmoIcons.value = iconsState;
+    material.userData.garmentGizmoIcons = iconsState;
+  }
 };
 
-export { applyGarmentNameMasks, applyGarmentNameStyle, applyGarmentPrintAtlasSize, hydrateGarmentNameUniforms };
-export type { GarmentNameMaskState };
+export { applyGarmentGizmoFrame, applyGarmentGizmoIcons, applyGarmentNameMasks, applyGarmentNameStyle, applyGarmentPrintAtlasSize, hydrateGarmentNameUniforms };
+export type { GarmentNameMaskState, GizmoFrameState };

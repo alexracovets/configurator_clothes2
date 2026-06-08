@@ -61,6 +61,9 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     shader.uniforms.uNamePartBounds = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Vector4(0, 0, 1, 1)) };
     shader.uniforms.uNameTextColors = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Color('#000000')) };
     shader.uniforms.uNameStrokeColors = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Color('#ffffff')) };
+    shader.uniforms.uNameGizmoEnabled = { value: 0 };
+    shader.uniforms.uNameGizmoHalf = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Vector2(0, 0)) };
+    shader.uniforms.uNameGizmoIcons = { value: emptyPrint };
     shader.uniforms.uPatternMask0 = { value: printState?.patternMasks[0] ?? emptyPrint };
     shader.uniforms.uPatternMask1 = { value: printState?.patternMasks[1] ?? emptyPrint };
     shader.uniforms.uPatternColor0 = { value: new Color(printState?.patternColors[0] ?? '#000000') };
@@ -79,6 +82,9 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     material.userData.uNamePartBoundsUniform = shader.uniforms.uNamePartBounds;
     material.userData.uNameTextColorsUniform = shader.uniforms.uNameTextColors;
     material.userData.uNameStrokeColorsUniform = shader.uniforms.uNameStrokeColors;
+    material.userData.uNameGizmoEnabledUniform = shader.uniforms.uNameGizmoEnabled;
+    material.userData.uNameGizmoHalfUniform = shader.uniforms.uNameGizmoHalf;
+    material.userData.uNameGizmoIconsUniform = shader.uniforms.uNameGizmoIcons;
     material.userData.uPatternMask0Uniform = shader.uniforms.uPatternMask0;
     material.userData.uPatternMask1Uniform = shader.uniforms.uPatternMask1;
     material.userData.uPatternColor0Uniform = shader.uniforms.uPatternColor0;
@@ -96,6 +102,9 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       uNamePartBounds: shader.uniforms.uNamePartBounds,
       uNameTextColors: shader.uniforms.uNameTextColors,
       uNameStrokeColors: shader.uniforms.uNameStrokeColors,
+      uNameGizmoEnabled: shader.uniforms.uNameGizmoEnabled,
+      uNameGizmoHalf: shader.uniforms.uNameGizmoHalf,
+      uNameGizmoIcons: shader.uniforms.uNameGizmoIcons,
     });
 
     shader.vertexShader = shader.vertexShader.replace('#include <uv_pars_vertex>', garmentVertexUvPars).replace('#include <uv_vertex>', garmentVertexUv);
@@ -107,7 +116,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       .replace('#include <roughnessmap_fragment>', garmentRoughnessFragment);
   };
 
-  material.customProgramCacheKey = () => 'garment-pbr-print-v30';
+  material.customProgramCacheKey = () => 'garment-pbr-print-v32-gizmo-btn';
 };
 
 const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMaterial, meshName = ''): MeshStandardMaterial => {

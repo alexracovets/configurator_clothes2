@@ -1,1 +1,1 @@
-export { isOrbitControlsEnabled, orbitControlsRef, registerAsideOrbitGuard, setAsidePointerOver } from './orbitFlag';
+export { isOrbitControlsEnabled, orbitControlsRef, registerAsideOrbitGuard, setAsidePointerOver, setGizmoDragging } from './orbitFlag';

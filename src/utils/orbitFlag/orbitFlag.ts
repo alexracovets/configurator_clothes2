@@ -10,8 +10,14 @@ let asideRoot: HTMLElement | null = null;
 let lastClientX = -1;
 let lastClientY = -1;
 let guardActive = false;
+let gizmoDragging = false;
 
-const isOrbitControlsEnabled = () => orbitFlag.enabled;
+const isOrbitControlsEnabled = () => orbitFlag.enabled && !gizmoDragging;
+
+const setGizmoDragging = (value: boolean) => {
+  gizmoDragging = value;
+  applyOrbitEnabled();
+};
 
 const applyOrbitEnabled = () => {
   const controls = orbitControlsRef.current;
@@ -83,4 +89,4 @@ const registerAsideOrbitGuard = (element: HTMLElement | null): (() => void) => {
   };
 };
 
-export { isOrbitControlsEnabled, orbitControlsRef, registerAsideOrbitGuard, setAsidePointerOver };
+export { isOrbitControlsEnabled, orbitControlsRef, registerAsideOrbitGuard, setAsidePointerOver, setGizmoDragging };
