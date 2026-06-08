@@ -13,6 +13,7 @@
     "validate": "pnpm format:check && pnpm lint && pnpm verify:design-assets",
     "verify:design-assets": "node scripts/verify-design-assets.mjs",
     "convert:design-assets": "node scripts/convert-design-assets.mjs",
+    "generate:design-thumbnails": "node scripts/generate-design-thumbnails.mjs",
     "prepare": "husky",
     "postinstall": "pnpm copy:logo-assets",
     "copy:logo-assets": "node scripts/copy-logo-assets.mjs"

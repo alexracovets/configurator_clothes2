@@ -10,7 +10,7 @@
       "minimum_count": 6,
       "path": "/models/crewneck/crewneck/",
       "modelFile": "crewneck.gltf",
-      "printAtlas": { "width": 2048, "height": 1074 },
+      "printAtlas": { "width": 4096, "height": 2149 },
       "parts": [
         {
           "name": "Davanti",
@@ -255,7 +255,7 @@
           "rotation": 0,
           "fontSize": 80,
           "show_frame": true,
-          "show_gizmo": true
+          "show_gizmo": false
         },
         {
           "label": "Bottom Back",
@@ -264,7 +264,7 @@
           "rotation": 0,
           "fontSize": 80,
           "show_frame": true,
-          "show_gizmo": true
+          "show_gizmo": false
         }
       ],
       "numberPositions": [
@@ -275,7 +275,7 @@
           "rotation": 0,
           "fontSize": 128,
           "show_frame": true,
-          "show_gizmo": true
+          "show_gizmo": false
         },
         {
           "label": "Front Right",
@@ -284,7 +284,7 @@
           "rotation": 0,
           "fontSize": 128,
           "show_frame": true,
-          "show_gizmo": true
+          "show_gizmo": false
         },
         {
           "label": "Back",
@@ -293,7 +293,7 @@
           "rotation": 0,
           "fontSize": 300,
           "show_frame": true,
-          "show_gizmo": true
+          "show_gizmo": false
         }
       ],
       "logoPositions": []
@@ -307,7 +307,7 @@
       "minimum_count": 6,
       "path": "/models/crewneck/mans_shorts/",
       "modelFile": "mans_shorts.gltf",
-      "printAtlas": { "width": 2048, "height": 1074 },
+      "printAtlas": { "width": 4096, "height": 2149 },
       "parts": [
         {
           "name": "Davanti",

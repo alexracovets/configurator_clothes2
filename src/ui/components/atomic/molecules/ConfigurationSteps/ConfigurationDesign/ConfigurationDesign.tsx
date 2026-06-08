@@ -16,7 +16,7 @@ const PatternPreview = ({ parts, eager }: { parts: DesignPatternPart[]; eager?: 
     {parts.map((part, index) => (
       <AtomImage
         key={part.key}
-        src={part.src}
+        src={part.previewSrc}
         alt=""
         loading={eager ? 'eager' : 'lazy'}
         fetchPriority={eager ? 'high' : 'low'}

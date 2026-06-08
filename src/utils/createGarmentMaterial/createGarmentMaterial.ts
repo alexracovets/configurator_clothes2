@@ -1,5 +1,7 @@
 import { Color, MeshStandardMaterial, type Texture, Vector2, Vector4 } from 'three';
 
+import { PRINT_ATLAS_HEIGHT, PRINT_ATLAS_WIDTH } from '@constants/printAtlas';
+
 import type { PbrMaps } from '../pbrMaps';
 
 import { garmentGradientMapFragment } from '../garmentGradient/garmentGradientShaders';
@@ -60,7 +62,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     material.userData.uGradientSoftnessUniform = shader.uniforms.uGradientSoftness;
     material.userData.uGradientOpacityUniform = shader.uniforms.uGradientOpacity;
     shader.uniforms.uDefaultLogos = { value: printState?.defaultLogos ?? emptyPrint };
-    shader.uniforms.uPrintAtlasSize = { value: new Vector2(2048, 1074) };
+    shader.uniforms.uPrintAtlasSize = { value: new Vector2(PRINT_ATLAS_WIDTH, PRINT_ATLAS_HEIGHT) };
     shader.uniforms.uNameFillMask = { value: emptyPrint };
     shader.uniforms.uNameStrokeMask = { value: emptyPrint };
     shader.uniforms.uNameStampSize = { value: new Vector2(1, 1) };

@@ -47,7 +47,9 @@ const useGarmentTextures = () => {
   const activeOpacity = useGarmentDesign((state) => state.activeOpacity);
   const defaultPattern = useGarmentDesign((state) => state.defaultPattern);
   const { getMaterials } = useGarmentMaterialRegistry();
+  const gl = useThree((state) => state.gl);
   const invalidate = useThree((state) => state.invalidate);
+  const textureAnisotropy = gl.capabilities.getMaxAnisotropy();
 
   const logosTextureRef = useRef<Texture | null>(null);
   const maskTexturesRef = useRef<PatternMaskPair>(emptyMaskPair());
@@ -128,7 +130,7 @@ const useGarmentTextures = () => {
 
     let cancelled = false;
 
-    imageToTexture(logosSrc).then((texture) => {
+    imageToTexture(logosSrc, { anisotropy: textureAnisotropy }).then((texture) => {
       if (cancelled) return;
 
       logosTextureRef.current = texture;
@@ -139,7 +141,7 @@ const useGarmentTextures = () => {
     return () => {
       cancelled = true;
     };
-  }, [applyPrintState, buildPrintState, clearRuntime, defaultPattern, product.path, productPath]);
+  }, [applyPrintState, buildPrintState, clearRuntime, defaultPattern, product.path, productPath, textureAnisotropy]);
 
   useEffect(() => {
     if (productPath !== product.path) return;
@@ -163,7 +165,7 @@ const useGarmentTextures = () => {
 
       await Promise.all(
         activePattern.parts.slice(0, PATTERN_LAYER_COUNT).map(async (part, index) => {
-          masks[index] = await imageToTexture(part.src);
+          masks[index] = await imageToTexture(part.src, { anisotropy: textureAnisotropy });
         }),
       );
 
@@ -179,7 +181,7 @@ const useGarmentTextures = () => {
     return () => {
       cancelled = true;
     };
-  }, [activePattern, applyPrintState, buildPrintState, product.path, productPath]);
+  }, [activePattern, applyPrintState, buildPrintState, product.path, productPath, textureAnisotropy]);
 
   useEffect(() => {
     if (productPath !== product.path) return;

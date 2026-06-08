@@ -1,17 +1,31 @@
-import { SRGBColorSpace, Texture } from 'three';
+import { LinearFilter, LinearMipmapLinearFilter, SRGBColorSpace, Texture } from 'three';
 
 import { loadCachedImage } from '../loadCachedImage/loadCachedImage';
 
+interface ImageTextureOptions {
+  anisotropy?: number;
+}
+
 const textureCache = new Map<string, Texture>();
 
-const imageToTexture = async (src: string): Promise<Texture> => {
+const configureImageTextureSampling = (texture: Texture, options?: ImageTextureOptions) => {
+  texture.colorSpace = SRGBColorSpace;
+  texture.flipY = false;
+  texture.generateMipmaps = true;
+  texture.minFilter = LinearMipmapLinearFilter;
+  texture.magFilter = LinearFilter;
+  if (options?.anisotropy) {
+    texture.anisotropy = options.anisotropy;
+  }
+};
+
+const imageToTexture = async (src: string, options?: ImageTextureOptions): Promise<Texture> => {
   const cached = textureCache.get(src);
   if (cached) return cached;
 
   const image = await loadCachedImage(src);
   const texture = new Texture(image);
-  texture.colorSpace = SRGBColorSpace;
-  texture.flipY = false;
+  configureImageTextureSampling(texture, options);
   texture.needsUpdate = true;
   textureCache.set(src, texture);
 
@@ -25,4 +39,5 @@ const clearImageTextureCache = () => {
   textureCache.clear();
 };
 
-export { clearImageTextureCache, imageToTexture };
+export { clearImageTextureCache, configureImageTextureSampling, imageToTexture };
+export type { ImageTextureOptions };

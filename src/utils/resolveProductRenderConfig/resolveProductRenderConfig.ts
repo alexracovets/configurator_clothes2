@@ -1,9 +1,11 @@
 import type { GarmentConfig, GarmentPartConfig, PrintAtlasConfig, UvBounds, UvPoint } from '@data';
 
-const DEFAULT_PART_TEXTURE_SIZE = 2048;
+import { DEFAULT_PART_TEXTURE_SIZE } from '@constants/partTexture';
+import { PRINT_ATLAS_HEIGHT, PRINT_ATLAS_WIDTH } from '@constants/printAtlas';
+
 const DEFAULT_PRINT_ATLAS: PrintAtlasConfig = {
-  width: 2048,
-  height: Math.round((4900 / 9331) * 2048),
+  width: PRINT_ATLAS_WIDTH,
+  height: PRINT_ATLAS_HEIGHT,
 };
 const FULL_UV_BOUNDS: UvBounds = { minX: 0, maxX: 1, minY: 0, maxY: 1 };
 

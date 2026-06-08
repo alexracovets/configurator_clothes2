@@ -14,8 +14,12 @@ for (const product of crewneck.products) {
   for (const pattern of product.patterns ?? []) {
     for (const part of pattern.parts ?? []) {
       const filePath = join(designsDir, part.path_name);
+      const thumbPath = join(designsDir, 'thumbs', part.path_name);
       if (!existsSync(filePath)) {
         missing.push(filePath);
+      }
+      if (!existsSync(thumbPath)) {
+        missing.push(thumbPath);
       }
     }
   }
@@ -23,8 +27,12 @@ for (const product of crewneck.products) {
   for (const pattern of product.default_pattern ?? []) {
     for (const part of pattern.parts ?? []) {
       const filePath = join(designsDir, part.path_name);
+      const thumbPath = join(designsDir, 'thumbs', part.path_name);
       if (!existsSync(filePath)) {
         missing.push(filePath);
+      }
+      if (!existsSync(thumbPath)) {
+        missing.push(thumbPath);
       }
     }
   }

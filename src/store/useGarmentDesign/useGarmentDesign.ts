@@ -4,6 +4,7 @@ import { create } from 'zustand';
 
 import { PALETTE_COLORS } from '@constants';
 import type { GarmentConfig } from '@data';
+import { resolveDesignThumbSrc } from '@utils';
 
 const DEFAULT_COLOR = PALETTE_COLORS[1];
 const DEFAULT_OPACITY = 1;
@@ -11,6 +12,7 @@ const DEFAULT_OPACITY = 1;
 interface DesignPatternPart {
   key: string;
   src: string;
+  previewSrc: string;
 }
 
 interface DesignPatternItem {
@@ -41,10 +43,14 @@ const mapProductDesigns = (product: GarmentConfig): DesignPatternItem[] =>
   product.patterns.map((pattern, patternIndex) => ({
     key: `pattern-${patternIndex}`,
     name: pattern.name,
-    parts: pattern.parts.map((part, partIndex) => ({
-      key: `pattern-${patternIndex}-part-${partIndex}`,
-      src: `${product.path}designs/${part.path_name}`,
-    })),
+    parts: pattern.parts.map((part, partIndex) => {
+      const src = `${product.path}designs/${part.path_name}`;
+      return {
+        key: `pattern-${patternIndex}-part-${partIndex}`,
+        src,
+        previewSrc: resolveDesignThumbSrc(src),
+      };
+    }),
   }));
 
 const mapDefaultPattern = (product: GarmentConfig): DesignPatternItem | null => {
@@ -54,10 +60,14 @@ const mapDefaultPattern = (product: GarmentConfig): DesignPatternItem | null => 
   return {
     key: 'default-pattern',
     name: pattern.name,
-    parts: pattern.parts.map((part, partIndex) => ({
-      key: `default-pattern-part-${partIndex}`,
-      src: `${product.path}designs/${part.path_name}`,
-    })),
+    parts: pattern.parts.map((part, partIndex) => {
+      const src = `${product.path}designs/${part.path_name}`;
+      return {
+        key: `default-pattern-part-${partIndex}`,
+        src,
+        previewSrc: resolveDesignThumbSrc(src),
+      };
+    }),
   };
 };
 
