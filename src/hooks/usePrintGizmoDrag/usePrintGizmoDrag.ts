@@ -113,11 +113,16 @@ const usePrintGizmoDrag = ({ element, atlasSize }: UsePrintGizmoDragOptions) => 
 
       const el = ctx.current.element;
       const world = uvToWorldPx(uv);
+      const selectedInstanceId = useGarmentName.getState().selectedInstanceId;
       const buttonHit = hitTestGizmoButton(world, el);
       const halfWorld = { x: el.half.x * el.scale, y: el.half.y * el.scale };
       const corner = buttonHit ? GIZMO_CORNERS.find((item) => item.cornerIndex === buttonHit.cornerIndex) : undefined;
       const onBody = Math.abs(world.x) <= halfWorld.x && Math.abs(world.y) <= halfWorld.y;
+      if (corner && selectedInstanceId !== el.id) return;
       if (!corner && !onBody) return;
+
+      useGarmentName.getState().setSelectedInstance(el.id);
+      ctx.current.invalidate();
 
       // This pointer belongs to the gizmo — keep OrbitControls and other handlers out of it.
       event.stopImmediatePropagation();

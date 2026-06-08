@@ -13,11 +13,14 @@ interface GarmentNameState {
   positions: NamePosition[];
   instances: NameInstance[];
   preview: NamePreview | null;
+  selectedInstanceId: string | null;
   initForProduct: (product: GarmentConfig) => void;
   addInstance: (instance: NameInstance) => void;
   removeInstance: (id: string) => void;
   duplicateInstance: (id: string) => void;
   updateInstance: (id: string, patch: Partial<NameInstance>) => void;
+  setSelectedInstance: (id: string | null) => void;
+  clearSelectedInstance: () => void;
   setPreview: (instanceId: string, patch: NamePreview['patch']) => void;
   clearPreview: () => void;
   getInstancesForRender: () => NameInstance[];
@@ -37,6 +40,7 @@ const useGarmentName = create<GarmentNameState>((set, get) => ({
   positions: [],
   instances: [],
   preview: null,
+  selectedInstanceId: null,
   initForProduct: (product) => {
     const positionsKey = buildPositionsKey(product);
     const state = get();
@@ -51,6 +55,7 @@ const useGarmentName = create<GarmentNameState>((set, get) => ({
       positions: mapProductNamePositions(product),
       instances: [],
       preview: null,
+      selectedInstanceId: null,
     });
   },
   addInstance: (instance) => {
@@ -60,6 +65,7 @@ const useGarmentName = create<GarmentNameState>((set, get) => ({
     set((state) => ({
       instances: state.instances.filter((instance) => instance.id !== id),
       preview: state.preview?.instanceId === id ? null : state.preview,
+      selectedInstanceId: state.selectedInstanceId === id ? null : state.selectedInstanceId,
     }));
   },
   duplicateInstance: (id) => {
@@ -73,8 +79,14 @@ const useGarmentName = create<GarmentNameState>((set, get) => ({
         uv: { x: source.uv.x, y: Math.min(0.98, source.uv.y + 0.04) },
       };
 
-      return { instances: [...state.instances, copy] };
+      return { instances: [...state.instances, copy], selectedInstanceId: copy.id };
     });
+  },
+  setSelectedInstance: (id) => {
+    set({ selectedInstanceId: id });
+  },
+  clearSelectedInstance: () => {
+    set({ selectedInstanceId: null });
   },
   updateInstance: (id, patch) => {
     set((state) => ({

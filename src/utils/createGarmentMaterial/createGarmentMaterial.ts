@@ -70,6 +70,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     shader.uniforms.uNameTextColors = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Color('#000000')) };
     shader.uniforms.uNameStrokeColors = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Color('#ffffff')) };
     shader.uniforms.uNameGizmoEnabled = { value: 0 };
+    shader.uniforms.uNameGizmoButtonsReveal = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
     shader.uniforms.uNameGizmoHalf = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Vector2(0, 0)) };
     shader.uniforms.uNameGizmoIcons = { value: emptyPrint };
     shader.uniforms.uNameGizmoHoverSlot = { value: -1 };
@@ -97,6 +98,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     material.userData.uNameTextColorsUniform = shader.uniforms.uNameTextColors;
     material.userData.uNameStrokeColorsUniform = shader.uniforms.uNameStrokeColors;
     material.userData.uNameGizmoEnabledUniform = shader.uniforms.uNameGizmoEnabled;
+    material.userData.uNameGizmoButtonsRevealUniform = shader.uniforms.uNameGizmoButtonsReveal;
     material.userData.uNameGizmoHalfUniform = shader.uniforms.uNameGizmoHalf;
     material.userData.uNameGizmoIconsUniform = shader.uniforms.uNameGizmoIcons;
     material.userData.uNameGizmoHoverSlotUniform = shader.uniforms.uNameGizmoHoverSlot;
@@ -134,7 +136,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       .replace('#include <tonemapping_fragment>', `#include <tonemapping_fragment>\n${garmentGizmoLightsFragment}`);
   };
 
-  material.customProgramCacheKey = () => 'garment-pbr-print-v40-gizmo-ui-post-tonemap';
+  material.customProgramCacheKey = () => 'garment-pbr-print-v43-gizmo-buttons-reveal';
 };
 
 const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMaterial, meshName = ''): MeshStandardMaterial => {

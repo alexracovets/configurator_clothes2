@@ -40,11 +40,13 @@ const GIZMO_HANDLE_CURSORS: Record<(typeof GIZMO_CORNERS)[number]['kind'], strin
   scale: 'nwse-resize',
 };
 
-const getGizmoHoverCursor = (world: { x: number; y: number }, element: PrintGizmoElement): string | null => {
-  const buttonHit = hitTestGizmoButton(world, element);
-  if (buttonHit) {
-    const corner = GIZMO_CORNERS.find((item) => item.cornerIndex === buttonHit.cornerIndex);
-    return corner ? GIZMO_HANDLE_CURSORS[corner.kind] : null;
+const getGizmoHoverCursor = (world: { x: number; y: number }, element: PrintGizmoElement, buttonsVisible = true): string | null => {
+  if (buttonsVisible) {
+    const buttonHit = hitTestGizmoButton(world, element);
+    if (buttonHit) {
+      const corner = GIZMO_CORNERS.find((item) => item.cornerIndex === buttonHit.cornerIndex);
+      return corner ? GIZMO_HANDLE_CURSORS[corner.kind] : null;
+    }
   }
 
   return hitTestGizmoFrame(world, element) ? 'move' : null;

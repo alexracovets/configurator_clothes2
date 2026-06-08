@@ -14,6 +14,7 @@ export { applyGarmentGradient, applyGarmentPartUvBounds } from './garmentGradien
 export { buildNameStyleUniforms } from './garmentPrint/buildNameStyleUniforms';
 export type { NameStyleUniforms } from './garmentPrint/buildNameStyleUniforms';
 export {
+  applyGarmentGizmoButtonsReveal,
   applyGarmentGizmoFrame,
   applyGarmentGizmoHover,
   applyGarmentGizmoIcons,

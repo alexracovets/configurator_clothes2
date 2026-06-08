@@ -5,4 +5,5 @@ export { resolvePbrTexturePaths, useGarmentPbrMaps } from './useGarmentPbrMaps';
 export { useGarmentNameTextures } from './useGarmentNameTextures/useGarmentNameTextures';
 export { useGarmentTextures } from './useGarmentTextures';
 export { useGizmoButtonHover } from './useGizmoButtonHover/useGizmoButtonHover';
+export { useGizmoSelection } from './useGizmoSelection/useGizmoSelection';
 export { usePrintGizmoDrag } from './usePrintGizmoDrag/usePrintGizmoDrag';

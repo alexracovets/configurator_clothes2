@@ -5,11 +5,19 @@ import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 import type { Texture } from 'three';
 
-import { getGizmoHoverUniforms, subscribeGizmoButtonHover, useGizmoIconAtlas } from '@gizmo';
+import {
+  getGizmoButtonsRevealUniforms,
+  getGizmoHoverUniforms,
+  setGizmoButtonsRevealTarget,
+  subscribeGizmoButtonHover,
+  subscribeGizmoButtonReveal,
+  useGizmoIconAtlas,
+} from '@gizmo';
 import { useGarmentMaterialRegistry } from '@providers';
 import { resolveInstancesForRender, useConfigurationControl, useConfiguratorProduct, useGarmentName } from '@store';
 import type { NameInstance } from '@store';
 import {
+  applyGarmentGizmoButtonsReveal,
   applyGarmentGizmoFrame,
   applyGarmentGizmoHover,
   applyGarmentGizmoIcons,
@@ -24,6 +32,7 @@ import {
   resolveNameStampSize,
   resolvePrintAtlasSize,
 } from '@utils';
+import { NAME_SLOT_COUNT } from '../../utils/garmentPrint/nameSlotConstants';
 
 const NAME_STEP = 4;
 import type { NameMaskAtlas } from '@utils';
@@ -65,6 +74,7 @@ const useGarmentNameTextures = () => {
   const nameProductPath = useGarmentName((state) => state.productPath);
   const nameInstances = useGarmentName((state) => state.instances);
   const namePreview = useGarmentName((state) => state.preview);
+  const selectedInstanceId = useGarmentName((state) => state.selectedInstanceId);
   const { getMaterials } = useGarmentMaterialRegistry();
   const invalidate = useThree((state) => state.invalidate);
 
@@ -77,6 +87,10 @@ const useGarmentNameTextures = () => {
   const prevFillSignatureRef = useRef('');
 
   const instancesForRender = useMemo(() => resolveInstancesForRender(nameInstances, namePreview), [nameInstances, namePreview]);
+  const selectedSlotIndex = useMemo(() => {
+    if (activeStep !== NAME_STEP || !selectedInstanceId) return -1;
+    return instancesForRender.slice(0, NAME_SLOT_COUNT).findIndex((instance) => instance.id === selectedInstanceId);
+  }, [activeStep, instancesForRender, selectedInstanceId]);
   const fillSignature = useMemo(() => buildNameFillSignature(instancesForRender), [instancesForRender]);
   const strokeSignature = useMemo(() => buildNameStrokeSignature(instancesForRender), [instancesForRender]);
   const styleSignature = useMemo(() => buildNameStyleSignature(instancesForRender), [instancesForRender]);
@@ -159,6 +173,16 @@ const useGarmentNameTextures = () => {
     invalidate();
   }, [activeStep, getMaterials, gizmoIcons, instancesForRender, invalidate, product.parts]);
 
+  useEffect(() => {
+    setGizmoButtonsRevealTarget(selectedSlotIndex);
+  }, [selectedSlotIndex]);
+
+  useEffect(() => {
+    if (activeStep !== NAME_STEP) {
+      setGizmoButtonsRevealTarget(-1);
+    }
+  }, [activeStep]);
+
   const updateNameMasks = useCallback(
     async (redrawFill: boolean, redrawStroke: boolean) => {
       if (nameProductPath !== product.path) return;
@@ -235,6 +259,21 @@ const useGarmentNameTextures = () => {
 
     applyHover();
     return subscribeGizmoButtonHover(applyHover);
+  }, [getMaterials, invalidate, product.parts]);
+
+  useEffect(() => {
+    const applyReveal = () => {
+      const reveal = getGizmoButtonsRevealUniforms();
+      for (const part of product.parts) {
+        for (const material of getMaterials(part.id)) {
+          applyGarmentGizmoButtonsReveal(material, reveal);
+        }
+      }
+      invalidate();
+    };
+
+    applyReveal();
+    return subscribeGizmoButtonReveal(applyReveal);
   }, [getMaterials, invalidate, product.parts]);
 
   useEffect(() => () => clearRuntime(), [clearRuntime]);

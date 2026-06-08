@@ -58,6 +58,7 @@ uniform vec4 uNamePartBounds[4];
 uniform vec3 uNameTextColors[4];
 uniform vec3 uNameStrokeColors[4];
 uniform float uNameGizmoEnabled;
+uniform float uNameGizmoButtonsReveal[4];
 uniform vec2 uNameGizmoHalf[4];
 uniform sampler2D uNameGizmoIcons;
 uniform float uNameGizmoHoverSlot;
@@ -158,9 +159,10 @@ vec2 garmentNameToWorldPx( vec2 worldUv, vec2 anchor ) {
 // Fixed atlas-px chrome (NAME_GIZMO_* in nameStampConstants.ts). Independent of uNameScale.
 const float GIZMO_BTN_HALF = 24.0;
 const float GIZMO_BTN_OUTSET = 16.0;
-const float GIZMO_FRAME_LINE_HALF = 0.6;
+const float GIZMO_FRAME_LINE_HALF = 0.9;
 const float GIZMO_DASH_PERIOD = 9.2;
 const float GIZMO_BTN_HOVER_SCALE_RANGE = 0.1;
+const float GIZMO_BTN_REVEAL_SCALE_MIN = 0.75;
 
 // Frame is an axis-aligned AABB around the scaled text. Only the extent uses scale; stroke/dash
 // are drawn in fixed atlas px so the selection chrome does not grow with font size.
@@ -213,21 +215,23 @@ vec4 garmentGizmoButtonCell( sampler2D icons, vec2 worldPx, vec2 center, float c
 }
 
 // Buttons sit at AABB corners in atlas px; icon size is fixed and does not follow uNameScale.
-vec4 garmentGizmoButtons( vec2 worldUv, vec2 anchor, float scale, vec2 halfPx, float enabled, float insidePart, sampler2D icons, float slotIndex ) {
-  if ( enabled < 0.5 || insidePart < 0.5 ) return vec4( 0.0 );
+vec4 garmentGizmoButtons( vec2 worldUv, vec2 anchor, float scale, vec2 halfPx, float enabled, float reveal, float insidePart, sampler2D icons, float slotIndex ) {
+  if ( enabled < 0.5 || reveal < 0.01 || insidePart < 0.5 ) return vec4( 0.0 );
   vec2 worldPx = garmentNameToWorldPx( worldUv, anchor );
   vec2 ext = halfPx * scale + vec2( GIZMO_BTN_OUTSET );
+  float revealScale = mix( GIZMO_BTN_REVEAL_SCALE_MIN, 1.0, reveal );
 
-  vec4 c0 = garmentGizmoButtonCell( icons, worldPx, vec2( -ext.x,  ext.y ), 0.0, garmentGizmoButtonHoverScale( slotIndex, 0.0 ) );
-  vec4 c1 = garmentGizmoButtonCell( icons, worldPx, vec2( -ext.x, -ext.y ), 1.0, garmentGizmoButtonHoverScale( slotIndex, 1.0 ) );
-  vec4 c2 = garmentGizmoButtonCell( icons, worldPx, vec2(  ext.x,  ext.y ), 2.0, garmentGizmoButtonHoverScale( slotIndex, 2.0 ) );
-  vec4 c3 = garmentGizmoButtonCell( icons, worldPx, vec2(  ext.x, -ext.y ), 3.0, garmentGizmoButtonHoverScale( slotIndex, 3.0 ) );
+  vec4 c0 = garmentGizmoButtonCell( icons, worldPx, vec2( -ext.x,  ext.y ), 0.0, garmentGizmoButtonHoverScale( slotIndex, 0.0 ) * revealScale );
+  vec4 c1 = garmentGizmoButtonCell( icons, worldPx, vec2( -ext.x, -ext.y ), 1.0, garmentGizmoButtonHoverScale( slotIndex, 1.0 ) * revealScale );
+  vec4 c2 = garmentGizmoButtonCell( icons, worldPx, vec2(  ext.x,  ext.y ), 2.0, garmentGizmoButtonHoverScale( slotIndex, 2.0 ) * revealScale );
+  vec4 c3 = garmentGizmoButtonCell( icons, worldPx, vec2(  ext.x, -ext.y ), 3.0, garmentGizmoButtonHoverScale( slotIndex, 3.0 ) * revealScale );
 
   vec4 col = vec4( 0.0 );
   col.rgb = c0.rgb * c0.a + col.rgb * ( 1.0 - c0.a ); col.a = c0.a + col.a * ( 1.0 - c0.a );
   col.rgb = c1.rgb * c1.a + col.rgb * ( 1.0 - c1.a ); col.a = c1.a + col.a * ( 1.0 - c1.a );
   col.rgb = c2.rgb * c2.a + col.rgb * ( 1.0 - c2.a ); col.a = c2.a + col.a * ( 1.0 - c2.a );
   col.rgb = c3.rgb * c3.a + col.rgb * ( 1.0 - c3.a ); col.a = c3.a + col.a * ( 1.0 - c3.a );
+  col.a *= reveal;
   return col;
 }
 

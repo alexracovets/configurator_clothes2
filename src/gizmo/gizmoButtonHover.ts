@@ -79,7 +79,9 @@ const getGizmoHoverUniforms = () => {
 
 const subscribeGizmoButtonHover = (listener: () => void) => {
   listeners.add(listener);
-  return () => listeners.delete(listener);
+  return () => {
+    listeners.delete(listener);
+  };
 };
 
 export { clearGizmoButtonHover, getGizmoHoverUniforms, isGizmoButtonDragActive, setGizmoButtonDragActive, setGizmoButtonHover, subscribeGizmoButtonHover };

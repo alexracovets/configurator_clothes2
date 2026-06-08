@@ -121,6 +121,15 @@ const applyGarmentGizmoIcons = (material: MeshStandardMaterial, texture: Texture
   if (iconsUniform) iconsUniform.value = texture;
 };
 
+const applyGarmentGizmoButtonsReveal = (material: MeshStandardMaterial, reveal: number[]) => {
+  const revealUniform = material.userData.uNameGizmoButtonsRevealUniform as { value: number[] } | undefined;
+  if (!revealUniform) return;
+
+  reveal.forEach((value, index) => {
+    revealUniform.value[index] = value;
+  });
+};
+
 const applyGarmentGizmoHover = (material: MeshStandardMaterial, hover: { slot: number; corner: number; scale: number }) => {
   const slotUniform = material.userData.uNameGizmoHoverSlotUniform as { value: number } | undefined;
   const cornerUniform = material.userData.uNameGizmoHoverCornerUniform as { value: number } | undefined;
@@ -189,6 +198,7 @@ const hydrateGarmentNameUniforms = (
 };
 
 export {
+  applyGarmentGizmoButtonsReveal,
   applyGarmentGizmoFrame,
   applyGarmentGizmoHover,
   applyGarmentGizmoIcons,
