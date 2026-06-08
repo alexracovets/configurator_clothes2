@@ -1,7 +1,7 @@
 import type { GarmentConfig } from '@data';
 import type { LogoInstance } from '@store';
 
-import { resolveLogoDisplayScale, resolveLogoReferenceDrawSize } from '../utils/composeLogoAtlas/composeLogoPrintAtlas';
+import { resolveLogoDisplayScale, resolveLogoGizmoHalf, resolveLogoReferenceDrawSize } from '../utils/composeLogoAtlas/composeLogoPrintAtlas';
 import { LOGO_SCALE_MAX, LOGO_SCALE_MIN, LOGO_SLOT_COUNT } from '../utils/garmentPrint/logoStampConstants';
 import { resolvePartPrintRotation, resolvePrintAtlasSize } from '../utils/resolveProductRenderConfig/resolveProductRenderConfig';
 
@@ -29,7 +29,7 @@ const buildLogoGizmoElements = ({ product, instances }: BuildLogoGizmoElementsIn
     const naturalHeight = instance.naturalHeight || 1;
     const { width, height } = resolveLogoReferenceDrawSize(instance, naturalWidth, naturalHeight);
 
-    const half = { x: width / 2, y: height / 2 };
+    const half = resolveLogoGizmoHalf(width, height, instance.uploadRotation ?? 0);
 
     return [
       {

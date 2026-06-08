@@ -1,6 +1,6 @@
 import type { LogoInstance } from '@store';
 
-import { resolveLogoReferenceDrawSize } from '../composeLogoAtlas/composeLogoPrintAtlas';
+import { resolveLogoGizmoHalf, resolveLogoReferenceDrawSize } from '../composeLogoAtlas/composeLogoPrintAtlas';
 import type { GizmoFrameState } from './applyGarmentLogos';
 import { LOGO_SLOT_COUNT } from './logoStampConstants';
 
@@ -19,7 +19,7 @@ const buildLogoGizmoFrameUniforms = (instances: LogoInstance[], meshPartId: stri
     const naturalHeight = instance.naturalHeight || 1;
     const { width, height } = resolveLogoReferenceDrawSize(instance, naturalWidth, naturalHeight);
 
-    half[index] = { x: width / 2, y: height / 2 };
+    half[index] = resolveLogoGizmoHalf(width, height, instance.uploadRotation ?? 0);
   });
 
   return { enabled: enabled ? 1 : 0, half, frameActive, gizmoActive };

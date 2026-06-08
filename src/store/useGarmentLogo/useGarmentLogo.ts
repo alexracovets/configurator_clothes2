@@ -3,7 +3,7 @@
 import { create } from 'zustand';
 
 import type { GarmentConfig } from '@data';
-import { loadCachedImage, LOGO_SLOT_COUNT } from '@utils';
+import { loadCachedImage, LOGO_SLOT_COUNT, LOGO_UPLOAD_ROTATION_DEG } from '@utils';
 
 import { createDefaultLogoInstances, createDynamicUserLogoPosition, createLogoInstance, mapProductLogoPositions } from './mapProductLogos';
 import type { LogoInstance, LogoPosition, LogoPreview } from './mapProductLogos';
@@ -92,6 +92,7 @@ const useGarmentLogo = create<GarmentLogoState>((set, get) => ({
       isDefault: false,
       naturalWidth: natural.width,
       naturalHeight: natural.height,
+      uploadRotation: LOGO_UPLOAD_ROTATION_DEG,
     });
 
     set((state) => ({ instances: [...state.instances, instance] }));
@@ -110,6 +111,7 @@ const useGarmentLogo = create<GarmentLogoState>((set, get) => ({
       isDefault: false,
       naturalWidth: natural.width,
       naturalHeight: natural.height,
+      uploadRotation: LOGO_UPLOAD_ROTATION_DEG,
     });
 
     set((state) => ({ instances: [...state.instances, instance] }));

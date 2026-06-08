@@ -52,6 +52,7 @@ const buildLogoStyleSignature = (instances: ReturnType<typeof resolveLogoInstanc
       id: instance.id,
       uv: instance.uv,
       rotation: instance.rotation,
+      uploadRotation: instance.uploadRotation ?? 0,
       scale: instance.scale,
       partId: instance.partId,
       showFrame: instance.showFrame,

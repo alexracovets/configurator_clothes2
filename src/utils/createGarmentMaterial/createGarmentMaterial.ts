@@ -102,6 +102,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     shader.uniforms.uLogoStampCellSize = { value: new Vector2(1, 1) };
     shader.uniforms.uLogoAnchorUv = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => new Vector2()) };
     shader.uniforms.uLogoRotation = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uLogoUploadRotation = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => 0) };
     shader.uniforms.uLogoPartRotation = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => 0) };
     shader.uniforms.uLogoScale = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => 1) };
     shader.uniforms.uLogoSlotActive = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => 0) };
@@ -157,6 +158,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     material.userData.uLogoStampCellSizeUniform = shader.uniforms.uLogoStampCellSize;
     material.userData.uLogoAnchorUvUniform = shader.uniforms.uLogoAnchorUv;
     material.userData.uLogoRotationUniform = shader.uniforms.uLogoRotation;
+    material.userData.uLogoUploadRotationUniform = shader.uniforms.uLogoUploadRotation;
     material.userData.uLogoPartRotationUniform = shader.uniforms.uLogoPartRotation;
     material.userData.uLogoScaleUniform = shader.uniforms.uLogoScale;
     material.userData.uLogoSlotActiveUniform = shader.uniforms.uLogoSlotActive;
@@ -210,6 +212,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       uLogoStampCellSize: shader.uniforms.uLogoStampCellSize,
       uLogoAnchorUv: shader.uniforms.uLogoAnchorUv,
       uLogoRotation: shader.uniforms.uLogoRotation,
+      uLogoUploadRotation: shader.uniforms.uLogoUploadRotation,
       uLogoPartRotation: shader.uniforms.uLogoPartRotation,
       uLogoScale: shader.uniforms.uLogoScale,
       uLogoSlotActive: shader.uniforms.uLogoSlotActive,
@@ -228,7 +231,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       .replace('#include <tonemapping_fragment>', `#include <tonemapping_fragment>\n${garmentGizmoLightsFragment}`);
   };
 
-  material.customProgramCacheKey = () => 'garment-pbr-print-v52-part-rotation';
+  material.customProgramCacheKey = () => 'garment-pbr-print-v53-logo-upload-rotation';
 };
 
 const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMaterial, meshName = ''): MeshStandardMaterial => {

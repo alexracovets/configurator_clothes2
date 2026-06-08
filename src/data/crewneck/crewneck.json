@@ -51,7 +51,7 @@
           "meshNames": ["crewneck_sleeve_left"],
           "renderOrder": 1,
           "uvBounds": { "minX": 0.0026, "maxX": 0.2625, "minY": 0.7191, "maxY": 0.9967 },
-          "printRotation": 0,
+          "printRotation": -90,
           "gradient": {
             "reversed": false,
             "rotation": 90,

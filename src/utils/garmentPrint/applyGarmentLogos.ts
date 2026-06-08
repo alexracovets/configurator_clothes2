@@ -41,6 +41,13 @@ const applyLogoStyleToUniforms = (material: MeshStandardMaterial, style: LogoSty
     });
   }
 
+  const uploadRotationUniform = material.userData.uLogoUploadRotationUniform as { value: number[] } | undefined;
+  if (uploadRotationUniform) {
+    style.uploadRotation.forEach((value, index) => {
+      uploadRotationUniform.value[index] = value;
+    });
+  }
+
   const partRotationUniform = material.userData.uLogoPartRotationUniform as { value: number[] } | undefined;
   if (partRotationUniform) {
     style.partRotation.forEach((value, index) => {
@@ -121,6 +128,7 @@ const hydrateGarmentLogoUniforms = (
     uLogoStampCellSize: { value: Vector2 };
     uLogoAnchorUv: { value: Vector2[] };
     uLogoRotation: { value: number[] };
+    uLogoUploadRotation: { value: number[] };
     uLogoPartRotation: { value: number[] };
     uLogoScale: { value: number[] };
     uLogoSlotActive: { value: number[] };
@@ -146,6 +154,7 @@ const hydrateGarmentLogoUniforms = (
     material.userData.garmentLogoStyleState = styleState;
     material.userData.uLogoAnchorUvUniform = uniforms.uLogoAnchorUv;
     material.userData.uLogoRotationUniform = uniforms.uLogoRotation;
+    material.userData.uLogoUploadRotationUniform = uniforms.uLogoUploadRotation;
     material.userData.uLogoPartRotationUniform = uniforms.uLogoPartRotation;
     material.userData.uLogoScaleUniform = uniforms.uLogoScale;
     material.userData.uLogoSlotActiveUniform = uniforms.uLogoSlotActive;

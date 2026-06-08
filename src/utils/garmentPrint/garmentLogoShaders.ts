@@ -4,10 +4,10 @@ const garmentLogoMapFragment = /* glsl */ `
   float logoInside2 = garmentNameInsidePart( vPrintUv, uLogoPartBounds[2] ) * uLogoSlotActive[2];
   float logoInside3 = garmentNameInsidePart( vPrintUv, uLogoPartBounds[3] ) * uLogoSlotActive[3];
 
-  vec2 logoStampUv0 = garmentLogoToStampUv( vPrintUv, uLogoAnchorUv[0], uLogoRotation[0], uLogoPartRotation[0], uLogoScale[0] );
-  vec2 logoStampUv1 = garmentLogoToStampUv( vPrintUv, uLogoAnchorUv[1], uLogoRotation[1], uLogoPartRotation[1], uLogoScale[1] );
-  vec2 logoStampUv2 = garmentLogoToStampUv( vPrintUv, uLogoAnchorUv[2], uLogoRotation[2], uLogoPartRotation[2], uLogoScale[2] );
-  vec2 logoStampUv3 = garmentLogoToStampUv( vPrintUv, uLogoAnchorUv[3], uLogoRotation[3], uLogoPartRotation[3], uLogoScale[3] );
+  vec2 logoStampUv0 = garmentLogoToStampUv( vPrintUv, uLogoAnchorUv[0], uLogoRotation[0], uLogoUploadRotation[0], uLogoPartRotation[0], uLogoScale[0] );
+  vec2 logoStampUv1 = garmentLogoToStampUv( vPrintUv, uLogoAnchorUv[1], uLogoRotation[1], uLogoUploadRotation[1], uLogoPartRotation[1], uLogoScale[1] );
+  vec2 logoStampUv2 = garmentLogoToStampUv( vPrintUv, uLogoAnchorUv[2], uLogoRotation[2], uLogoUploadRotation[2], uLogoPartRotation[2], uLogoScale[2] );
+  vec2 logoStampUv3 = garmentLogoToStampUv( vPrintUv, uLogoAnchorUv[3], uLogoRotation[3], uLogoUploadRotation[3], uLogoPartRotation[3], uLogoScale[3] );
 
   float logoInsideStamp0 = garmentNameInsideStamp( logoStampUv0 );
   float logoInsideStamp1 = garmentNameInsideStamp( logoStampUv1 );

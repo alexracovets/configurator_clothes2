@@ -84,7 +84,9 @@ const useStepLogo = <T>(selector: (state: StepLogoStoreView) => T): T => {
 
   const updatePart = useCallback(
     (id: string, patch: Partial<StepLogoPartState>) => {
-      const { baseScale: _baseScale, visible: _visible, ...logoPatch } = patch;
+      const logoPatch = { ...patch };
+      delete logoPatch.baseScale;
+      delete logoPatch.visible;
       updateInstance(id, logoPatch);
     },
     [updateInstance],

@@ -18,6 +18,7 @@ interface LogoStyleUniforms {
   stampCellSize: { width: number; height: number };
   anchorUv: LogoSlotVec2;
   rotation: LogoSlotFloat4;
+  uploadRotation: LogoSlotFloat4;
   partRotation: LogoSlotFloat4;
   scale: LogoSlotFloat4;
   slotActive: LogoSlotFloat4;
@@ -42,6 +43,7 @@ const buildLogoStyleUniforms = (
     { x: 0, y: 0 },
   ];
   const rotation: LogoSlotFloat4 = [0, 0, 0, 0];
+  const uploadRotation: LogoSlotFloat4 = [0, 0, 0, 0];
   const partRotation: LogoSlotFloat4 = [0, 0, 0, 0];
   const scale: LogoSlotFloat4 = [1, 1, 1, 1];
   const slotActive: LogoSlotFloat4 = [0, 0, 0, 0];
@@ -58,6 +60,7 @@ const buildLogoStyleUniforms = (
     slotActive[index] = 1;
     anchorUv[index] = instance.uv;
     rotation[index] = (instance.rotation * Math.PI) / 180;
+    uploadRotation[index] = ((instance.uploadRotation ?? 0) * Math.PI) / 180;
     partRotation[index] = part ? (resolvePartPrintRotation(part) * Math.PI) / 180 : 0;
     scale[index] = resolveLogoDisplayScale(instance, naturalWidth, naturalHeight, atlasWidth, atlasHeight);
     partBounds[index] = bounds;
@@ -70,6 +73,7 @@ const buildLogoStyleUniforms = (
     },
     anchorUv,
     rotation,
+    uploadRotation,
     partRotation,
     scale,
     slotActive,

@@ -30,6 +30,8 @@ interface LogoInstance {
   showGizmo: boolean;
   naturalWidth: number;
   naturalHeight: number;
+  /** Baked upload orientation correction; does not affect gizmo rotation. */
+  uploadRotation: number;
   opacity: number;
 }
 
@@ -80,7 +82,14 @@ const resolveLogoFileName = (src: string) => {
 const createLogoInstance = (
   position: LogoPosition,
   id: string,
-  options: { src: string; fileName?: string; isDefault?: boolean; naturalWidth?: number; naturalHeight?: number },
+  options: {
+    src: string;
+    fileName?: string;
+    isDefault?: boolean;
+    naturalWidth?: number;
+    naturalHeight?: number;
+    uploadRotation?: number;
+  },
 ): LogoInstance => ({
   id,
   positionKey: position.key,
@@ -96,6 +105,7 @@ const createLogoInstance = (
   showGizmo: (options.isDefault ?? position.isDefault) ? position.showGizmo : true,
   naturalWidth: options.naturalWidth ?? 0,
   naturalHeight: options.naturalHeight ?? 0,
+  uploadRotation: options.uploadRotation ?? 0,
   opacity: 1,
 });
 

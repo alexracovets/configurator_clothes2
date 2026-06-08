@@ -76,6 +76,7 @@ uniform sampler2D uLogoStamp;
 uniform vec2 uLogoStampCellSize;
 uniform vec2 uLogoAnchorUv[4];
 uniform float uLogoRotation[4];
+uniform float uLogoUploadRotation[4];
 uniform float uLogoPartRotation[4];
 uniform float uLogoScale[4];
 uniform float uLogoSlotActive[4];
@@ -141,9 +142,9 @@ vec2 garmentNumberToStampUv( vec2 worldUv, vec2 anchor, float rotation, float pa
   return vec2( 0.5 ) + localPx / uNumberStampSize;
 }
 
-vec2 garmentLogoToStampUv( vec2 worldUv, vec2 anchor, float rotation, float partRotation, float scale ) {
+vec2 garmentLogoToStampUv( vec2 worldUv, vec2 anchor, float rotation, float uploadRotation, float partRotation, float scale ) {
   vec2 localPx = garmentPrintToLocalPx( worldUv, anchor, partRotation );
-  localPx = garmentPrintRotateLocalPx( localPx, rotation ) / max( scale, 0.001 );
+  localPx = garmentPrintRotateLocalPx( localPx, rotation + uploadRotation ) / max( scale, 0.001 );
   return vec2( 0.5 ) + localPx / uLogoStampCellSize;
 }
 

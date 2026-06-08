@@ -1,6 +1,12 @@
 export { cn } from './cn';
 export { composePartAlbedo } from './composePartAlbedo/composePartAlbedo';
-export { composeLogoPrintAtlas, resolveLogoDisplayScale, resolveLogoDrawSize, resolveLogoReferenceDrawSize } from './composeLogoAtlas/composeLogoPrintAtlas';
+export {
+  composeLogoPrintAtlas,
+  resolveLogoDisplayScale,
+  resolveLogoDrawSize,
+  resolveLogoGizmoHalf,
+  resolveLogoReferenceDrawSize,
+} from './composeLogoAtlas/composeLogoPrintAtlas';
 export { composeLogoStampAtlas } from './composeLogoAtlas/composeLogoStampAtlas';
 export { composeNameMaskAtlas, resolveNameStampSize } from './composeNameAtlas/composeNameMaskAtlas';
 export type { ComposeNameMaskAtlasInput, NameMaskAtlas } from './composeNameAtlas/composeNameMaskAtlas';
@@ -47,6 +53,7 @@ export {
   LOGO_SCALE_MAX,
   LOGO_SCALE_MIN,
   LOGO_SLOT_COUNT,
+  LOGO_UPLOAD_ROTATION_DEG,
   LOGO_VERTICAL_REF_HEIGHT,
 } from './garmentPrint/logoStampConstants';
 export { NAME_GIZMO_BTN_HALF_ATLAS, NAME_GIZMO_BTN_OUTSET_ATLAS } from './garmentPrint/nameStampConstants';
