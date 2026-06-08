@@ -58,7 +58,12 @@ export { canvasToTexture } from './garmentPrint/canvasToTexture';
 export { clearImageTextureCache, imageToTexture } from './garmentPrint/imageToTexture';
 export { loadCachedImage } from './loadCachedImage/loadCachedImage';
 export { loadImage } from './loadImage/loadImage';
-export { resolvePartTextureSize, resolvePartUvBounds, resolvePrintAtlasSize } from './resolveProductRenderConfig/resolveProductRenderConfig';
+export {
+  resolvePartPrintRotation,
+  resolvePartTextureSize,
+  resolvePartUvBounds,
+  resolvePrintAtlasSize,
+} from './resolveProductRenderConfig/resolveProductRenderConfig';
 export type { PbrMaps, PbrTexturePaths } from './pbrMaps';
 export { priceFormat } from './priceFormat';
 export { resolveModelUrl } from './resolveModelUrl';

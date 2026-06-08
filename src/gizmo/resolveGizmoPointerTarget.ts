@@ -1,10 +1,25 @@
+import type { GarmentPartConfig } from '@data';
 import type { Camera, Object3D, Raycaster, Scene } from 'three';
 import { Vector2 } from 'three';
+
+import { resolvePartPrintRotation } from '../utils/resolveProductRenderConfig/resolveProductRenderConfig';
 
 import { getGizmoButtonReveal } from './gizmoButtonReveal';
 import { hitTestGizmoButton, hitTestGizmoFrame } from './hitTestGizmoButton';
 import type { GizmoButtonHit } from './hitTestGizmoButton';
+import { toPrintLocalPx } from './printLocalSpace';
 import type { PrintGizmoElement } from './types';
+
+interface PrintablePartMeshes {
+  partId: string;
+  meshNames: string[];
+  printRotation: number;
+}
+
+interface PrintUvHit {
+  uv: { x: number; y: number };
+  partId: string;
+}
 
 interface GizmoPointerTarget {
   element: PrintGizmoElement;
@@ -26,10 +41,40 @@ interface ResolveGizmoPointerTargetOptions {
   requireVisibleButtons?: boolean;
 }
 
-const toWorldPx = (uv: { x: number; y: number }, element: PrintGizmoElement, atlasSize: { width: number; height: number }) => ({
-  x: (uv.x - element.uv.x) * atlasSize.width,
-  y: (uv.y - element.uv.y) * atlasSize.height,
-});
+const toLocalPx = (uv: { x: number; y: number }, element: PrintGizmoElement, atlasSize: { width: number; height: number }) =>
+  toPrintLocalPx(uv, element.uv, atlasSize, element.partRotation, element.rotation);
+
+const buildPrintablePartMeshes = (parts: GarmentPartConfig[]): PrintablePartMeshes[] =>
+  parts.map((part) => ({
+    partId: part.id,
+    meshNames: part.meshNames,
+    printRotation: resolvePartPrintRotation(part),
+  }));
+
+const resolvePartIdFromMeshName = (meshName: string, printableParts: PrintablePartMeshes[]) => {
+  const match = printableParts.find((part) => part.meshNames.includes(meshName));
+  return match?.partId ?? null;
+};
+
+const raycastPrintUv = (clientX: number, clientY: number, printableParts: PrintablePartMeshes[], ctx: ResolveGizmoPointerTargetContext): PrintUvHit | null => {
+  const rect = ctx.domElement.getBoundingClientRect();
+  const x = ((clientX - rect.left) / rect.width) * 2 - 1;
+  const y = -((clientY - rect.top) / rect.height) * 2 + 1;
+  ctx.raycaster.setFromCamera(new Vector2(x, y), ctx.camera);
+  const hits = ctx.raycaster.intersectObject(ctx.scene as Object3D, true).filter((item) => item.uv);
+  const allowedMeshes = new Set(printableParts.flatMap((part) => part.meshNames));
+
+  for (const hit of hits) {
+    if (!allowedMeshes.has(hit.object.name)) continue;
+
+    const partId = resolvePartIdFromMeshName(hit.object.name, printableParts);
+    if (!partId) continue;
+
+    return { uv: { x: hit.uv!.x, y: hit.uv!.y }, partId };
+  }
+
+  return null;
+};
 
 const raycastGizmoUv = (clientX: number, clientY: number, elements: PrintGizmoElement[], ctx: ResolveGizmoPointerTargetContext) => {
   const rect = ctx.domElement.getBoundingClientRect();
@@ -73,7 +118,7 @@ const resolveGizmoPointerTarget = (
   const sorted = [...elements].sort((left, right) => right.slotIndex - left.slotIndex);
 
   for (const element of sorted) {
-    const world = toWorldPx(uv, element, ctx.atlasSize);
+    const world = toLocalPx(uv, element, ctx.atlasSize);
     const onFrame = hitTestGizmoFrame(world, element);
     const buttonHit = resolveGizmoButtonHit(world, element, options);
 
@@ -85,5 +130,5 @@ const resolveGizmoPointerTarget = (
   return null;
 };
 
-export { raycastGizmoUv, resolveGizmoPointerTarget, toWorldPx };
-export type { GizmoPointerTarget, ResolveGizmoPointerTargetContext, ResolveGizmoPointerTargetOptions };
+export { buildPrintablePartMeshes, raycastGizmoUv, raycastPrintUv, resolveGizmoPointerTarget, toLocalPx };
+export type { GizmoPointerTarget, PrintablePartMeshes, PrintUvHit, ResolveGizmoPointerTargetContext, ResolveGizmoPointerTargetOptions };

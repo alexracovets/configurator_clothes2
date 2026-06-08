@@ -2,7 +2,7 @@ import type { GarmentPartConfig } from '@data';
 import type { GarmentTextRenderInstance } from '@store';
 
 import type { StampPixelSize } from '../drawNameOnAtlas/measureNameStampBounds';
-import { FULL_UV_BOUNDS, resolvePartUvBounds } from '../resolveProductRenderConfig/resolveProductRenderConfig';
+import { FULL_UV_BOUNDS, resolvePartPrintRotation, resolvePartUvBounds } from '../resolveProductRenderConfig/resolveProductRenderConfig';
 import { NAME_REFERENCE_FONT_SIZE } from './nameStampConstants';
 import { NAME_SLOT_COUNT } from './nameSlotConstants';
 
@@ -20,6 +20,7 @@ interface NameStyleUniforms {
   stampSize: StampPixelSize;
   anchorUv: NameSlotVec2;
   rotation: NameSlotFloat4;
+  partRotation: NameSlotFloat4;
   scale: NameSlotFloat4;
   slotActive: NameSlotFloat4;
   partBounds: NameSlotBounds4;
@@ -46,6 +47,7 @@ const buildNameStyleUniforms = (
     { x: 0, y: 0 },
   ];
   const rotation: NameSlotFloat4 = [0, 0, 0, 0];
+  const partRotation: NameSlotFloat4 = [0, 0, 0, 0];
   const scale: NameSlotFloat4 = [1, 1, 1, 1];
   const slotActive: NameSlotFloat4 = [0, 0, 0, 0];
   const partBounds: NameSlotBounds4 = [{ ...DEFAULT_PART_BOUNDS }, { ...DEFAULT_PART_BOUNDS }, { ...DEFAULT_PART_BOUNDS }, { ...DEFAULT_PART_BOUNDS }];
@@ -55,11 +57,13 @@ const buildNameStyleUniforms = (
   instances.slice(0, NAME_SLOT_COUNT).forEach((instance, index) => {
     if (instance.partId !== meshPartId) return;
 
-    const bounds = partsById[instance.partId] ? resolvePartUvBounds(partsById[instance.partId]) : DEFAULT_PART_BOUNDS;
+    const part = partsById[instance.partId];
+    const bounds = part ? resolvePartUvBounds(part) : DEFAULT_PART_BOUNDS;
 
     slotActive[index] = 1;
     anchorUv[index] = instance.uv;
     rotation[index] = (instance.rotation * Math.PI) / 180;
+    partRotation[index] = part ? (resolvePartPrintRotation(part) * Math.PI) / 180 : 0;
     scale[index] = instance.fontSize / NAME_REFERENCE_FONT_SIZE;
     partBounds[index] = bounds;
     textColors[index] = instance.textColor;
@@ -70,6 +74,7 @@ const buildNameStyleUniforms = (
     stampSize: stampSize.width > 0 && stampSize.height > 0 ? stampSize : DEFAULT_STAMP_SIZE,
     anchorUv,
     rotation,
+    partRotation,
     scale,
     slotActive,
     partBounds,

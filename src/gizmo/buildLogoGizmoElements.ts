@@ -3,7 +3,7 @@ import type { LogoInstance } from '@store';
 
 import { resolveLogoDisplayScale, resolveLogoReferenceDrawSize } from '../utils/composeLogoAtlas/composeLogoPrintAtlas';
 import { LOGO_SCALE_MAX, LOGO_SCALE_MIN, LOGO_SLOT_COUNT } from '../utils/garmentPrint/logoStampConstants';
-import { resolvePrintAtlasSize } from '../utils/resolveProductRenderConfig/resolveProductRenderConfig';
+import { resolvePartPrintRotation, resolvePrintAtlasSize } from '../utils/resolveProductRenderConfig/resolveProductRenderConfig';
 
 import type { PrintGizmoElement } from './types';
 
@@ -29,13 +29,7 @@ const buildLogoGizmoElements = ({ product, instances }: BuildLogoGizmoElementsIn
     const naturalHeight = instance.naturalHeight || 1;
     const { width, height } = resolveLogoReferenceDrawSize(instance, naturalWidth, naturalHeight);
 
-    const rad = (instance.rotation * Math.PI) / 180;
-    const cosA = Math.abs(Math.cos(rad));
-    const sinA = Math.abs(Math.sin(rad));
-    const half = {
-      x: (width * cosA + height * sinA) / 2,
-      y: (width * sinA + height * cosA) / 2,
-    };
+    const half = { x: width / 2, y: height / 2 };
 
     return [
       {
@@ -46,6 +40,7 @@ const buildLogoGizmoElements = ({ product, instances }: BuildLogoGizmoElementsIn
         meshNames: part.meshNames,
         uv: instance.uv,
         rotation: instance.rotation,
+        partRotation: resolvePartPrintRotation(part),
         scale: resolveLogoDisplayScale(instance, naturalWidth, naturalHeight, atlasSize.width, atlasSize.height),
         half,
         scaleMin: LOGO_SCALE_MIN,

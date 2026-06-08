@@ -3,20 +3,33 @@
 import { useEffect, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 
-import { GIZMO_CORNERS, type GizmoButtonHit, type PrintGizmoElement, raycastGizmoUv, resolveGizmoPointerTarget, setGizmoButtonDragActive } from '@gizmo';
+import {
+  GIZMO_CORNERS,
+  type GizmoButtonHit,
+  type PrintablePartMeshes,
+  type PrintGizmoElement,
+  raycastPrintUv,
+  resolveGizmoPointerTarget,
+  setGizmoButtonDragActive,
+  toPrintLocalPx,
+} from '@gizmo';
 import { useGarmentLogo, useGarmentName } from '@store';
 
 type DragMode = 'move' | 'rotate' | 'scale';
 
+const resolvePrintRotation = (printableParts: PrintablePartMeshes[], partId: string, fallback: number) =>
+  printableParts.find((part) => part.partId === partId)?.printRotation ?? fallback;
+
 interface UsePrintGizmoDragOptions {
   element: PrintGizmoElement;
   elements: PrintGizmoElement[];
+  printableParts: PrintablePartMeshes[];
   atlasSize: { width: number; height: number };
   gizmoStep: number | null;
   selectedInstanceId: string | null;
 }
 
-const usePrintGizmoDrag = ({ element, elements, atlasSize, gizmoStep, selectedInstanceId }: UsePrintGizmoDragOptions) => {
+const usePrintGizmoDrag = ({ element, elements, printableParts, atlasSize, gizmoStep, selectedInstanceId }: UsePrintGizmoDragOptions) => {
   const raycaster = useThree((state) => state.raycaster);
   const camera = useThree((state) => state.camera);
   const gl = useThree((state) => state.gl);
@@ -24,9 +37,36 @@ const usePrintGizmoDrag = ({ element, elements, atlasSize, gizmoStep, selectedIn
   const invalidate = useThree((state) => state.invalidate);
   const controls = useThree((state) => state.controls) as { enabled: boolean } | null;
 
-  const ctx = useRef({ element, elements, atlasSize, gizmoStep, selectedInstanceId, raycaster, camera, gl, scene, invalidate, controls });
+  const ctx = useRef({
+    element,
+    elements,
+    printableParts,
+    atlasSize,
+    gizmoStep,
+    selectedInstanceId,
+    raycaster,
+    camera,
+    gl,
+    scene,
+    invalidate,
+    controls,
+  });
+
   useEffect(() => {
-    ctx.current = { element, elements, atlasSize, gizmoStep, selectedInstanceId, raycaster, camera, gl, scene, invalidate, controls };
+    ctx.current = {
+      element,
+      elements,
+      printableParts,
+      atlasSize,
+      gizmoStep,
+      selectedInstanceId,
+      raycaster,
+      camera,
+      gl,
+      scene,
+      invalidate,
+      controls,
+    };
   });
 
   useEffect(() => {
@@ -54,10 +94,12 @@ const usePrintGizmoDrag = ({ element, elements, atlasSize, gizmoStep, selectedIn
         const startRotation = instance.rotation;
         const startFontSize = instance.fontSize;
         const centerUv = { ...instance.uv };
-        const grab = raycastGizmoUv(clientX, clientY, ctx.current.elements, raycastContext());
-        const moveOffset = grab ? { x: instance.uv.x - grab.x, y: instance.uv.y - grab.y } : { x: 0, y: 0 };
-        const startDistance = grab ? Math.hypot(grab.x - centerUv.x, grab.y - centerUv.y) || 0.05 : 0.05;
-        const startAngle = grab ? Math.atan2(grab.y - centerUv.y, grab.x - centerUv.x) : 0;
+        const grab = raycastPrintUv(clientX, clientY, ctx.current.printableParts, raycastContext());
+        const moveOffset = grab ? { x: instance.uv.x - grab.uv.x, y: instance.uv.y - grab.uv.y } : { x: 0, y: 0 };
+        const grabPartRotation = grab ? resolvePrintRotation(ctx.current.printableParts, grab.partId, el.partRotation) : el.partRotation;
+        const startLocal = grab ? toPrintLocalPx(grab.uv, centerUv, ctx.current.atlasSize, grabPartRotation, startRotation) : { x: 1, y: 0 };
+        const startDistance = Math.hypot(startLocal.x, startLocal.y) || 0.05;
+        const startAngle = Math.atan2(startLocal.y, startLocal.x);
 
         setControls(false);
         if (buttonHit && (mode === 'rotate' || mode === 'scale')) {
@@ -65,17 +107,24 @@ const usePrintGizmoDrag = ({ element, elements, atlasSize, gizmoStep, selectedIn
         }
 
         const onMove = (moveEvent: PointerEvent) => {
-          const uv = raycastGizmoUv(moveEvent.clientX, moveEvent.clientY, ctx.current.elements, raycastContext());
-          if (!uv) return;
+          const hit = raycastPrintUv(moveEvent.clientX, moveEvent.clientY, ctx.current.printableParts, raycastContext());
+          if (!hit) return;
 
           if (mode === 'move') {
-            useGarmentName.getState().updateInstance(el.id, { uv: { x: uv.x + moveOffset.x, y: uv.y + moveOffset.y } });
+            useGarmentName.getState().updateInstance(el.id, {
+              uv: { x: hit.uv.x + moveOffset.x, y: hit.uv.y + moveOffset.y },
+              partId: hit.partId,
+            });
           } else if (mode === 'rotate') {
-            const angle = Math.atan2(uv.y - centerUv.y, uv.x - centerUv.x);
+            const partRotation = resolvePrintRotation(ctx.current.printableParts, hit.partId, el.partRotation);
+            const local = toPrintLocalPx(hit.uv, centerUv, ctx.current.atlasSize, partRotation, startRotation);
+            const angle = Math.atan2(local.y, local.x);
             const deltaDeg = ((angle - startAngle) * 180) / Math.PI;
             useGarmentName.getState().updateInstance(el.id, { rotation: startRotation + deltaDeg });
           } else {
-            const distance = Math.hypot(uv.x - centerUv.x, uv.y - centerUv.y);
+            const partRotation = resolvePrintRotation(ctx.current.printableParts, hit.partId, el.partRotation);
+            const local = toPrintLocalPx(hit.uv, centerUv, ctx.current.atlasSize, partRotation, startRotation);
+            const distance = Math.hypot(local.x, local.y);
             const ratio = distance / Math.max(startDistance, 0.0001);
             const next = Math.min(el.fontSizeMax ?? Infinity, Math.max(el.fontSizeMin ?? 0, Math.round(startFontSize * ratio)));
             useGarmentName.getState().updateInstance(el.id, { fontSize: next });
@@ -104,10 +153,12 @@ const usePrintGizmoDrag = ({ element, elements, atlasSize, gizmoStep, selectedIn
       const startRotation = instance.rotation;
       const startScale = instance.scale;
       const centerUv = { ...instance.uv };
-      const grab = raycastGizmoUv(clientX, clientY, ctx.current.elements, raycastContext());
-      const moveOffset = grab ? { x: instance.uv.x - grab.x, y: instance.uv.y - grab.y } : { x: 0, y: 0 };
-      const startDistance = grab ? Math.hypot(grab.x - centerUv.x, grab.y - centerUv.y) || 0.05 : 0.05;
-      const startAngle = grab ? Math.atan2(grab.y - centerUv.y, grab.x - centerUv.x) : 0;
+      const grab = raycastPrintUv(clientX, clientY, ctx.current.printableParts, raycastContext());
+      const moveOffset = grab ? { x: instance.uv.x - grab.uv.x, y: instance.uv.y - grab.uv.y } : { x: 0, y: 0 };
+      const grabPartRotation = grab ? resolvePrintRotation(ctx.current.printableParts, grab.partId, el.partRotation) : el.partRotation;
+      const startLocal = grab ? toPrintLocalPx(grab.uv, centerUv, ctx.current.atlasSize, grabPartRotation, startRotation) : { x: 1, y: 0 };
+      const startDistance = Math.hypot(startLocal.x, startLocal.y) || 0.05;
+      const startAngle = Math.atan2(startLocal.y, startLocal.x);
 
       setControls(false);
       if (buttonHit && (mode === 'rotate' || mode === 'scale')) {
@@ -115,17 +166,24 @@ const usePrintGizmoDrag = ({ element, elements, atlasSize, gizmoStep, selectedIn
       }
 
       const onMove = (moveEvent: PointerEvent) => {
-        const uv = raycastGizmoUv(moveEvent.clientX, moveEvent.clientY, ctx.current.elements, raycastContext());
-        if (!uv) return;
+        const hit = raycastPrintUv(moveEvent.clientX, moveEvent.clientY, ctx.current.printableParts, raycastContext());
+        if (!hit) return;
 
         if (mode === 'move') {
-          useGarmentLogo.getState().updateInstance(el.id, { uv: { x: uv.x + moveOffset.x, y: uv.y + moveOffset.y } });
+          useGarmentLogo.getState().updateInstance(el.id, {
+            uv: { x: hit.uv.x + moveOffset.x, y: hit.uv.y + moveOffset.y },
+            partId: hit.partId,
+          });
         } else if (mode === 'rotate') {
-          const angle = Math.atan2(uv.y - centerUv.y, uv.x - centerUv.x);
+          const partRotation = resolvePrintRotation(ctx.current.printableParts, hit.partId, el.partRotation);
+          const local = toPrintLocalPx(hit.uv, centerUv, ctx.current.atlasSize, partRotation, startRotation);
+          const angle = Math.atan2(local.y, local.x);
           const deltaDeg = ((angle - startAngle) * 180) / Math.PI;
           useGarmentLogo.getState().updateInstance(el.id, { rotation: startRotation + deltaDeg });
         } else {
-          const distance = Math.hypot(uv.x - centerUv.x, uv.y - centerUv.y);
+          const partRotation = resolvePrintRotation(ctx.current.printableParts, hit.partId, el.partRotation);
+          const local = toPrintLocalPx(hit.uv, centerUv, ctx.current.atlasSize, partRotation, startRotation);
+          const distance = Math.hypot(local.x, local.y);
           const ratio = distance / Math.max(startDistance, 0.0001);
           const next = Math.min(el.scaleMax ?? Infinity, Math.max(el.scaleMin ?? 0, startScale * ratio));
           useGarmentLogo.getState().updateInstance(el.id, { scale: next });

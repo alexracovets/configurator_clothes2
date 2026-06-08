@@ -4,6 +4,7 @@ import type { NameInstance } from '@store';
 import { measureNameGizmoHalf } from '../utils/drawNameOnAtlas/measureNameStampBounds';
 import { NAME_REFERENCE_FONT_SIZE } from '../utils/garmentPrint/nameStampConstants';
 import { NAME_SLOT_COUNT } from '../utils/garmentPrint/nameSlotConstants';
+import { resolvePartPrintRotation } from '../utils/resolveProductRenderConfig/resolveProductRenderConfig';
 
 import type { PrintGizmoElement } from './types';
 
@@ -32,11 +33,6 @@ const buildNameGizmoElements = ({ product, instances, fontSizeMin, fontSizeMax }
     const rawHalf = measureCtx ? measureNameGizmoHalf(instance.text, instance.font, measureCtx) : null;
     if (!rawHalf) return [];
 
-    const rad = (instance.rotation * Math.PI) / 180;
-    const cosA = Math.abs(Math.cos(rad));
-    const sinA = Math.abs(Math.sin(rad));
-    const half = { x: rawHalf.x * cosA + rawHalf.y * sinA, y: rawHalf.x * sinA + rawHalf.y * cosA };
-
     return [
       {
         kind: 'name' as const,
@@ -46,8 +42,9 @@ const buildNameGizmoElements = ({ product, instances, fontSizeMin, fontSizeMax }
         meshNames: part.meshNames,
         uv: instance.uv,
         rotation: instance.rotation,
+        partRotation: resolvePartPrintRotation(part),
+        half: rawHalf,
         scale: instance.fontSize / NAME_REFERENCE_FONT_SIZE,
-        half,
         fontSize: instance.fontSize,
         fontSizeMin,
         fontSizeMax,

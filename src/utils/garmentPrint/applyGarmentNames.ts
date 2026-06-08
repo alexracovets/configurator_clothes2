@@ -48,6 +48,13 @@ const applyNameStyleToUniforms = (material: MeshStandardMaterial, style: NameSty
     });
   }
 
+  const partRotationUniform = material.userData.uNamePartRotationUniform as { value: number[] } | undefined;
+  if (partRotationUniform) {
+    style.partRotation.forEach((value, index) => {
+      partRotationUniform.value[index] = value;
+    });
+  }
+
   const scaleUniform = material.userData.uNameScaleUniform as { value: number[] } | undefined;
   if (scaleUniform) {
     style.scale.forEach((value, index) => {
@@ -119,6 +126,13 @@ const applyNumberStyleToUniforms = (material: MeshStandardMaterial, style: NameS
   if (rotationUniform) {
     style.rotation.forEach((value, index) => {
       rotationUniform.value[index] = value;
+    });
+  }
+
+  const partRotationUniform = material.userData.uNumberPartRotationUniform as { value: number[] } | undefined;
+  if (partRotationUniform) {
+    style.partRotation.forEach((value, index) => {
+      partRotationUniform.value[index] = value;
     });
   }
 
@@ -266,6 +280,7 @@ const hydrateGarmentNameUniforms = (
     uNameStampSize: { value: Vector2 };
     uNameAnchorUv: { value: Vector2[] };
     uNameRotation: { value: number[] };
+    uNamePartRotation: { value: number[] };
     uNameScale: { value: number[] };
     uNameSlotActive: { value: number[] };
     uNamePartBounds: { value: Vector4[] };
@@ -294,6 +309,7 @@ const hydrateGarmentNameUniforms = (
     material.userData.uNameStampSizeUniform = uniforms.uNameStampSize;
     material.userData.uNameAnchorUvUniform = uniforms.uNameAnchorUv;
     material.userData.uNameRotationUniform = uniforms.uNameRotation;
+    material.userData.uNamePartRotationUniform = uniforms.uNamePartRotation;
     material.userData.uNameScaleUniform = uniforms.uNameScale;
     material.userData.uNameSlotActiveUniform = uniforms.uNameSlotActive;
     material.userData.uNamePartBoundsUniform = uniforms.uNamePartBounds;
@@ -323,6 +339,7 @@ const hydrateGarmentNumberUniforms = (
     uNumberStampSize: { value: Vector2 };
     uNumberAnchorUv: { value: Vector2[] };
     uNumberRotation: { value: number[] };
+    uNumberPartRotation: { value: number[] };
     uNumberScale: { value: number[] };
     uNumberSlotActive: { value: number[] };
     uNumberPartBounds: { value: Vector4[] };
@@ -350,6 +367,7 @@ const hydrateGarmentNumberUniforms = (
     material.userData.uNumberStampSizeUniform = uniforms.uNumberStampSize;
     material.userData.uNumberAnchorUvUniform = uniforms.uNumberAnchorUv;
     material.userData.uNumberRotationUniform = uniforms.uNumberRotation;
+    material.userData.uNumberPartRotationUniform = uniforms.uNumberPartRotation;
     material.userData.uNumberScaleUniform = uniforms.uNumberScale;
     material.userData.uNumberSlotActiveUniform = uniforms.uNumberSlotActive;
     material.userData.uNumberPartBoundsUniform = uniforms.uNumberPartBounds;

@@ -10,9 +10,10 @@ export {
 } from './gizmoButtonHover';
 export { getGizmoButtonReveal, getGizmoButtonsRevealUniforms, setGizmoButtonsRevealTarget, subscribeGizmoButtonReveal } from './gizmoButtonReveal';
 export { GIZMO_CORNERS, getGizmoHoverCursor, hitTestGizmoButton, hitTestGizmoFrame } from './hitTestGizmoButton';
-export { raycastGizmoUv, resolveGizmoPointerTarget, toWorldPx } from './resolveGizmoPointerTarget';
+export { buildPrintablePartMeshes, raycastGizmoUv, raycastPrintUv, resolveGizmoPointerTarget, toLocalPx } from './resolveGizmoPointerTarget';
+export { toPrintLocalPx } from './printLocalSpace';
 export { useGizmoIconAtlas } from './useGizmoIconAtlas';
 export type { GizmoButtonHoverTarget } from './gizmoButtonHover';
 export type { GizmoButtonHit } from './hitTestGizmoButton';
-export type { GizmoPointerTarget } from './resolveGizmoPointerTarget';
+export type { GizmoPointerTarget, PrintablePartMeshes, PrintUvHit } from './resolveGizmoPointerTarget';
 export type { GizmoHandleKind, PrintGizmoElement } from './types';

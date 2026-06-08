@@ -30,6 +30,8 @@ interface GarmentPartConfig {
   meshNames: string[];
   renderOrder?: number;
   uvBounds?: UvBounds;
+  /** Degrees: rotates print/gizmo local space so content aligns with the 3D panel. */
+  printRotation?: number;
   gradient?: PartGradientConfig;
 }
 

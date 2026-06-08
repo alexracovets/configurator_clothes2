@@ -66,6 +66,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     shader.uniforms.uNameStampSize = { value: new Vector2(1, 1) };
     shader.uniforms.uNameAnchorUv = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Vector2()) };
     shader.uniforms.uNameRotation = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uNamePartRotation = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
     shader.uniforms.uNameScale = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 1) };
     shader.uniforms.uNameSlotActive = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
     shader.uniforms.uNamePartBounds = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Vector4(0, 0, 1, 1)) };
@@ -88,6 +89,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     shader.uniforms.uNumberStampSize = { value: new Vector2(1, 1) };
     shader.uniforms.uNumberAnchorUv = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Vector2()) };
     shader.uniforms.uNumberRotation = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uNumberPartRotation = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
     shader.uniforms.uNumberScale = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 1) };
     shader.uniforms.uNumberSlotActive = { value: Array.from({ length: NAME_SLOT_COUNT }, () => 0) };
     shader.uniforms.uNumberPartBounds = { value: Array.from({ length: NAME_SLOT_COUNT }, () => new Vector4(0, 0, 1, 1)) };
@@ -100,6 +102,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     shader.uniforms.uLogoStampCellSize = { value: new Vector2(1, 1) };
     shader.uniforms.uLogoAnchorUv = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => new Vector2()) };
     shader.uniforms.uLogoRotation = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => 0) };
+    shader.uniforms.uLogoPartRotation = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => 0) };
     shader.uniforms.uLogoScale = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => 1) };
     shader.uniforms.uLogoSlotActive = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => 0) };
     shader.uniforms.uLogoPartBounds = { value: Array.from({ length: LOGO_SLOT_COUNT }, () => new Vector4(0, 0, 1, 1)) };
@@ -121,6 +124,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     material.userData.uNameStampSizeUniform = shader.uniforms.uNameStampSize;
     material.userData.uNameAnchorUvUniform = shader.uniforms.uNameAnchorUv;
     material.userData.uNameRotationUniform = shader.uniforms.uNameRotation;
+    material.userData.uNamePartRotationUniform = shader.uniforms.uNamePartRotation;
     material.userData.uNameScaleUniform = shader.uniforms.uNameScale;
     material.userData.uNameSlotActiveUniform = shader.uniforms.uNameSlotActive;
     material.userData.uNamePartBoundsUniform = shader.uniforms.uNamePartBounds;
@@ -140,6 +144,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     material.userData.uNumberStampSizeUniform = shader.uniforms.uNumberStampSize;
     material.userData.uNumberAnchorUvUniform = shader.uniforms.uNumberAnchorUv;
     material.userData.uNumberRotationUniform = shader.uniforms.uNumberRotation;
+    material.userData.uNumberPartRotationUniform = shader.uniforms.uNumberPartRotation;
     material.userData.uNumberScaleUniform = shader.uniforms.uNumberScale;
     material.userData.uNumberSlotActiveUniform = shader.uniforms.uNumberSlotActive;
     material.userData.uNumberPartBoundsUniform = shader.uniforms.uNumberPartBounds;
@@ -152,6 +157,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
     material.userData.uLogoStampCellSizeUniform = shader.uniforms.uLogoStampCellSize;
     material.userData.uLogoAnchorUvUniform = shader.uniforms.uLogoAnchorUv;
     material.userData.uLogoRotationUniform = shader.uniforms.uLogoRotation;
+    material.userData.uLogoPartRotationUniform = shader.uniforms.uLogoPartRotation;
     material.userData.uLogoScaleUniform = shader.uniforms.uLogoScale;
     material.userData.uLogoSlotActiveUniform = shader.uniforms.uLogoSlotActive;
     material.userData.uLogoPartBoundsUniform = shader.uniforms.uLogoPartBounds;
@@ -172,6 +178,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       uNameStampSize: shader.uniforms.uNameStampSize,
       uNameAnchorUv: shader.uniforms.uNameAnchorUv,
       uNameRotation: shader.uniforms.uNameRotation,
+      uNamePartRotation: shader.uniforms.uNamePartRotation,
       uNameScale: shader.uniforms.uNameScale,
       uNameSlotActive: shader.uniforms.uNameSlotActive,
       uNamePartBounds: shader.uniforms.uNamePartBounds,
@@ -188,6 +195,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       uNumberStampSize: shader.uniforms.uNumberStampSize,
       uNumberAnchorUv: shader.uniforms.uNumberAnchorUv,
       uNumberRotation: shader.uniforms.uNumberRotation,
+      uNumberPartRotation: shader.uniforms.uNumberPartRotation,
       uNumberScale: shader.uniforms.uNumberScale,
       uNumberSlotActive: shader.uniforms.uNumberSlotActive,
       uNumberPartBounds: shader.uniforms.uNumberPartBounds,
@@ -202,6 +210,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       uLogoStampCellSize: shader.uniforms.uLogoStampCellSize,
       uLogoAnchorUv: shader.uniforms.uLogoAnchorUv,
       uLogoRotation: shader.uniforms.uLogoRotation,
+      uLogoPartRotation: shader.uniforms.uLogoPartRotation,
       uLogoScale: shader.uniforms.uLogoScale,
       uLogoSlotActive: shader.uniforms.uLogoSlotActive,
       uLogoPartBounds: shader.uniforms.uLogoPartBounds,
@@ -219,7 +228,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
       .replace('#include <tonemapping_fragment>', `#include <tonemapping_fragment>\n${garmentGizmoLightsFragment}`);
   };
 
-  material.customProgramCacheKey = () => 'garment-pbr-print-v51-logo-stamp-inside';
+  material.customProgramCacheKey = () => 'garment-pbr-print-v52-part-rotation';
 };
 
 const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMaterial, meshName = ''): MeshStandardMaterial => {

@@ -19,6 +19,7 @@
           "meshNames": ["crewneck_front"],
           "renderOrder": 1,
           "uvBounds": { "minX": 0.5028, "maxX": 0.9979, "minY": 0.0872, "maxY": 0.8119 },
+          "printRotation": 180,
           "gradient": {
             "reversed": false,
             "rotation": 0,
@@ -34,6 +35,7 @@
           "meshNames": ["crewneck_back"],
           "renderOrder": 1,
           "uvBounds": { "minX": 0.0038, "maxX": 0.4985, "minY": 0.0013, "maxY": 0.7299 },
+          "printRotation": 0,
           "gradient": {
             "reversed": true,
             "rotation": 0,
@@ -49,6 +51,7 @@
           "meshNames": ["crewneck_sleeve_left"],
           "renderOrder": 1,
           "uvBounds": { "minX": 0.0026, "maxX": 0.2625, "minY": 0.7191, "maxY": 0.9967 },
+          "printRotation": 0,
           "gradient": {
             "reversed": false,
             "rotation": 90,
@@ -64,6 +67,7 @@
           "meshNames": ["crewneck_sleeve_right"],
           "renderOrder": 1,
           "uvBounds": { "minX": 0.3125, "maxX": 0.5711, "minY": 0.7182, "maxY": 0.998 },
+          "printRotation": 270,
           "gradient": {
             "reversed": true,
             "rotation": 270,

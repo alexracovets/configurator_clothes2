@@ -11,7 +11,7 @@ import {
   isGizmoButtonDragActive,
   resolveGizmoPointerTarget,
   setGizmoButtonHover,
-  toWorldPx,
+  toLocalPx,
 } from '@gizmo';
 
 interface UseGizmoButtonHoverOptions {
@@ -85,7 +85,7 @@ const useGizmoButtonHover = ({ elements, atlasSize, gizmoStep, selectedInstanceI
         return;
       }
 
-      const world = toWorldPx(target.uv, target.element, c.atlasSize);
+      const world = toLocalPx(target.uv, target.element, c.atlasSize);
       const buttonsVisible = c.selectedInstanceId === target.element.id && getGizmoButtonReveal(target.element.slotIndex) > 0.5;
 
       dom.style.cursor = getGizmoHoverCursor(world, target.element, buttonsVisible) ?? '';

@@ -13,4 +13,6 @@ const resolvePartTextureSize = (product: GarmentConfig): number => product.partT
 
 const resolvePartUvBounds = (part: GarmentPartConfig): UvBounds => part.uvBounds ?? FULL_UV_BOUNDS;
 
-export { FULL_UV_BOUNDS, resolvePartTextureSize, resolvePartUvBounds, resolvePrintAtlasSize };
+const resolvePartPrintRotation = (part: GarmentPartConfig): number => part.printRotation ?? part.gradient?.rotation ?? 0;
+
+export { FULL_UV_BOUNDS, resolvePartPrintRotation, resolvePartTextureSize, resolvePartUvBounds, resolvePrintAtlasSize };

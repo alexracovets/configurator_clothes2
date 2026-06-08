@@ -2,7 +2,7 @@
 
 import { memo, useEffect, useMemo } from 'react';
 
-import { buildLogoGizmoElements, buildNameGizmoElements } from '@gizmo';
+import { buildLogoGizmoElements, buildNameGizmoElements, buildPrintablePartMeshes } from '@gizmo';
 import { useGizmoButtonHover, useGizmoSelection } from '@hooks';
 import { resolveNameLimits, useConfigurationControl, useConfiguratorProduct, useGarmentLogo, useGarmentName } from '@store';
 import { resolvePrintAtlasSize } from '@utils';
@@ -73,6 +73,7 @@ const PrintGizmoLayer = memo(() => {
   );
 
   const atlasSize = useMemo(() => resolvePrintAtlasSize(product), [product]);
+  const printableParts = useMemo(() => buildPrintablePartMeshes(product.parts), [product.parts]);
 
   useEffect(() => {
     if (activeStep !== NAME_STEP) clearNameSelectedInstance();
@@ -90,7 +91,14 @@ const PrintGizmoLayer = memo(() => {
   return (
     <group>
       {elements.map((element) => (
-        <PrintGizmoInstance key={element.id} element={element} elements={elements} gizmoStep={gizmoStep} selectedInstanceId={selectedInstanceId} />
+        <PrintGizmoInstance
+          key={element.id}
+          element={element}
+          elements={elements}
+          printableParts={printableParts}
+          gizmoStep={gizmoStep}
+          selectedInstanceId={selectedInstanceId}
+        />
       ))}
     </group>
   );

@@ -19,13 +19,7 @@ const buildLogoGizmoFrameUniforms = (instances: LogoInstance[], meshPartId: stri
     const naturalHeight = instance.naturalHeight || 1;
     const { width, height } = resolveLogoReferenceDrawSize(instance, naturalWidth, naturalHeight);
 
-    const rad = (instance.rotation * Math.PI) / 180;
-    const cosA = Math.abs(Math.cos(rad));
-    const sinA = Math.abs(Math.sin(rad));
-    half[index] = {
-      x: (width * cosA + height * sinA) / 2,
-      y: (width * sinA + height * cosA) / 2,
-    };
+    half[index] = { x: width / 2, y: height / 2 };
   });
 
   return { enabled: enabled ? 1 : 0, half, frameActive, gizmoActive };
