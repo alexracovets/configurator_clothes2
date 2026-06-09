@@ -271,10 +271,18 @@ const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMate
     applyGarmentPrintBase(material);
   }
 
-  configureGarmentShader(material);
+  material.userData.garmentShaderMode = 'bootstrap';
   material.needsUpdate = true;
 
   return material;
 };
 
-export { createGarmentMaterial };
+const upgradeGarmentMaterialShader = (material: MeshStandardMaterial) => {
+  if (material.userData.garmentShaderMode === 'full') return;
+
+  configureGarmentShader(material);
+  material.userData.garmentShaderMode = 'full';
+  material.needsUpdate = true;
+};
+
+export { createGarmentMaterial, upgradeGarmentMaterialShader };

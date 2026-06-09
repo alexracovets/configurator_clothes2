@@ -2,9 +2,9 @@
 
 import type { ReactNode } from 'react';
 
-import type { PbrTexturePaths } from '@utils';
-import { useGarmentPbrMaps } from '@hooks';
+import { useAsyncGarmentPbrMaps } from '@hooks';
 import { PbrMapsProvider } from '@providers';
+import type { PbrTexturePaths } from '@utils';
 
 interface PbrMapsLoaderProps {
   paths: PbrTexturePaths | null;
@@ -20,7 +20,8 @@ const PbrMapsLoader = ({ paths, children }: PbrMapsLoaderProps) => {
 };
 
 const PbrMapsLoaderWithMaps = ({ paths, children }: { paths: PbrTexturePaths; children: ReactNode }) => {
-  const maps = useGarmentPbrMaps(paths);
+  const maps = useAsyncGarmentPbrMaps(paths);
+
   return <PbrMapsProvider maps={maps}>{children}</PbrMapsProvider>;
 };
 

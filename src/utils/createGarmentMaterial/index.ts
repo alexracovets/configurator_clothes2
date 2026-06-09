@@ -1,1 +1,1 @@
-export { createGarmentMaterial } from './createGarmentMaterial';
+export { createGarmentMaterial, upgradeGarmentMaterialShader } from './createGarmentMaterial';

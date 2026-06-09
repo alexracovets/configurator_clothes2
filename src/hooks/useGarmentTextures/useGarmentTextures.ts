@@ -5,7 +5,8 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber';
 import type { Texture } from 'three';
 
-import { useGarmentMaterialRegistry, useMaterialRegistryRevision } from '@providers';
+import { resolvePbrTexturePaths } from '@hooks';
+import { useGarmentMaterialRegistry, useMaterialRegistryRevision, usePbrMaps } from '@providers';
 import {
   DEFAULT_COLOR,
   type DesignPatternItem,
@@ -31,6 +32,7 @@ import {
   readProductAppearanceTextures,
   resolvePartUvBounds,
   resolveRasterDesignSrc,
+  scheduleGarmentShaderUpgrade,
   syncProductAppearanceTextures,
 } from '@utils';
 
@@ -62,6 +64,8 @@ const useGarmentTextures = () => {
   const markInitialSceneLoaded = useConfiguratorSceneLoad((state) => state.markInitialSceneLoaded);
   const { getMaterials, hasMaterialsForParts } = useGarmentMaterialRegistry();
   const materialRevision = useMaterialRegistryRevision();
+  const pbrMaps = usePbrMaps();
+  const requiresPbrMaps = useMemo(() => Boolean(resolvePbrTexturePaths(product)), [product]);
   const gl = useThree((state) => state.gl);
   const invalidate = useThree((state) => state.invalidate);
   const textureAnisotropy = gl.capabilities.getMaxAnisotropy();
@@ -71,6 +75,8 @@ const useGarmentTextures = () => {
   const masksPatternKeyRef = useRef<string | null>(null);
   const loadSessionRef = useRef(0);
   const pendingFrameReapplyRef = useRef(false);
+  const initialLoadCompletedRef = useRef(false);
+  const cancelShaderUpgradeRef = useRef<(() => void) | null>(null);
 
   const syncAppearanceCache = useCallback((targetPath: string) => {
     syncProductAppearanceTextures(targetPath, {
@@ -143,6 +149,7 @@ const useGarmentTextures = () => {
 
   const isInitialAppearanceReady = useCallback(() => {
     if (!hasMaterialsForParts(partIds)) return false;
+    if (requiresPbrMaps && !pbrMaps) return false;
     if (productPath !== product.path) return false;
     if (pendingFrameReapplyRef.current) return false;
 
@@ -154,20 +161,9 @@ const useGarmentTextures = () => {
     }
 
     return true;
-  }, [activePatternKey, defaultPattern, hasMaterialsForParts, partIds, product.path, productPath]);
+  }, [activePatternKey, defaultPattern, hasMaterialsForParts, partIds, pbrMaps, product.path, productPath, requiresPbrMaps]);
 
-  const tryMarkInitialSceneLoaded = useCallback(() => {
-    if (!isInitialAppearanceReady()) return;
-
-    invalidate();
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        markInitialSceneLoaded();
-      });
-    });
-  }, [invalidate, isInitialAppearanceReady, markInitialSceneLoaded]);
-
-  const reapplyAppearance = useCallback(() => {
+  const reapplyAppearanceCore = useCallback(() => {
     if (!hasMaterialsForParts(partIds)) {
       pendingFrameReapplyRef.current = true;
       return;
@@ -180,24 +176,40 @@ const useGarmentTextures = () => {
 
     applyPatternTints();
     applyPrintState(buildPrintState());
+  }, [applyPartColors, applyPatternTints, applyPrintState, buildPrintState, hasMaterialsForParts, partIds, product.path, productPath]);
+
+  const scheduleFullShaderUpgrade = useCallback(() => {
+    cancelShaderUpgradeRef.current?.();
+
+    cancelShaderUpgradeRef.current = scheduleGarmentShaderUpgrade({
+      parts: product.parts,
+      getMaterials,
+      invalidate,
+      onComplete: () => {
+        reapplyAppearanceCore();
+        invalidate();
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            markInitialSceneLoaded();
+          });
+        });
+      },
+    });
+  }, [getMaterials, invalidate, markInitialSceneLoaded, product.parts, reapplyAppearanceCore]);
+
+  const tryMarkInitialSceneLoaded = useCallback(() => {
+    if (!isInitialAppearanceReady()) return;
+    if (initialLoadCompletedRef.current) return;
+
+    initialLoadCompletedRef.current = true;
+    invalidate();
+    scheduleFullShaderUpgrade();
+  }, [invalidate, isInitialAppearanceReady, scheduleFullShaderUpgrade]);
+
+  const reapplyAppearance = useCallback(() => {
+    reapplyAppearanceCore();
     tryMarkInitialSceneLoaded();
-  }, [
-    applyPartColors,
-    applyPatternTints,
-    applyPrintState,
-    buildPrintState,
-    hasMaterialsForParts,
-    partIds,
-    product.path,
-    productPath,
-    tryMarkInitialSceneLoaded,
-  ]);
-
-  const reapplyAppearanceRef = useRef(reapplyAppearance);
-
-  useEffect(() => {
-    reapplyAppearanceRef.current = reapplyAppearance;
-  }, [reapplyAppearance]);
+  }, [reapplyAppearanceCore, tryMarkInitialSceneLoaded]);
 
   useEffect(() => {
     const cached = readProductAppearanceTextures(product.path);
@@ -209,9 +221,14 @@ const useGarmentTextures = () => {
 
   useEffect(() => {
     loadSessionRef.current += 1;
+    initialLoadCompletedRef.current = false;
+    cancelShaderUpgradeRef.current?.();
+    cancelShaderUpgradeRef.current = null;
 
     return () => {
       loadSessionRef.current += 1;
+      cancelShaderUpgradeRef.current?.();
+      cancelShaderUpgradeRef.current = null;
     };
   }, [product.path]);
 
@@ -221,7 +238,7 @@ const useGarmentTextures = () => {
 
   useFrame(() => {
     if (!pendingFrameReapplyRef.current) return;
-    reapplyAppearanceRef.current();
+    reapplyAppearance();
   });
 
   useEffect(() => {
@@ -241,13 +258,13 @@ const useGarmentTextures = () => {
 
       logosTextureRef.current = texture;
       syncAppearanceCache(targetPath);
-      reapplyAppearanceRef.current();
+      reapplyAppearance();
     });
 
     return () => {
       cancelled = true;
     };
-  }, [defaultPattern, isLoadSessionActive, product.path, productPath, syncAppearanceCache, textureAnisotropy]);
+  }, [defaultPattern, isLoadSessionActive, product.path, productPath, reapplyAppearance, syncAppearanceCache, textureAnisotropy]);
 
   useEffect(() => {
     if (productPath !== product.path) return;
@@ -256,7 +273,7 @@ const useGarmentTextures = () => {
       maskTexturesRef.current = emptyMaskPair();
       masksPatternKeyRef.current = null;
       syncAppearanceCache(product.path);
-      reapplyAppearanceRef.current();
+      reapplyAppearance();
       return;
     }
 
@@ -280,7 +297,7 @@ const useGarmentTextures = () => {
       maskTexturesRef.current = masks;
       masksPatternKeyRef.current = activePatternKey;
       syncAppearanceCache(targetPath);
-      reapplyAppearanceRef.current();
+      reapplyAppearance();
     };
 
     void loadMasks();
@@ -288,7 +305,7 @@ const useGarmentTextures = () => {
     return () => {
       cancelled = true;
     };
-  }, [activePattern, activePatternKey, isLoadSessionActive, product.path, productPath, syncAppearanceCache, textureAnisotropy]);
+  }, [activePattern, activePatternKey, isLoadSessionActive, product.path, productPath, reapplyAppearance, syncAppearanceCache, textureAnisotropy]);
 };
 
 export { useGarmentTextures };

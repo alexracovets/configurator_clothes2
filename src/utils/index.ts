@@ -16,7 +16,8 @@ export type { ComposePrintAtlasInput } from './composePrintAtlas/composePrintAtl
 export { composePrintAtlasFbo } from './composePrintAtlasFbo/composePrintAtlasFbo';
 export type { ComposePrintAtlasFboInput } from './composePrintAtlasFbo/PrintAtlasFbo';
 export { PrintAtlasFbo } from './composePrintAtlasFbo/PrintAtlasFbo';
-export { createGarmentMaterial } from './createGarmentMaterial';
+export { createGarmentMaterial, upgradeGarmentMaterialShader } from './createGarmentMaterial';
+export { scheduleGarmentShaderUpgrade } from './scheduleGarmentShaderUpgrade/scheduleGarmentShaderUpgrade';
 export { getProductAppearanceTextures, readProductAppearanceTextures, syncProductAppearanceTextures } from './garmentAppearance/garmentProductAppearanceCache';
 export { createPartAlbedoTexture } from './createPartAlbedoTexture/createPartAlbedoTexture';
 export { applyGarmentGradient, applyGarmentPartUvBounds } from './garmentGradient/applyGarmentGradient';

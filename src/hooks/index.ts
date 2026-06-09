@@ -2,7 +2,7 @@ export { useConfiguratorProduct } from './useConfiguratorProduct';
 export { useConfigurationCartSync } from './useConfigurationCartSync';
 export { useControlledState } from './useControlledState';
 export { useSlidingIndicator } from './useSlidingIndicator';
-export { resolvePbrTexturePaths, useGarmentPbrMaps } from './useGarmentPbrMaps';
+export { resolvePbrTexturePaths, useAsyncGarmentPbrMaps, useGarmentPbrMaps } from './useGarmentPbrMaps';
 export { useGarmentLogoTextures } from './useGarmentLogoTextures/useGarmentLogoTextures';
 export { useGarmentNameTextures } from './useGarmentNameTextures/useGarmentNameTextures';
 export { useGarmentTextures } from './useGarmentTextures';
