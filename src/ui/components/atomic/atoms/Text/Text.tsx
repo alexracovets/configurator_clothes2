@@ -16,7 +16,7 @@ const variantText = cva('font-inter font-[400] leading-none', {
       product_price: 'text-[32px] leading-[39px] font-semibold tracking-[-1px]',
       menu_step_buy: cn(
         'relative text-[22px] text-gray-10 leading-[27px] font-semibold uppercase overflow-hidden cursor-pointer',
-        'data-[active=true]:text-default',
+        'data-[active=true]:text-default hover:text-default',
         'transition-colors duration-300 ease-in-out',
       ),
       menu_step_buy_line: cn(

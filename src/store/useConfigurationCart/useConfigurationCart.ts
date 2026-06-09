@@ -19,6 +19,7 @@ interface ConfigurationCartState {
   activeItemId: string;
   configurations: Record<string, CartItemConfiguration>;
   addItem: (styleId: StyleId, productIndex: number) => void;
+  duplicateActiveItem: () => void;
   selectItem: (id: string) => void;
   removeItem: (id: string) => void;
   getActiveItemIndex: () => number;
@@ -63,6 +64,31 @@ const useConfigurationCart = create<ConfigurationCartState>((set, get) => ({
     });
 
     activateCartItem(get, item.id);
+  },
+
+  duplicateActiveItem: () => {
+    const { items, activeItemId, configurations } = get();
+    const activeItem = items.find((item) => item.id === activeItemId);
+    if (!activeItem) return;
+
+    const currentConfiguration = captureGarmentConfiguration();
+    const nextConfigurations: Record<string, CartItemConfiguration> = {
+      ...configurations,
+      [activeItemId]: currentConfiguration,
+    };
+
+    const duplicatedItem = createCartItem(activeItem.styleId, activeItem.productIndex);
+
+    set({
+      items: [...items, duplicatedItem],
+      activeItemId: duplicatedItem.id,
+      configurations: {
+        ...nextConfigurations,
+        [duplicatedItem.id]: cloneCartItemConfiguration(currentConfiguration),
+      },
+    });
+
+    activateCartItem(get, duplicatedItem.id);
   },
 
   selectItem: (id) => {
