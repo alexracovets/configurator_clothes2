@@ -4,6 +4,8 @@ export { FooterCoinfiguration } from './FooterCoinfiguration';
 export { HeaderConfiguration } from './HeaderConfiguration';
 export { AsideConfiguration } from './AsideConfiguration';
 export { Configurator } from './Configurator';
+export { ConfiguratorCanvasLoader } from './ConfiguratorCanvasLoader';
 export { ConfiguratorInitialLoader } from './ConfiguratorInitialLoader';
+export { ConfiguratorView } from './ConfiguratorView';
 export { Footer } from './Footer';
 export { Header } from './Header';

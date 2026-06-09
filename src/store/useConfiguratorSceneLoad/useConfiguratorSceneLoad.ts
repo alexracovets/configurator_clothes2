@@ -4,57 +4,125 @@ import { create } from 'zustand';
 
 const MIN_LOADER_VISIBLE_MS = 400;
 
+type LoaderKind = 'initial' | 'transition';
+
 interface ConfiguratorSceneLoadState {
   isInitialSceneLoading: boolean;
+  isSceneTransitionLoading: boolean;
   loaderSession: number;
   loaderVisibleUntil: number;
+  transitionSession: number;
+  transitionVisibleUntil: number;
   beginInitialSceneLoad: () => void;
   markInitialSceneLoaded: () => void;
+  beginSceneTransitionLoad: () => void;
+  markSceneTransitionLoaded: () => void;
 }
 
-let markLoaderTimeoutId: ReturnType<typeof setTimeout> | null = null;
+const loaderTimeouts: Record<LoaderKind, ReturnType<typeof setTimeout> | null> = {
+  initial: null,
+  transition: null,
+};
+
+const scheduleLoaderHide = (
+  kind: LoaderKind,
+  session: number,
+  visibleUntil: number,
+  isActive: (state: ConfiguratorSceneLoadState) => boolean,
+  hide: () => void,
+  get: () => ConfiguratorSceneLoadState,
+) => {
+  if (loaderTimeouts[kind]) {
+    clearTimeout(loaderTimeouts[kind]!);
+    loaderTimeouts[kind] = null;
+  }
+
+  const complete = () => {
+    const state = get();
+    const sessionKey = kind === 'initial' ? 'loaderSession' : 'transitionSession';
+    if (!isActive(state) || state[sessionKey] !== session) return;
+    hide();
+  };
+
+  const remaining = visibleUntil - Date.now();
+
+  if (remaining > 0) {
+    loaderTimeouts[kind] = setTimeout(() => {
+      loaderTimeouts[kind] = null;
+      complete();
+    }, remaining);
+    return;
+  }
+
+  complete();
+};
+
+const beginLoader = (
+  kind: LoaderKind,
+  get: () => ConfiguratorSceneLoadState,
+  patch: (session: number, visibleUntil: number) => Partial<ConfiguratorSceneLoadState>,
+) => {
+  if (loaderTimeouts[kind]) {
+    clearTimeout(loaderTimeouts[kind]!);
+    loaderTimeouts[kind] = null;
+  }
+
+  const session = (kind === 'initial' ? get().loaderSession : get().transitionSession) + 1;
+  const visibleUntil = Date.now() + MIN_LOADER_VISIBLE_MS;
+
+  return { session, visibleUntil, patch: patch(session, visibleUntil) };
+};
 
 const useConfiguratorSceneLoad = create<ConfiguratorSceneLoadState>((set, get) => ({
   isInitialSceneLoading: true,
+  isSceneTransitionLoading: false,
   loaderSession: 0,
   loaderVisibleUntil: 0,
+  transitionSession: 0,
+  transitionVisibleUntil: 0,
   beginInitialSceneLoad: () => {
-    if (markLoaderTimeoutId) {
-      clearTimeout(markLoaderTimeoutId);
-      markLoaderTimeoutId = null;
-    }
-
-    const loaderSession = get().loaderSession + 1;
-
-    set({
+    const { patch } = beginLoader('initial', get, (loaderSession, loaderVisibleUntil) => ({
       isInitialSceneLoading: true,
       loaderSession,
-      loaderVisibleUntil: Date.now() + MIN_LOADER_VISIBLE_MS,
-    });
+      loaderVisibleUntil,
+    }));
+
+    set(patch);
   },
   markInitialSceneLoaded: () => {
     const { isInitialSceneLoading, loaderSession, loaderVisibleUntil } = get();
-
     if (!isInitialSceneLoading) return;
 
-    const complete = () => {
-      const state = get();
-      if (!state.isInitialSceneLoading || state.loaderSession !== loaderSession) return;
-      set({ isInitialSceneLoading: false });
-    };
+    scheduleLoaderHide(
+      'initial',
+      loaderSession,
+      loaderVisibleUntil,
+      (state) => state.isInitialSceneLoading,
+      () => set({ isInitialSceneLoading: false }),
+      get,
+    );
+  },
+  beginSceneTransitionLoad: () => {
+    const { patch } = beginLoader('transition', get, (transitionSession, transitionVisibleUntil) => ({
+      isSceneTransitionLoading: true,
+      transitionSession,
+      transitionVisibleUntil,
+    }));
 
-    const remaining = loaderVisibleUntil - Date.now();
+    set(patch);
+  },
+  markSceneTransitionLoaded: () => {
+    const { isSceneTransitionLoading, transitionSession, transitionVisibleUntil } = get();
+    if (!isSceneTransitionLoading) return;
 
-    if (remaining > 0) {
-      if (markLoaderTimeoutId) clearTimeout(markLoaderTimeoutId);
-      markLoaderTimeoutId = setTimeout(() => {
-        markLoaderTimeoutId = null;
-        complete();
-      }, remaining);
-      return;
-    }
-
-    complete();
+    scheduleLoaderHide(
+      'transition',
+      transitionSession,
+      transitionVisibleUntil,
+      (state) => state.isSceneTransitionLoading,
+      () => set({ isSceneTransitionLoading: false }),
+      get,
+    );
   },
 }));
 
