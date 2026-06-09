@@ -30,6 +30,19 @@ body,
   --color-black-10: #0d0f11;
   --color-gradient-primary: linear-gradient(to right, #ecd187, #cc2967, #030102);
   --color-error: #a00e0c;
+
+  --animate-loader-beam: loader-beam 14s ease-in-out infinite;
+
+  @keyframes loader-beam {
+    0%,
+    100% {
+      transform: translate3d(-5%, -3%, 0) rotate(-31deg) scale(1.65);
+    }
+
+    50% {
+      transform: translate3d(5%, 3%, 0) rotate(-31deg) scale(1.65);
+    }
+  }
 }
 
 a {

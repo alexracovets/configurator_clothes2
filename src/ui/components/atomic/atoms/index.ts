@@ -22,3 +22,4 @@ export * from './AtomPopover';
 export * from './AtomList';
 export * from './AtomTable';
 export * from './AtomTabs';
+export * from './LogoYOU';

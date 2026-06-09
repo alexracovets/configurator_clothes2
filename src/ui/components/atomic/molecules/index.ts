@@ -11,3 +11,4 @@ export { UserBar } from './UserBar';
 export * from './ConfigurationSteps';
 export * from './ConfigurationTools';
 export * from './Modals';
+export * from './Loaders';

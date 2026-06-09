@@ -13,6 +13,7 @@ import {
   resolveGradientColors,
   useConfigurationCart,
   useConfiguratorProduct,
+  useConfiguratorSceneLoad,
   useGarmentColor,
   useGarmentDesign,
 } from '@store';
@@ -58,6 +59,7 @@ const useGarmentTextures = () => {
   const activeOpacity = useGarmentDesign((state) => state.activeOpacity);
   const defaultPattern = useGarmentDesign((state) => state.defaultPattern);
   const activeItemId = useConfigurationCart((state) => state.activeItemId);
+  const markInitialSceneLoaded = useConfiguratorSceneLoad((state) => state.markInitialSceneLoaded);
   const { getMaterials, hasMaterialsForParts } = useGarmentMaterialRegistry();
   const materialRevision = useMaterialRegistryRevision();
   const gl = useThree((state) => state.gl);
@@ -137,6 +139,34 @@ const useGarmentTextures = () => {
     invalidate();
   }, [activeOpacity, activePattern, getMaterials, invalidate, patternColors, product.parts]);
 
+  const activePatternKey = activePattern?.key ?? null;
+
+  const isInitialAppearanceReady = useCallback(() => {
+    if (!hasMaterialsForParts(partIds)) return false;
+    if (productPath !== product.path) return false;
+    if (pendingFrameReapplyRef.current) return false;
+
+    const logosSrc = defaultPattern?.parts[0]?.src ? resolveRasterDesignSrc(defaultPattern.parts[0].src) : null;
+    if (logosSrc && !logosTextureRef.current) return false;
+
+    if (activePatternKey) {
+      if (masksPatternKeyRef.current !== activePatternKey || !maskTexturesRef.current[0]) return false;
+    }
+
+    return true;
+  }, [activePatternKey, defaultPattern, hasMaterialsForParts, partIds, product.path, productPath]);
+
+  const tryMarkInitialSceneLoaded = useCallback(() => {
+    if (!isInitialAppearanceReady()) return;
+
+    invalidate();
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        markInitialSceneLoaded();
+      });
+    });
+  }, [invalidate, isInitialAppearanceReady, markInitialSceneLoaded]);
+
   const reapplyAppearance = useCallback(() => {
     if (!hasMaterialsForParts(partIds)) {
       pendingFrameReapplyRef.current = true;
@@ -150,15 +180,24 @@ const useGarmentTextures = () => {
 
     applyPatternTints();
     applyPrintState(buildPrintState());
-  }, [applyPartColors, applyPatternTints, applyPrintState, buildPrintState, hasMaterialsForParts, partIds, product.path, productPath]);
+    tryMarkInitialSceneLoaded();
+  }, [
+    applyPartColors,
+    applyPatternTints,
+    applyPrintState,
+    buildPrintState,
+    hasMaterialsForParts,
+    partIds,
+    product.path,
+    productPath,
+    tryMarkInitialSceneLoaded,
+  ]);
 
   const reapplyAppearanceRef = useRef(reapplyAppearance);
 
   useEffect(() => {
     reapplyAppearanceRef.current = reapplyAppearance;
   }, [reapplyAppearance]);
-
-  const activePatternKey = activePattern?.key ?? null;
 
   useEffect(() => {
     const cached = readProductAppearanceTextures(product.path);
