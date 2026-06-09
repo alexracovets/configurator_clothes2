@@ -11,6 +11,7 @@ interface GarmentMaterialRegistryValue {
   hasMaterialsForParts: (partIds: readonly string[]) => boolean;
   subscribeMaterials: (listener: () => void) => () => void;
   getRevision: () => number;
+  bumpRevision: () => void;
 }
 
 const GarmentMaterialRegistryContext = createContext<GarmentMaterialRegistryValue | null>(null);
@@ -64,6 +65,10 @@ const GarmentMaterialRegistryProvider = ({ children }: { children: React.ReactNo
 
   const getRevision = useCallback(() => revisionRef.current, []);
 
+  const bumpRevision = useCallback(() => {
+    notifyMaterials();
+  }, [notifyMaterials]);
+
   const value = useMemo(
     () => ({
       register,
@@ -72,8 +77,9 @@ const GarmentMaterialRegistryProvider = ({ children }: { children: React.ReactNo
       hasMaterialsForParts,
       subscribeMaterials,
       getRevision,
+      bumpRevision,
     }),
-    [getMaterials, getRevision, hasMaterialsForParts, register, subscribeMaterials, unregister],
+    [bumpRevision, getMaterials, getRevision, hasMaterialsForParts, register, subscribeMaterials, unregister],
   );
 
   return <GarmentMaterialRegistryContext.Provider value={value}>{children}</GarmentMaterialRegistryContext.Provider>;
