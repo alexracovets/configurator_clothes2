@@ -1,5 +1,6 @@
 import crewneckData from './crewneck/crewneck.json';
 
+import { faqContent } from './modalInfo';
 import type { GarmentConfig, StyleConfig, StyleId } from './types';
 
 const STYLES: Record<StyleId, StyleConfig> = {
@@ -28,7 +29,8 @@ const listCatalogProducts = (): CatalogProductRef[] =>
 const resolveProductPreviewSrc = (product: GarmentConfig) =>
   product.previewImage ? `${product.path}${product.previewImage}` : `${product.path}designs/thumbs/crewneck_design_1.webp`;
 
-export { getProduct, getStyle, listCatalogProducts, resolveProductPreviewSrc, STYLES };
+export { faqContent, getProduct, getStyle, listCatalogProducts, resolveProductPreviewSrc, STYLES };
+export type { FaqContentData, FaqContentListSection, FaqContentParagraphsSection, FaqContentSection } from './modalInfo';
 export type { CatalogProductRef };
 export type {
   GarmentConfig,

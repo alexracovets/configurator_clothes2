@@ -42,10 +42,10 @@ importers:
         specifier: ^0.10.1
         version: 0.10.1(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       lucide-react:
-        specifier: ^1.14.0
+        specifier: ^1.17.0
         version: 1.17.0(react@19.2.4)
       motion:
-        specifier: ^12.38.0
+        specifier: ^12.40.0
         version: 12.40.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       next:
         specifier: 16.2.6

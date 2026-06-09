@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, memo, useContext } from 'react';
+import { createContext, forwardRef, memo, useContext } from 'react';
 
 import { cva, type VariantProps } from 'class-variance-authority';
 
@@ -10,11 +10,11 @@ import { useSlidingIndicator } from '@hooks';
 import type { HeaderConfigItemType } from '@types';
 import { cn } from '@utils';
 
+import { SlidingIndicator } from '../SlidingIndicator';
 import { AtomTabsSeparator } from './AtomTabsSeparator';
 
 type AtomTabsVariant = NonNullable<VariantProps<typeof atomTabsListVariants>['variant']>;
 type SharedTabsListVariant = 'default' | 'line';
-
 const AtomTabsVariantContext = createContext<AtomTabsVariant>('default');
 
 const useAtomTabsVariant = () => useContext(AtomTabsVariantContext);
@@ -25,6 +25,7 @@ const atomTabsRootVariants = cva('', {
       default: '',
       line: '',
       configurator: 'gap-0',
+      modal: 'flex min-h-0 w-full flex-1 flex-col overflow-hidden gap-4',
     },
   },
   defaultVariants: {
@@ -38,6 +39,7 @@ const atomTabsListVariants = cva('', {
       default: '',
       line: '',
       configurator: cn('inline-flex h-auto w-fit items-center rounded-none bg-transparent p-0', 'group-data-horizontal/tabs:h-auto'),
+      modal: cn('inline-flex h-auto w-full items-center rounded-none bg-transparent', 'group-data-horizontal/tabs:h-auto'),
     },
   },
   defaultVariants: {
@@ -48,14 +50,15 @@ const atomTabsListVariants = cva('', {
 const atomTabsTriggerVariants = cva('', {
   variants: {
     variant: {
-      default: '',
+      default: cn('text-default text-[14px] font-[500] flex items-center justify-center gap-2 bg-transparent', 'px-6.5 pb-3 [&_svg]:size-5'),
       line: '',
       configurator: cn(
-        'h-auto flex-none rounded-none border-transparent bg-transparent p-0 shadow-none',
+        'h-auto flex-none rounded-none border-transparent bg-transparent shadow-none',
         'hover:bg-transparent data-active:bg-transparent',
         'after:hidden',
         'focus-visible:ring-0 focus-visible:outline-none',
       ),
+      modal: cn('text-default text-[14px] font-[500] flex items-center justify-center gap-2 bg-transparent', 'px-6.5 pb-3 [&_svg]:size-5'),
     },
   },
   defaultVariants: {
@@ -69,6 +72,7 @@ const atomTabsContentVariants = cva('', {
       default: '',
       line: '',
       configurator: 'pt-4',
+      modal: 'flex-none min-h-0 pt-2 outline-none',
     },
   },
   defaultVariants: {
@@ -80,6 +84,7 @@ const sharedTabsListVariantMap: Record<AtomTabsVariant, SharedTabsListVariant> =
   default: 'default',
   line: 'line',
   configurator: 'line',
+  modal: 'line',
 };
 
 type AtomTabsListProps = React.ComponentProps<typeof TabsList> & VariantProps<typeof atomTabsListVariants>;
@@ -94,12 +99,14 @@ const AtomTabsList = ({ className, variant: variantProp, ...props }: AtomTabsLis
 
 type AtomTabsTriggerProps = React.ComponentProps<typeof TabsTrigger> & VariantProps<typeof atomTabsTriggerVariants>;
 
-const AtomTabsTrigger = ({ className, variant: variantProp, ...props }: AtomTabsTriggerProps) => {
+const AtomTabsTrigger = forwardRef<HTMLButtonElement, AtomTabsTriggerProps>(({ className, variant: variantProp, ...props }, ref) => {
   const contextVariant = useAtomTabsVariant();
   const variant = variantProp ?? contextVariant;
 
-  return <TabsTrigger className={cn(atomTabsTriggerVariants({ variant }), className)} {...props} />;
-};
+  return <TabsTrigger ref={ref} className={cn(atomTabsTriggerVariants({ variant }), className)} {...props} />;
+});
+
+AtomTabsTrigger.displayName = 'AtomTabsTrigger';
 
 type AtomTabsContentProps = React.ComponentProps<typeof TabsContent> & VariantProps<typeof atomTabsContentVariants>;
 
@@ -129,7 +136,13 @@ const ConfiguratorTabItem = memo(({ item, index, activeIndex, getItemRef }: Conf
   return (
     <>
       {index > 0 && <AtomTabsSeparator isActive={isReached} />}
-      <span ref={getItemRef(index)} className="inline-flex">
+      <span
+        ref={(node) => {
+          const trigger = node?.querySelector<HTMLElement>('[data-slot="tabs-trigger"]') ?? node;
+          getItemRef(index)(trigger);
+        }}
+        className="inline-flex"
+      >
         <AtomTabsTrigger value={item.value} disabled={item.disabled} data-progress-active={isReached || undefined}>
           <Text variant="menu_step_buy" data-active={isReached} asChild>
             <span>{item.label}</span>
@@ -153,9 +166,7 @@ const ConfiguratorTabsList = ({ items, activeIndex, listClassName }: Configurato
         ))}
       </AtomTabsList>
 
-      <Text variant="menu_step_buy_line" asChild aria-hidden>
-        <span ref={indicatorRef} />
-      </Text>
+      <SlidingIndicator ref={indicatorRef} variant="gradient" />
     </div>
   );
 };

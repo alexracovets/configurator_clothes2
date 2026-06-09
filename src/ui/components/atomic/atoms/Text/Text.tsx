@@ -10,7 +10,7 @@ import type { ChildrenType } from '@types';
 const variantText = cva('font-inter font-[400] leading-none', {
   variants: {
     variant: {
-      default: '',
+      default: 'text-[16px] text-gray',
       whatsapp_badge: 'text-[14px] leading-[24px] text-white font-medium',
       product_name: 'text-[32px] leading-[1] font-[600] tracking-[-1px]',
       product_price: 'text-[32px] leading-[39px] font-semibold tracking-[-1px]',
@@ -19,17 +19,14 @@ const variantText = cva('font-inter font-[400] leading-none', {
         'data-[active=true]:text-default hover:text-default',
         'transition-colors duration-300 ease-in-out',
       ),
-      menu_step_buy_line: cn(
-        'absolute bottom-0 left-0 h-[4px] pointer-events-none will-change-transform',
-        'bg-linear-to-r from-[#ECD187] via-[#CC2967] to-[#030102]',
-        'transition-[transform,width] duration-300 ease-in-out',
-      ),
       slider_label: cn('text-[14px] leading-[15px] text-gray', 'data-[thumb=true]:text-default data-[thumb=true]:absolute data-[thumb=true]:-translate-x-1/2'),
       configurator_part_label: cn(
         'text-[16px] leading-[16px] font-semibold text-gray-30 underline-gray-30',
         'group-aria-expanded/accordion-trigger:text-default',
         'transition-all duration-200 ease-in-out',
       ),
+      h2: 'text-[32px] leading-[1] font-semibold text-base-black mb-6',
+      h3: 'text-[24px] leading-[1] font-semibold text-base-black mb-3',
     },
   },
   defaultVariants: {

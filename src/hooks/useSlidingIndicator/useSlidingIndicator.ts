@@ -9,13 +9,6 @@ const useSlidingIndicator = (activeIndex: number): SlidingIndicatorReturnType =>
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const indicatorRef = useRef<HTMLSpanElement>(null);
 
-  const getItemRef = useCallback(
-    (index: number) => (element: HTMLElement | null) => {
-      itemRefs.current[index] = element;
-    },
-    [],
-  );
-
   const updateIndicator = useCallback(() => {
     const wrapper = wrapperRef.current;
     const element = itemRefs.current[activeIndex];
@@ -29,6 +22,17 @@ const useSlidingIndicator = (activeIndex: number): SlidingIndicatorReturnType =>
     indicator.style.transform = `translateX(${elementRect.left - wrapperRect.left}px)`;
     indicator.style.width = `${elementRect.width}px`;
   }, [activeIndex]);
+
+  const getItemRef = useCallback(
+    (index: number) => (element: HTMLElement | null) => {
+      itemRefs.current[index] = element;
+
+      if (element) {
+        requestAnimationFrame(updateIndicator);
+      }
+    },
+    [updateIndicator],
+  );
 
   useLayoutEffect(() => {
     updateIndicator();
@@ -51,7 +55,7 @@ const useSlidingIndicator = (activeIndex: number): SlidingIndicatorReturnType =>
       observer.disconnect();
       window.removeEventListener('resize', updateIndicator);
     };
-  }, [updateIndicator]);
+  }, [updateIndicator, activeIndex]);
 
   return { wrapperRef, getItemRef, indicatorRef };
 };

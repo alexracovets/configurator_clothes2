@@ -21,6 +21,7 @@ const variantFlex = cva('flex w-fit items-center justify-center', {
       aside_configurator_content: 'flex-col gap-7 w-full py-6 min-h-0',
       configurator_part: 'flex flex-col items-start justify-start gap-3 w-full pb-3',
       slider_labels: 'relative w-full flex justify-between',
+      info_part: 'flex flex-col items-start justify-start w-full',
     },
   },
   defaultVariants: {

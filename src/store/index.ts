@@ -29,3 +29,4 @@ export { resolveLogoInstancesForRender, useGarmentLogo } from './useGarmentLogo'
 export type { LogoInstance, LogoPosition, LogoPreview } from './useGarmentLogo';
 export { useStepLogo } from './useStepLogo';
 export type { StepLogoPartState, StepLogoPositionState, StepLogoUv } from './useStepLogo';
+export { useInfoDialog } from './useInfoDialog';

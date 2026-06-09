@@ -1,0 +1,1 @@
+export { useInfoDialog } from './useInfoDialog';

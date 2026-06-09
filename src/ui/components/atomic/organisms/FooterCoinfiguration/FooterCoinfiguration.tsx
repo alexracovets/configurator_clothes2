@@ -1,15 +1,22 @@
 'use client';
 
-import { Button, Container, Flex, SvgIcon } from '@atoms';
-import { useConfigurationCart } from '@store';
 import { useCallback } from 'react';
+
+import { Button, Container, Flex, SvgIcon } from '@atoms';
+
+import { useConfigurationCart, useInfoDialog } from '@store';
 
 const FooterCoinfiguration = () => {
   const duplicateActiveItem = useConfigurationCart((state) => state.duplicateActiveItem);
+  const setIsOpen = useInfoDialog((state) => state.setIsOpen);
 
   const handleDuplicate = useCallback(() => {
     duplicateActiveItem();
   }, [duplicateActiveItem]);
+
+  const handleInfo = useCallback(() => {
+    setIsOpen(true);
+  }, [setIsOpen]);
 
   return (
     <Container>
@@ -26,7 +33,7 @@ const FooterCoinfiguration = () => {
           <SvgIcon name="duplicate" />
           Duplica
         </Button>
-        <Button size="sm">
+        <Button size="sm" onClick={handleInfo}>
           <SvgIcon name="info" />
           Info
         </Button>

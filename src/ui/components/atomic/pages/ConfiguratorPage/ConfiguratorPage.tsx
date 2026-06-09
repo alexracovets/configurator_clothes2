@@ -1,9 +1,15 @@
 'use client';
 
 import { Configurator } from '@organisms';
+import { ModalInfo } from '@molecules';
 
 const ConfiguratorPage = () => {
-  return <Configurator />;
+  return (
+    <>
+      <Configurator />
+      <ModalInfo />
+    </>
+  );
 };
 
 export { ConfiguratorPage };
