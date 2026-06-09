@@ -31,16 +31,16 @@ body,
   --color-gradient-primary: linear-gradient(to right, #ecd187, #cc2967, #030102);
   --color-error: #a00e0c;
 
-  --animate-loader-beam: loader-beam 14s ease-in-out infinite;
+  --animate-loader-diagonal: loader-diagonal 14s ease-in-out infinite;
 
-  @keyframes loader-beam {
+  @keyframes loader-diagonal {
     0%,
     100% {
-      transform: translate3d(-5%, -3%, 0) rotate(-31deg) scale(1.65);
+      transform: translate3d(-4%, -2.5%, 0) rotate(-0.6deg);
     }
 
     50% {
-      transform: translate3d(5%, 3%, 0) rotate(-31deg) scale(1.65);
+      transform: translate3d(4%, 2.5%, 0) rotate(0.6deg);
     }
   }
 }
