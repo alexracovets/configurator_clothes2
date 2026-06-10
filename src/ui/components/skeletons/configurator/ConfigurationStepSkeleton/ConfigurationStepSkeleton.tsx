@@ -1,7 +1,9 @@
-import { ConfigurationAccordionStepSkeleton } from '../ConfigurationAccordionStepSkeleton';
-import { ConfigurationDesignStepSkeleton } from '../ConfigurationDesignStepSkeleton';
-import { ConfigurationLogoStepSkeleton } from '../ConfigurationLogoStepSkeleton';
-import { ConfigurationNamingStepSkeleton } from '../ConfigurationNamingStepSkeleton';
+import {
+  ConfigurationAccordionStepSkeleton,
+  ConfigurationDesignStepSkeleton,
+  ConfigurationLogoStepSkeleton,
+  ConfigurationNamingStepSkeleton,
+} from '@skeletons';
 
 type ConfigurationStepSkeletonProps = {
   step: number;

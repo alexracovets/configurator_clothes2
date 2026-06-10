@@ -1,8 +1,6 @@
 import { AtomSkeleton, Flex } from '@atoms';
 
-import { SkeletonColorPalette } from '../primitives/SkeletonColorPalette';
-import { SkeletonPatternGrid } from '../primitives/SkeletonPatternGrid';
-import { SkeletonRangeControl } from '../primitives/SkeletonRangeControl';
+import { SkeletonColorPalette, SkeletonPatternGrid, SkeletonRangeControl } from '@skeletons';
 
 const ConfigurationDesignStepSkeleton = () => {
   return (

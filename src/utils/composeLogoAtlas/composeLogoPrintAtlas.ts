@@ -1,4 +1,4 @@
-import type { LogoInstance } from '@store';
+import type { LogoInstance } from '@types';
 import { loadCachedImage } from '@utils';
 
 import { LOGO_ATLAS_REF_HEIGHT, LOGO_ATLAS_REF_WIDTH, LOGO_MARK_REF_WIDTH, LOGO_VERTICAL_REF_HEIGHT } from '../garmentPrint/logoStampConstants';

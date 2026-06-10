@@ -1,11 +1,15 @@
-import type { GarmentConfig } from '@data';
-import type { LogoInstance } from '@store';
+import type { GarmentConfig, LogoInstance, PrintGizmoElement } from '@types';
 
-import { resolveLogoDisplayScale, resolveLogoGizmoHalf, resolveLogoReferenceDrawSize } from '../utils/composeLogoAtlas/composeLogoPrintAtlas';
-import { LOGO_SCALE_MAX, LOGO_SCALE_MIN, LOGO_SLOT_COUNT } from '../utils/garmentPrint/logoStampConstants';
-import { resolvePartPrintRotation, resolvePrintAtlasSize } from '../utils/resolveProductRenderConfig/resolveProductRenderConfig';
-
-import type { PrintGizmoElement } from './types';
+import {
+  LOGO_SCALE_MAX,
+  LOGO_SCALE_MIN,
+  LOGO_SLOT_COUNT,
+  resolveLogoDisplayScale,
+  resolveLogoGizmoHalf,
+  resolveLogoReferenceDrawSize,
+  resolvePartPrintRotation,
+  resolvePrintAtlasSize,
+} from '@utils';
 
 interface BuildLogoGizmoElementsInput {
   product: GarmentConfig;

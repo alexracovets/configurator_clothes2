@@ -1,4 +1,4 @@
-import type { GarmentTextRenderInstance } from '@store';
+import type { GarmentTextRenderInstance } from '@types';
 
 import { drawNameMaskGeometry } from '../drawNameOnAtlas/drawNameMaskGeometry';
 import { drawNameStrokeMaskGeometry } from '../drawNameOnAtlas/drawNameStrokeMaskGeometry';

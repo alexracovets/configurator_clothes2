@@ -7,3 +7,7 @@ export { ConfiguratorProductSkeleton } from './ConfiguratorProductSkeleton';
 export { LogoUploadSkeleton } from './LogoUploadSkeleton';
 export { PatternPreviewSkeleton } from './PatternPreviewSkeleton';
 export { ProductSessionPreviewSkeleton } from './ProductSessionPreviewSkeleton';
+export { SkeletonAccordionTrigger } from './primitives/SkeletonAccordionTrigger';
+export { SkeletonColorPalette } from './primitives/SkeletonColorPalette';
+export { SkeletonPatternGrid } from './primitives/SkeletonPatternGrid';
+export { SkeletonRangeControl } from './primitives/SkeletonRangeControl';

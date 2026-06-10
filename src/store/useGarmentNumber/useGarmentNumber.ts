@@ -1,8 +1,8 @@
 'use client';
 
-import { create } from 'zustand';
+import type { GarmentConfig } from '@types';
 
-import type { GarmentConfig } from '@data';
+import { create } from 'zustand';
 
 import { mapProductNumberPositions } from './mapProductNumbers';
 import type { NumberInstance, NumberPosition, NumberPreview } from './mapProductNumbers';

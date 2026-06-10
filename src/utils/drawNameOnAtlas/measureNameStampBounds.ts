@@ -1,4 +1,4 @@
-import { FONTS_CONFIGURATION } from '@constants';
+import { FONT_FAMILY_BY_NAME } from '@constants';
 
 import { NAME_REFERENCE_FONT_SIZE, resolveMaxReferenceStrokeWidth } from '../garmentPrint/nameStampConstants';
 
@@ -8,8 +8,6 @@ interface StampPixelSize {
 }
 
 const STAMP_BOUNDS_PADDING = 20;
-
-const FONT_FAMILY_BY_NAME = Object.fromEntries(FONTS_CONFIGURATION.map((font) => [font.name, font.fontFamily]));
 
 const resolveFontFamily = (fontName: string) => FONT_FAMILY_BY_NAME[fontName] ?? fontName;
 

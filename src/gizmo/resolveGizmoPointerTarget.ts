@@ -1,46 +1,22 @@
-import type { GarmentPartConfig } from '@data';
-import type { Camera, Object3D, Raycaster, Scene } from 'three';
+import type {
+  GarmentPartConfig,
+  GizmoButtonHit,
+  GizmoPointerTarget,
+  PrintablePartMeshes,
+  PrintGizmoElement,
+  PrintUvHit,
+  ResolveGizmoPointerTargetContext,
+  ResolveGizmoPointerTargetOptions,
+} from '@types';
+
+import type { Object3D } from 'three';
 import { Vector2 } from 'three';
 
-import { resolvePartPrintRotation, resolvePartUvBounds } from '../utils/resolveProductRenderConfig/resolveProductRenderConfig';
+import { resolvePartPrintRotation, resolvePartUvBounds } from '@utils';
 
 import { getGizmoButtonReveal } from './gizmoButtonReveal';
 import { hitTestGizmoButton, hitTestGizmoFrame } from './hitTestGizmoButton';
-import type { GizmoButtonHit } from './hitTestGizmoButton';
 import { toPrintLocalPx } from './printLocalSpace';
-import type { PrintGizmoElement } from './types';
-
-interface PrintablePartMeshes {
-  partId: string;
-  meshNames: string[];
-  printRotation: number;
-  uvBounds: { minX: number; maxX: number; minY: number; maxY: number };
-}
-
-interface PrintUvHit {
-  uv: { x: number; y: number };
-  partId: string;
-}
-
-interface GizmoPointerTarget {
-  element: PrintGizmoElement;
-  buttonHit: GizmoButtonHit | null;
-  onFrame: boolean;
-  uv: { x: number; y: number };
-}
-
-interface ResolveGizmoPointerTargetContext {
-  raycaster: Raycaster;
-  camera: Camera;
-  scene: Scene;
-  domElement: HTMLElement;
-  atlasSize: { width: number; height: number };
-}
-
-interface ResolveGizmoPointerTargetOptions {
-  selectedInstanceId?: string | null;
-  requireVisibleButtons?: boolean;
-}
 
 const toLocalPx = (uv: { x: number; y: number }, element: PrintGizmoElement, atlasSize: { width: number; height: number }) =>
   toPrintLocalPx(uv, element.uv, atlasSize, element.partRotation, element.rotation);
@@ -133,4 +109,4 @@ const resolveGizmoPointerTarget = (
 };
 
 export { buildPrintablePartMeshes, raycastGizmoUv, raycastPrintUv, resolveGizmoPointerTarget, toLocalPx };
-export type { GizmoPointerTarget, PrintablePartMeshes, PrintUvHit, ResolveGizmoPointerTargetContext, ResolveGizmoPointerTargetOptions };
+export type { GizmoPointerTarget, PrintablePartMeshes, PrintUvHit, ResolveGizmoPointerTargetContext, ResolveGizmoPointerTargetOptions } from '@types';

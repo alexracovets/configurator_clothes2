@@ -1,7 +1,7 @@
 'use client';
 
 import { AtomSelect, Flex, Text } from '@atoms';
-import { FONTS_CONFIGURATION } from '@constants';
+import { FONTS_CONFIGURATION } from '../../../../../../fonts/FONTS_CONFIGURATION';
 
 interface FontSelectRowProps {
   font: string;

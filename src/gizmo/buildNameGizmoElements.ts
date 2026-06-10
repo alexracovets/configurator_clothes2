@@ -1,13 +1,6 @@
-import type { GarmentConfig } from '@data';
-import type { NameInstance } from '@store';
+import type { GarmentConfig, NameInstance, PrintGizmoElement } from '@types';
 
-import { measureNameGizmoHalf } from '../utils/drawNameOnAtlas/measureNameStampBounds';
-import { NAME_REFERENCE_FONT_SIZE } from '../utils/garmentPrint/nameStampConstants';
-import { NAME_SLOT_COUNT } from '../utils/garmentPrint/nameSlotConstants';
-import { resolveTextGizmoHalf } from '../utils/garmentPrint/resolveTextGizmoHalf';
-import { resolvePartPrintRotation } from '../utils/resolveProductRenderConfig/resolveProductRenderConfig';
-
-import type { PrintGizmoElement } from './types';
+import { measureNameGizmoHalf, NAME_REFERENCE_FONT_SIZE, NAME_SLOT_COUNT, resolvePartPrintRotation, resolveTextGizmoHalf } from '@utils';
 
 interface BuildNameGizmoElementsInput {
   product: GarmentConfig;

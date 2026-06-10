@@ -1,5 +1,5 @@
+import type { GarmentConfig } from '@types';
 import { PALETTE_COLORS } from '@constants';
-import type { GarmentConfig } from '@data';
 
 import type { CartItemConfiguration, GarmentColorSnapshot } from './cartItemConfiguration';
 import { createDefaultCartItemConfiguration, createDefaultColorSnapshot } from './cartItemConfiguration';

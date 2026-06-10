@@ -1,8 +1,6 @@
 import { AtomSkeleton, Flex } from '@atoms';
 
-import { SkeletonAccordionTrigger } from '../primitives/SkeletonAccordionTrigger';
-import { SkeletonColorPalette } from '../primitives/SkeletonColorPalette';
-import { SkeletonRangeControl } from '../primitives/SkeletonRangeControl';
+import { SkeletonAccordionTrigger, SkeletonColorPalette, SkeletonRangeControl } from '@skeletons';
 
 const ACCORDION_ITEM_COUNT = 4;
 

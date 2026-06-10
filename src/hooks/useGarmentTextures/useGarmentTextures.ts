@@ -5,11 +5,11 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber';
 import type { Texture } from 'three';
 
-import { resolvePbrTexturePaths } from '@hooks';
+import { resolvePbrTexturePaths } from '@utils';
 import { useGarmentMaterialRegistry, useMaterialRegistryRevision, usePbrMaps } from '@providers';
+import type { DesignPatternItem } from '@types';
 import {
   DEFAULT_COLOR,
-  type DesignPatternItem,
   DISABLED_PART_GRADIENT,
   resolveGradientColors,
   useConfigurationCart,

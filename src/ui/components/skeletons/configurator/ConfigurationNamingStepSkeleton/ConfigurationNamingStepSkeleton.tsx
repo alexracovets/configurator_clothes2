@@ -1,7 +1,6 @@
 import { AtomSkeleton, Flex } from '@atoms';
 
-import { SkeletonAccordionTrigger } from '../primitives/SkeletonAccordionTrigger';
-import { SkeletonRangeControl } from '../primitives/SkeletonRangeControl';
+import { SkeletonAccordionTrigger, SkeletonRangeControl } from '@skeletons';
 
 const FORM_FIELD_COUNT = 4;
 

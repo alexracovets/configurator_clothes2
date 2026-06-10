@@ -1,4 +1,4 @@
-import type { GarmentTextRenderInstance } from '@store';
+import type { GarmentTextRenderInstance } from '@types';
 
 import { resolveRotatedGizmoHalf } from '../composeLogoAtlas/composeLogoPrintAtlas';
 import { PRINT_UPLOAD_ROTATION_DEG } from './nameStampConstants';

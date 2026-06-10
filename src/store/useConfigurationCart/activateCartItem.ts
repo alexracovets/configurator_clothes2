@@ -1,4 +1,5 @@
-import { getProduct, type StyleId } from '@data';
+import type { StyleId } from '@types';
+import { getProduct } from '@data';
 
 import { useConfigurationControl } from '../useConfigurationControl';
 import { useConfiguratorProduct } from '../useConfiguratorProduct';

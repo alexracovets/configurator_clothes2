@@ -2,47 +2,9 @@
 
 import { useCallback, useMemo } from 'react';
 
+import type { LogoInstance, StepLogoPartState, StepLogoPositionState, StepLogoStoreView } from '@types';
+
 import { useGarmentLogo } from '../useGarmentLogo';
-import type { LogoInstance, LogoPosition } from '../useGarmentLogo';
-
-interface StepLogoUv {
-  x: number;
-  y: number;
-}
-
-interface StepLogoPartState {
-  id: string;
-  positionKey: string;
-  label: string;
-  uv: StepLogoUv;
-  rotation: number;
-  opacity: number;
-  baseScale: number;
-  scale: number;
-  src: string;
-  fileName: string;
-  visible: boolean;
-  isDefault: boolean;
-}
-
-interface StepLogoPositionState {
-  key: string;
-  label: string;
-  uv: StepLogoUv;
-  rotation: number;
-  scale: number;
-  default: boolean;
-  interactive: boolean;
-  defaultSrc: string;
-}
-
-interface StepLogoStoreView {
-  parts: StepLogoPartState[];
-  positions: StepLogoPositionState[];
-  canAddUserLogo: () => boolean;
-  removePart: (id: string) => void;
-  updatePart: (id: string, patch: Partial<StepLogoPartState>) => void;
-}
 
 const mapInstanceToPart = (instance: LogoInstance): StepLogoPartState => ({
   id: instance.id,
@@ -59,7 +21,16 @@ const mapInstanceToPart = (instance: LogoInstance): StepLogoPartState => ({
   isDefault: instance.isDefault,
 });
 
-const mapPositionToStep = (position: LogoPosition): StepLogoPositionState => ({
+const mapPositionToStep = (position: {
+  key: string;
+  label: string;
+  uv: { x: number; y: number };
+  rotation: number;
+  scale: number;
+  isDefault: boolean;
+  interactive: boolean;
+  src?: string;
+}): StepLogoPositionState => ({
   key: position.key,
   label: position.label,
   uv: position.uv,
@@ -84,10 +55,10 @@ const useStepLogo = <T>(selector: (state: StepLogoStoreView) => T): T => {
 
   const updatePart = useCallback(
     (id: string, patch: Partial<StepLogoPartState>) => {
-      const logoPatch = { ...patch };
-      delete logoPatch.baseScale;
-      delete logoPatch.visible;
-      updateInstance(id, logoPatch);
+      const { baseScale: _baseScale, visible: _visible, ...instancePatch } = patch;
+      void _baseScale;
+      void _visible;
+      updateInstance(id, instancePatch);
     },
     [updateInstance],
   );
@@ -102,4 +73,4 @@ const useStepLogo = <T>(selector: (state: StepLogoStoreView) => T): T => {
 };
 
 export { useStepLogo };
-export type { StepLogoPartState, StepLogoPositionState, StepLogoUv };
+export type { StepLogoPartState, StepLogoPositionState, StepLogoUv } from '@types';

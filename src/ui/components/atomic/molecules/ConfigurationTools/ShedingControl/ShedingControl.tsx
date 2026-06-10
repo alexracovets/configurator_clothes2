@@ -1,7 +1,9 @@
 'use client';
 
 import { Flex, Text } from '@atoms';
-import { ColorControl, RangeControl, ToggleControl } from '@molecules';
+import { ColorControl } from '../ColorControl';
+import { RangeControl } from '../RangeControl';
+import { ToggleControl } from '../ToggleControl';
 import { DEFAULT_COLOR, DISABLED_PART_GRADIENT, useGarmentColor } from '@store';
 
 interface ShedingControlProps {

@@ -1,3 +1,4 @@
+import type { DesignPatternItem, PrintAtlasConfig } from '@types';
 import {
   Color,
   LinearFilter,
@@ -14,9 +15,6 @@ import {
   type WebGLRenderer,
   WebGLRenderTarget,
 } from 'three';
-
-import type { PrintAtlasConfig } from '@data';
-import type { DesignPatternItem } from '@store';
 
 import { imageToTexture } from '../garmentPrint/imageToTexture';
 

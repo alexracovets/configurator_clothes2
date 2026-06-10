@@ -3,10 +3,13 @@
 import { useCallback, useState } from 'react';
 
 import { AtomImage, Button, Flex, Grid, SvgIcon } from '@atoms';
-import { ColorControl, ColorTabControl, PatternLayerColorControl, RangeControl } from '@molecules';
+import { ColorControl } from '../../ConfigurationTools/ColorControl';
+import { ColorTabControl } from '../../ConfigurationTools/ColorTabControl';
+import { PatternLayerColorControl } from '../../ConfigurationTools/PatternLayerColorControl';
+import { RangeControl } from '../../ConfigurationTools/RangeControl';
 import { PALETTE_COLORS } from '@constants';
 import { useConfiguratorProduct, useGarmentDesign } from '@store';
-import type { DesignPatternPart } from '@store';
+import type { DesignPatternPart } from '@types';
 import { PatternPreviewSkeleton } from '@skeletons';
 import { cn } from '@utils';
 

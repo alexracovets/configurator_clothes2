@@ -1,16 +1,9 @@
+import type { GarmentConfig, LogoInstance, NameInstance, NumberInstance, PartGradient, UvPoint } from '@types';
 import { PALETTE_COLORS } from '@constants';
-import type { GarmentConfig, UvPoint } from '@data';
+
+import { useGarmentColor, useGarmentDesign, useGarmentLogo, useGarmentName, useGarmentNumber } from '@store';
 
 import { buildDefaultGradients } from '../useGarmentColor/mapPartGradientDefaults';
-import type { PartGradient } from '../useGarmentColor';
-import { useGarmentColor } from '../useGarmentColor';
-import { useGarmentDesign } from '../useGarmentDesign';
-import { useGarmentLogo } from '../useGarmentLogo';
-import type { LogoInstance } from '../useGarmentLogo';
-import { useGarmentName } from '../useGarmentName';
-import type { NameInstance } from '../useGarmentName';
-import { useGarmentNumber } from '../useGarmentNumber';
-import type { NumberInstance } from '../useGarmentNumber';
 
 interface GarmentColorSnapshot {
   byPart: Record<string, string>;

@@ -1,8 +1,9 @@
 'use client';
 
-import { create } from 'zustand';
+import type { StyleId } from '@types';
+import { getProduct } from '@data';
 
-import { getProduct, type StyleId } from '@data';
+import { create } from 'zustand';
 
 import { activateCartItem } from './activateCartItem';
 import {

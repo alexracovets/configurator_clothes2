@@ -1,5 +1,5 @@
+import type { UvBounds } from '@types';
 import { DEFAULT_PART_TEXTURE_SIZE } from '@constants';
-import type { UvBounds } from '@data';
 
 const drawPrintOnPart = (ctx: CanvasRenderingContext2D, size: number, printCanvas: HTMLCanvasElement, bounds: UvBounds) => {
   const pw = printCanvas.width;

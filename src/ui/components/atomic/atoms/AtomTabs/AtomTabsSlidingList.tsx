@@ -4,7 +4,7 @@ import { Children, cloneElement, isValidElement, type ReactElement, type RefAttr
 
 import { cva, type VariantProps } from 'class-variance-authority';
 
-import { SlidingIndicator, SlidingIndicatorTrack, slidingIndicatorTrackVariants, slidingIndicatorVariants } from '../SlidingIndicator';
+import { SlidingIndicator, SlidingIndicatorTrack, slidingIndicatorTrackVariants, slidingIndicatorVariants } from '@atoms';
 import { useSlidingIndicator } from '@hooks';
 import { cn } from '@utils';
 

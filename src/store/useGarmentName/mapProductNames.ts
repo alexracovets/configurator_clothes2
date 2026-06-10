@@ -1,47 +1,4 @@
-import type { GarmentConfig, TextDefaultsConfig } from '@data';
-
-interface NamePosition {
-  key: string;
-  label: string;
-  partId: string;
-  uv: { x: number; y: number };
-  rotation: number;
-  fontSize: number;
-  showFrame: boolean;
-  showGizmo: boolean;
-  interactive: boolean;
-}
-
-interface NameInstance {
-  id: string;
-  positionKey: string;
-  label: string;
-  partId: string;
-  uv: { x: number; y: number };
-  rotation: number;
-  /** Position default orientation; affects text only, not gizmo. */
-  placementRotation?: number;
-  text: string;
-  font: string;
-  fontSize: number;
-  textColor: string;
-  strokeColor: string;
-  strokeWidth: number;
-  showFrame: boolean;
-  showGizmo: boolean;
-}
-
-interface NamePreview {
-  instanceId: string;
-  patch: Partial<Pick<NameInstance, 'text' | 'textColor' | 'strokeColor' | 'fontSize' | 'strokeWidth'>>;
-}
-
-interface NameLimits {
-  maxLength: number;
-  fontSizeMin: number;
-  fontSizeMax: number;
-  strokeWidthMax: number;
-}
+import type { GarmentConfig, NameInstance, NameLimits, NamePosition, TextDefaultsConfig } from '@types';
 
 const resolveNameDefaults = (product: GarmentConfig): TextDefaultsConfig => {
   if (!product.nameDefaults) {
@@ -98,4 +55,4 @@ const createNameInstance = (product: GarmentConfig, position: NamePosition, id: 
 };
 
 export { createNameInstance, mapProductNamePositions, resolveNameDefaults, resolveNameLimits };
-export type { NameInstance, NameLimits, NamePosition, NamePreview };
+export type { NameInstance, NameLimits, NamePosition, NamePreview } from '@types';

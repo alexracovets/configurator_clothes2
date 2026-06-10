@@ -1,4 +1,4 @@
-import { NAME_SLOT_COUNT } from '../utils/garmentPrint/nameSlotConstants';
+import { NAME_SLOT_COUNT } from '@utils';
 
 const REVEAL_LERP = 0.42;
 const REVEAL_EPSILON = 0.001;

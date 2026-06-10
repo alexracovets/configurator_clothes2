@@ -1,5 +1,4 @@
-import type { GarmentPartConfig } from '@data';
-import type { LogoInstance } from '@store';
+import type { GarmentPartConfig, LogoInstance } from '@types';
 
 import { resolveLogoDisplayScale } from '../composeLogoAtlas/composeLogoPrintAtlas';
 import { FULL_UV_BOUNDS, resolvePartPrintRotation, resolvePartUvBounds } from '../resolveProductRenderConfig/resolveProductRenderConfig';

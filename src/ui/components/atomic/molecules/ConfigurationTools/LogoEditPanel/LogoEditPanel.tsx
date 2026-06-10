@@ -1,7 +1,7 @@
 'use client';
 
 import { AtomImage, Button, Flex, Grid, SvgIcon, Text } from '@atoms';
-import { RangeControl } from '@molecules';
+import { RangeControl } from '../RangeControl';
 import { useStepLogo } from '@store';
 
 interface LogoEditPanelProps {

@@ -1,7 +1,8 @@
+import type { CatalogProductRef, GarmentConfig, StyleConfig, StyleId } from '@types';
+
 import crewneckData from './crewneck/crewneck.json';
 
 import { faqContent } from './modalInfo';
-import type { GarmentConfig, StyleConfig, StyleId } from './types';
 
 const STYLES: Record<StyleId, StyleConfig> = {
   crewneck: crewneckData as StyleConfig,
@@ -10,12 +11,6 @@ const STYLES: Record<StyleId, StyleConfig> = {
 const getStyle = (id: StyleId): StyleConfig => STYLES[id];
 
 const getProduct = (styleId: StyleId, productIndex: number): GarmentConfig | undefined => STYLES[styleId]?.products[productIndex - 1];
-
-interface CatalogProductRef {
-  styleId: StyleId;
-  productIndex: number;
-  product: GarmentConfig;
-}
 
 const listCatalogProducts = (): CatalogProductRef[] =>
   (Object.keys(STYLES) as StyleId[]).flatMap((styleId) =>
@@ -30,18 +25,3 @@ const resolveProductPreviewSrc = (product: GarmentConfig) =>
   product.previewImage ? `${product.path}${product.previewImage}` : `${product.path}designs/thumbs/crewneck_design_1.webp`;
 
 export { faqContent, getProduct, getStyle, listCatalogProducts, resolveProductPreviewSrc, STYLES };
-export type { FaqContentData, FaqContentListSection, FaqContentParagraphsSection, FaqContentSection } from './modalInfo';
-export type { CatalogProductRef };
-export type {
-  GarmentConfig,
-  GarmentPartConfig,
-  LogoPositionConfig,
-  NamePositionConfig,
-  PartGradientConfig,
-  PrintAtlasConfig,
-  StyleConfig,
-  StyleId,
-  TextDefaultsConfig,
-  UvBounds,
-  UvPoint,
-} from './types';

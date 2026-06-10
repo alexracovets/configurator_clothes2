@@ -3,7 +3,7 @@
 import { useCallback, useState } from 'react';
 
 import { useConfiguratorProduct, useGarmentLogo } from '@store';
-import type { StepLogoPositionState } from '@store';
+import type { StepLogoPositionState } from '@types';
 import { LogoFileError, logoFileToDisplayUrl, preloadLogoDisplayUrl, yieldToMain } from '@utils';
 
 interface UploadLogoOptions {

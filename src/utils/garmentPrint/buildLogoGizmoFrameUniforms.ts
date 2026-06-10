@@ -1,4 +1,4 @@
-import type { LogoInstance } from '@store';
+import type { LogoInstance } from '@types';
 
 import { resolveLogoGizmoHalf, resolveLogoReferenceDrawSize } from '../composeLogoAtlas/composeLogoPrintAtlas';
 import type { GizmoFrameState } from './applyGarmentLogos';

@@ -1,5 +1,4 @@
-import type { GarmentPartConfig } from '@data';
-import type { LogoInstance } from '@store';
+import type { GarmentPartConfig, LogoInstance } from '@types';
 
 import { FULL_UV_BOUNDS, resolvePartUvBounds } from '../resolveProductRenderConfig/resolveProductRenderConfig';
 import { LOGO_SLOT_COUNT } from './logoStampConstants';

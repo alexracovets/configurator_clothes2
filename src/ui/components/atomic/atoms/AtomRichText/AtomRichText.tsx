@@ -1,14 +1,14 @@
 'use client';
 
+import type { FaqContentSection } from '@types';
+
 import type { ReactNode } from 'react';
 
 import { type VariantProps } from 'class-variance-authority';
 
-import type { FaqContentSection } from '@data';
 import { cn } from '@utils';
 
-import { AtomList, atomListWrapperVariants } from '../AtomList';
-import { Text } from '../Text';
+import { AtomList, atomListWrapperVariants, Text } from '@atoms';
 
 type RichTextSection = { type: 'list'; items: string[] } | { type: 'paragraphs'; paragraphs: string[] };
 

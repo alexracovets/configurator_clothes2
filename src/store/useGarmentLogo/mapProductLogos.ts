@@ -1,44 +1,6 @@
-import type { GarmentConfig, LogoPositionConfig, UvPoint } from '@data';
+import type { GarmentConfig, LogoInstance, LogoPosition, LogoPositionConfig, UvPoint } from '@types';
+
 import { resolvePartUvBounds } from '@utils';
-
-interface LogoPosition {
-  key: string;
-  label: string;
-  partId: string;
-  uv: UvPoint;
-  rotation: number;
-  scale: number;
-  src?: string;
-  showFrame: boolean;
-  showGizmo: boolean;
-  interactive: boolean;
-  isDefault: boolean;
-}
-
-interface LogoInstance {
-  id: string;
-  positionKey: string;
-  label: string;
-  partId: string;
-  uv: UvPoint;
-  rotation: number;
-  scale: number;
-  src: string;
-  fileName: string;
-  isDefault: boolean;
-  showFrame: boolean;
-  showGizmo: boolean;
-  naturalWidth: number;
-  naturalHeight: number;
-  /** Baked upload orientation correction; does not affect gizmo rotation. */
-  uploadRotation: number;
-  opacity: number;
-}
-
-interface LogoPreview {
-  instanceId: string;
-  patch: Partial<Pick<LogoInstance, 'scale' | 'rotation' | 'uv'>>;
-}
 
 const resolvePartIdForAtlasUv = (product: GarmentConfig, uv: UvPoint): string => {
   const match = product.parts.find((part) => {
@@ -158,4 +120,4 @@ const createDynamicUserLogoPosition = (product: GarmentConfig, index: number): L
 };
 
 export { createDefaultLogoInstances, createDynamicUserLogoPosition, createLogoInstance, mapProductLogoPositions, resolveLogoDefaults, resolvePartIdForAtlasUv };
-export type { LogoInstance, LogoPosition, LogoPreview };
+export type { LogoInstance, LogoPosition, LogoPreview } from '@types';

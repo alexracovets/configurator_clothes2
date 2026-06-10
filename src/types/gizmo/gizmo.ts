@@ -1,3 +1,5 @@
+import type { UvPoint } from '../entities/garment';
+
 type GizmoHandleKind = 'duplicate' | 'delete' | 'rotate' | 'scale';
 type PrintGizmoElementKind = 'name' | 'logo';
 
@@ -7,7 +9,7 @@ interface PrintGizmoElement {
   partId: string;
   slotIndex: number;
   meshNames: string[];
-  uv: { x: number; y: number };
+  uv: UvPoint;
   rotation: number;
   /** Part print rotation in degrees (from product data). */
   partRotation: number;

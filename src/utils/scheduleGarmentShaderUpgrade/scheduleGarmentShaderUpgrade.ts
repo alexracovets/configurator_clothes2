@@ -1,6 +1,5 @@
+import type { GarmentConfig } from '@types';
 import type { MeshStandardMaterial } from 'three';
-
-import type { GarmentConfig } from '@data';
 
 import { upgradeGarmentMaterialShader } from '../createGarmentMaterial';
 

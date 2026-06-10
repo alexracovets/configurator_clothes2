@@ -3,7 +3,7 @@
 import { useState } from 'react';
 
 import { Flex, Text } from '@atoms';
-import { ColorControl } from '@molecules';
+import { ColorControl } from '../ColorControl';
 
 import { cn } from '@utils';
 

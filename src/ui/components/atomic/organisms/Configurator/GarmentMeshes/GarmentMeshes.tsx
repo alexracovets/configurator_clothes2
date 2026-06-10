@@ -5,12 +5,12 @@ import { useGLTF } from '@react-three/drei';
 import { resolveModelUrl } from '@utils';
 import { useConfiguratorProduct } from '@store';
 
-import { GarmentPartMesh } from '../GarmentPartMesh';
 import { GarmentLogoTextureLayer } from '../GarmentLogoTextureLayer';
 import { GarmentNameTextureLayer } from '../GarmentNameTextureLayer';
-import { PrintGizmoLayer } from '../PrintGizmoLayer';
+import { GarmentPartMesh } from '../GarmentPartMesh';
 import { GarmentTextureLayer } from '../GarmentTextureLayer';
 import { PreserveGltfMesh } from '../PreserveGltfMesh';
+import { PrintGizmoLayer } from '../PrintGizmoLayer';
 import { StaticGltfMesh } from '../StaticGltfMesh';
 
 const GarmentMeshes = () => {

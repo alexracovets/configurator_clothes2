@@ -1,6 +1,6 @@
 'use client';
 
-import { anton, bebasNeue, blackOpsOne, oswald, russoOne } from '@fonts';
+import { anton, bebasNeue, blackOpsOne, oswald, russoOne } from './sportFonts';
 
 const FONTS_CONFIGURATION = [
   {

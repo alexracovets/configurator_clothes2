@@ -11,8 +11,8 @@ import {
   setGizmoButtonsRevealTarget,
   subscribeGizmoButtonHover,
   subscribeGizmoButtonReveal,
-  useGizmoIconAtlas,
 } from '@gizmo';
+import { useGizmoIconAtlas } from '@hooks';
 import { useGarmentMaterialRegistry, useMaterialRegistryRevision } from '@providers';
 import { resolveLogoInstancesForRender, useConfigurationControl, useConfiguratorProduct, useGarmentLogo } from '@store';
 import {

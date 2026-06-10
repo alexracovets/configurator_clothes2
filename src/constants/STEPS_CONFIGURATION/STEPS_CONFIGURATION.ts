@@ -1,6 +1,11 @@
 'use client';
 
-import { ConfigurationColorize, ConfigurationDesign, ConfigurationLogo, ConfigurationNaming, ConfigurationNumbers, ConfigurationShading } from '@molecules';
+import { ConfigurationColorize } from '../../ui/components/atomic/molecules/ConfigurationSteps/ConfigurationColorize';
+import { ConfigurationDesign } from '../../ui/components/atomic/molecules/ConfigurationSteps/ConfigurationDesign';
+import { ConfigurationLogo } from '../../ui/components/atomic/molecules/ConfigurationSteps/ConfigurationLogo';
+import { ConfigurationNaming } from '../../ui/components/atomic/molecules/ConfigurationSteps/ConfigurationNaming';
+import { ConfigurationNumbers } from '../../ui/components/atomic/molecules/ConfigurationSteps/ConfigurationNumbers';
+import { ConfigurationShading } from '../../ui/components/atomic/molecules/ConfigurationSteps/ConfigurationShading';
 import type { HeaderConfigItemType } from '@types';
 
 const STEPS_CONFIGURATION: HeaderConfigItemType[] = [

@@ -3,7 +3,8 @@
 import { useCallback, useMemo } from 'react';
 
 import { AccordionAtom, Flex } from '@atoms';
-import { PartColorSwitch, ShedingControl } from '@molecules';
+import { PartColorSwitch } from '../../ConfigurationTools/PartColorSwitch';
+import { ShedingControl } from '../../ConfigurationTools/ShedingControl';
 import { DEFAULT_COLOR, useConfiguratorProduct, useGarmentColor } from '@store';
 
 const ConfigurationShading = () => {

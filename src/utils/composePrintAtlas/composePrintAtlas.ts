@@ -1,5 +1,4 @@
-import type { PrintAtlasConfig } from '@data';
-import type { DesignPatternItem } from '@store';
+import type { DesignPatternItem, PrintAtlasConfig } from '@types';
 
 import { loadCachedImage } from '../loadCachedImage/loadCachedImage';
 

@@ -1,4 +1,4 @@
-import type { GarmentConfig, GarmentPartConfig, PartGradientConfig } from '@data';
+import type { GarmentConfig, GarmentPartConfig, PartGradientConfig } from '@types';
 
 import { DEFAULT_GRADIENT_COLOR2, type PartGradient } from './partGradientTypes';
 

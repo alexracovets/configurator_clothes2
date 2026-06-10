@@ -1,12 +1,6 @@
-import type { UvPoint } from '@data';
-import { clampUvToPartBounds } from '../utils/resolveProductRenderConfig/resolveProductRenderConfig';
+import type { PrintablePartMeshes, PrintDragMoveState, PrintUvHit, UvPoint } from '@types';
 
-import type { PrintablePartMeshes, PrintUvHit } from './resolveGizmoPointerTarget';
-
-interface PrintDragMoveState {
-  offset: UvPoint;
-  activePartId: string;
-}
+import { clampUvToPartBounds } from '@utils';
 
 interface PrintDragMoveResult {
   uv: UvPoint;
@@ -38,4 +32,4 @@ const resolvePrintDragMove = (hit: PrintUvHit, state: PrintDragMoveState, printa
 };
 
 export { resolvePrintDragMove };
-export type { PrintDragMoveState };
+export type { PrintDragMoveState } from '@types';

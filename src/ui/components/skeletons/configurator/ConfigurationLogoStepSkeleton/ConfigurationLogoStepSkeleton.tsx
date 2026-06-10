@@ -1,6 +1,6 @@
 import { AtomSkeleton, Flex } from '@atoms';
 
-import { LogoUploadSkeleton } from '../LogoUploadSkeleton';
+import { LogoUploadSkeleton } from '@skeletons';
 
 const ConfigurationLogoStepSkeleton = () => {
   return (

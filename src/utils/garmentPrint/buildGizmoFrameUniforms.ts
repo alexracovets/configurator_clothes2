@@ -1,4 +1,4 @@
-import type { GarmentTextRenderInstance } from '@store';
+import type { GarmentTextRenderInstance } from '@types';
 
 import { measureNameGizmoHalf } from '../drawNameOnAtlas/measureNameStampBounds';
 

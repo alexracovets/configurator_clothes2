@@ -1,10 +1,11 @@
 'use client';
 
+import type { CatalogProductRef } from '@types';
+import { resolveProductPreviewSrc } from '@data';
+
 import { useState } from 'react';
 
 import { AtomPopover, AtomPopoverContent, AtomPopoverTrigger, Grid, Text } from '@atoms';
-
-import { type CatalogProductRef, resolveProductPreviewSrc } from '@data';
 
 import { ProductCatalogOption } from '../ProductCatalogOption';
 import { ProductSessionAddButton } from '../ProductSessionAddButton';

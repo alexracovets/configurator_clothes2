@@ -1,7 +1,4 @@
-interface GizmoButtonHoverTarget {
-  slotIndex: number;
-  cornerIndex: number;
-}
+import type { GizmoButtonHoverTarget } from '@types';
 
 const HOVER_SCALE_TARGET = 1.1;
 const HOVER_SCALE_DEFAULT = 1;
@@ -85,4 +82,4 @@ const subscribeGizmoButtonHover = (listener: () => void) => {
 };
 
 export { clearGizmoButtonHover, getGizmoHoverUniforms, isGizmoButtonDragActive, setGizmoButtonDragActive, setGizmoButtonHover, subscribeGizmoButtonHover };
-export type { GizmoButtonHoverTarget };
+export type { GizmoButtonHoverTarget } from '@types';

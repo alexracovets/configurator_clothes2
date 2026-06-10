@@ -1,25 +1,15 @@
 'use client';
 
+import type { DesignPatternItem, GarmentConfig } from '@types';
+
 import { create } from 'zustand';
 
 import { PALETTE_COLORS } from '@constants';
-import type { GarmentConfig } from '@data';
+
 import { resolveDesignThumbSrc } from '@utils';
 
 const DEFAULT_COLOR = PALETTE_COLORS[1];
 const DEFAULT_OPACITY = 1;
-
-interface DesignPatternPart {
-  key: string;
-  src: string;
-  previewSrc: string;
-}
-
-interface DesignPatternItem {
-  key: string;
-  name: string;
-  parts: DesignPatternPart[];
-}
 
 interface GarmentDesignSnapshot {
   activePatternKey: string | null;
@@ -167,4 +157,4 @@ const useGarmentDesign = create<UseGarmentDesignStore>((set, get) => ({
 }));
 
 export { useGarmentDesign };
-export type { DesignPatternItem, DesignPatternPart };
+export type { DesignPatternItem, DesignPatternPart } from '@types';

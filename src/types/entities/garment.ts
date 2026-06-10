@@ -30,7 +30,6 @@ interface GarmentPartConfig {
   meshNames: string[];
   renderOrder?: number;
   uvBounds?: UvBounds;
-  /** Degrees: rotates print/gizmo local space so content aligns with the 3D panel. */
   printRotation?: number;
   gradient?: PartGradientConfig;
 }
@@ -103,7 +102,6 @@ interface GarmentStaticMeshConfig {
 interface GarmentConfig {
   name: string;
   type: string;
-  /** Path relative to product.path, used in the session sidebar and catalog popup. */
   previewImage?: string;
   price: number;
   bonus_count: number;

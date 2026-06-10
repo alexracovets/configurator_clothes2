@@ -10,6 +10,7 @@ export {
 export { composeLogoStampAtlas } from './composeLogoAtlas/composeLogoStampAtlas';
 export { composeNameMaskAtlas, resolveNameStampSize } from './composeNameAtlas/composeNameMaskAtlas';
 export type { ComposeNameMaskAtlasInput, NameMaskAtlas } from './composeNameAtlas/composeNameMaskAtlas';
+export { measureNameGizmoHalf, measureNameStampPixelSize, unionStampPixelSize } from './drawNameOnAtlas/measureNameStampBounds';
 export type { StampPixelSize } from './drawNameOnAtlas/measureNameStampBounds';
 export { composePrintAtlas } from './composePrintAtlas/composePrintAtlas';
 export type { ComposePrintAtlasInput } from './composePrintAtlas/composePrintAtlas';
@@ -58,7 +59,9 @@ export {
   LOGO_UPLOAD_ROTATION_DEG,
   LOGO_VERTICAL_REF_HEIGHT,
 } from './garmentPrint/logoStampConstants';
-export { NAME_GIZMO_BTN_HALF_ATLAS, NAME_GIZMO_BTN_OUTSET_ATLAS, PRINT_UPLOAD_ROTATION_DEG } from './garmentPrint/nameStampConstants';
+export { NAME_GIZMO_BTN_HALF_ATLAS, NAME_GIZMO_BTN_OUTSET_ATLAS, NAME_REFERENCE_FONT_SIZE, PRINT_UPLOAD_ROTATION_DEG } from './garmentPrint/nameStampConstants';
+export { NAME_SLOT_COUNT } from './garmentPrint/nameSlotConstants';
+export { resolveTextContentRotationDeg, resolveTextGizmoHalf } from './garmentPrint/resolveTextGizmoHalf';
 export { resolveRotatedGizmoHalf } from './composeLogoAtlas/composeLogoPrintAtlas';
 export { applyGarmentPatternTints, applyGarmentPrint, emptyMaskPair, PATTERN_LAYER_COUNT } from './garmentPrint/applyGarmentPrint';
 export { getEmptyPrintTexture } from './garmentPrint/emptyPrintTexture';
@@ -82,6 +85,7 @@ export { resolveDesignThumbSrc } from './resolveDesignThumbSrc/resolveDesignThum
 export type { PbrMaps, PbrTexturePaths } from './pbrMaps';
 export { priceFormat } from './priceFormat';
 export { resolveModelUrl } from './resolveModelUrl';
+export { resolvePbrTexturePaths } from './resolvePbrTexturePaths';
 export {
   isAcceptedLogoFile,
   LOGO_ACCEPTED_INPUT,

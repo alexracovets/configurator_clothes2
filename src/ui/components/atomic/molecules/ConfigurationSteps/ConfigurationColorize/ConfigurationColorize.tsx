@@ -3,7 +3,8 @@
 import { memo, useMemo } from 'react';
 
 import { AccordionAtom, Flex } from '@atoms';
-import { ColorControl, PartColorSwitch } from '@molecules';
+import { ColorControl } from '../../ConfigurationTools/ColorControl';
+import { PartColorSwitch } from '../../ConfigurationTools/PartColorSwitch';
 
 import { DEFAULT_COLOR, useConfiguratorProduct, useGarmentColor } from '@store';
 

@@ -1,8 +1,9 @@
+'use client';
+
 import { useGLTF } from '@react-three/drei';
 
-import { resolvePbrTexturePaths } from '@hooks';
 import { useConfiguratorProduct } from '@store';
-import { resolveModelUrl } from '@utils';
+import { resolveModelUrl, resolvePbrTexturePaths } from '@utils';
 
 const preloadConfiguratorScene = () => {
   const product = useConfiguratorProduct.getState().product;

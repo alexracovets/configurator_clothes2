@@ -1,8 +1,9 @@
 'use client';
 
-import { create } from 'zustand';
+import type { GarmentConfig, StyleId } from '@types';
+import { getProduct } from '@data';
 
-import { GarmentConfig, getProduct, type StyleId } from '@data';
+import { create } from 'zustand';
 
 interface ConfiguratorProductState {
   styleId: StyleId;

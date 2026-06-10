@@ -1,11 +1,11 @@
 import { Geist } from 'next/font/google';
 
-import '@styles/globals.css';
+import '@styles';
 
 import { anton, bebasNeue, blackOpsOne, inter, oswald, russoOne } from '@fonts';
 import type { ChildrenType } from '@types';
 
-import { cn } from '@/src/utils/cn/cn';
+import { cn } from '@utils';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
 const RootLayout = ({ children }: ChildrenType) => {

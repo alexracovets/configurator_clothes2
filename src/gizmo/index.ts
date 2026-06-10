@@ -12,10 +12,17 @@ export { getGizmoButtonReveal, getGizmoButtonsRevealUniforms, setGizmoButtonsRev
 export { GIZMO_CORNERS, getGizmoHoverCursor, hitTestGizmoButton, hitTestGizmoFrame } from './hitTestGizmoButton';
 export { buildPrintablePartMeshes, raycastGizmoUv, raycastPrintUv, resolveGizmoPointerTarget, toLocalPx } from './resolveGizmoPointerTarget';
 export { resolvePrintDragMove } from './printDragMove';
-export type { PrintDragMoveState } from './printDragMove';
 export { toPrintLocalPx } from './printLocalSpace';
-export { useGizmoIconAtlas } from './useGizmoIconAtlas';
-export type { GizmoButtonHoverTarget } from './gizmoButtonHover';
-export type { GizmoButtonHit } from './hitTestGizmoButton';
-export type { GizmoPointerTarget, PrintablePartMeshes, PrintUvHit } from './resolveGizmoPointerTarget';
-export type { GizmoHandleKind, PrintGizmoElement } from './types';
+export { useGizmoIconAtlas } from '@hooks';
+export type {
+  GizmoButtonHit,
+  GizmoButtonHoverTarget,
+  GizmoHandleKind,
+  GizmoPointerTarget,
+  PrintablePartMeshes,
+  PrintDragMoveState,
+  PrintGizmoElement,
+  PrintUvHit,
+  ResolveGizmoPointerTargetContext,
+  ResolveGizmoPointerTargetOptions,
+} from '@types';

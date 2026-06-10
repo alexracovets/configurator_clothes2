@@ -1,4 +1,4 @@
-import type { LogoInstance } from '@store';
+import type { LogoInstance } from '@types';
 import { loadCachedImage } from '@utils';
 
 import { LOGO_SLOT_COUNT } from '../garmentPrint/logoStampConstants';

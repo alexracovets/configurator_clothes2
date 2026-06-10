@@ -1,12 +1,4 @@
-interface PartGradient {
-  enabled: boolean;
-  reversed: boolean;
-  color2: string;
-  rotation: number;
-  position: number;
-  softness: number;
-  opacity: number;
-}
+import type { PartGradient } from '@types';
 
 const DEFAULT_GRADIENT_COLOR2 = '#000000';
 
@@ -31,4 +23,4 @@ const DISABLED_PART_GRADIENT: PartGradient = {
 };
 
 export { DEFAULT_GRADIENT_COLOR2, DEFAULT_PART_GRADIENT, DISABLED_PART_GRADIENT };
-export type { PartGradient };
+export type { PartGradient } from '@types';

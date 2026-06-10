@@ -1,4 +1,4 @@
-import type { GarmentConfig } from '@data';
+import type { GarmentConfig } from '@types';
 
 const resolveModelUrl = (product: GarmentConfig): string => {
   const base = product.path.endsWith('/') ? product.path : `${product.path}/`;

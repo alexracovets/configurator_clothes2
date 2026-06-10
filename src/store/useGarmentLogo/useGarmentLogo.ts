@@ -1,8 +1,9 @@
 'use client';
 
+import type { GarmentConfig } from '@types';
+
 import { create } from 'zustand';
 
-import type { GarmentConfig } from '@data';
 import { loadCachedImage, LOGO_SLOT_COUNT, LOGO_UPLOAD_ROTATION_DEG } from '@utils';
 
 import { createDefaultLogoInstances, createDynamicUserLogoPosition, createLogoInstance, mapProductLogoPositions } from './mapProductLogos';

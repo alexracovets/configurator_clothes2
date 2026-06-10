@@ -1,7 +1,5 @@
+import type { PartGradient, UvBounds } from '@types';
 import { Color, type MeshStandardMaterial, Vector4 } from 'three';
-
-import type { UvBounds } from '@data';
-import type { PartGradient } from '@store';
 
 const applyGarmentGradient = (material: MeshStandardMaterial, gradient: PartGradient) => {
   material.userData.garmentGradient = gradient;

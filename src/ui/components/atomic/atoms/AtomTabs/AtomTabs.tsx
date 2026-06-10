@@ -4,13 +4,12 @@ import { createContext, forwardRef, memo, useContext } from 'react';
 
 import { cva, type VariantProps } from 'class-variance-authority';
 
-import { Text } from '@atoms';
+import { SlidingIndicator, Text } from '@atoms';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@shared';
 import { useSlidingIndicator } from '@hooks';
 import type { HeaderConfigItemType } from '@types';
 import { cn } from '@utils';
 
-import { SlidingIndicator } from '../SlidingIndicator';
 import { AtomTabsSeparator } from './AtomTabsSeparator';
 
 type AtomTabsVariant = NonNullable<VariantProps<typeof atomTabsListVariants>['variant']>;

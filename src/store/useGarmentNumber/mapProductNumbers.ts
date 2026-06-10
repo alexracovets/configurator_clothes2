@@ -1,47 +1,6 @@
-import type { GarmentConfig, TextDefaultsConfig, UvPoint } from '@data';
+import type { GarmentConfig, NumberInstance, NumberLimits, NumberPosition, TextDefaultsConfig, UvPoint } from '@types';
+
 import { resolvePartUvBounds } from '@utils';
-
-interface NumberPosition {
-  key: string;
-  label: string;
-  partId: string;
-  uv: { x: number; y: number };
-  rotation: number;
-  fontSize: number;
-  showFrame: boolean;
-  showGizmo: boolean;
-  interactive: boolean;
-}
-
-interface NumberInstance {
-  id: string;
-  positionKey: string;
-  label: string;
-  partId: string;
-  uv: { x: number; y: number };
-  rotation: number;
-  placementRotation?: number;
-  text: string;
-  font: string;
-  fontSize: number;
-  textColor: string;
-  strokeColor: string;
-  strokeWidth: number;
-  showFrame: boolean;
-  showGizmo: boolean;
-}
-
-interface NumberPreview {
-  instanceId: string;
-  patch: Partial<Pick<NumberInstance, 'text' | 'textColor' | 'strokeColor' | 'fontSize' | 'strokeWidth'>>;
-}
-
-interface NumberLimits {
-  maxLength: number;
-  fontSizeMin: number;
-  fontSizeMax: number;
-  strokeWidthMax: number;
-}
 
 const NUMBER_MAX_LENGTH = 2;
 
@@ -138,4 +97,4 @@ export {
   sanitizeNumberText,
   NUMBER_MAX_LENGTH,
 };
-export type { NumberInstance, NumberLimits, NumberPosition, NumberPreview };
+export type { NumberInstance, NumberLimits, NumberPosition, NumberPreview } from '@types';

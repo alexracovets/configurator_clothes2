@@ -4,9 +4,8 @@ import { useEffect } from 'react';
 
 import { useGLTF } from '@react-three/drei';
 
-import { resolvePbrTexturePaths } from '@hooks';
 import { GarmentMaterialRegistryProvider } from '@providers';
-import { resolveModelUrl } from '@utils';
+import { resolveModelUrl, resolvePbrTexturePaths } from '@utils';
 import { useConfiguratorProduct } from '@store';
 
 import { GarmentMeshes } from '../GarmentMeshes';

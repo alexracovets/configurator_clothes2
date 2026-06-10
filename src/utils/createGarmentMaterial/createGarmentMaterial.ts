@@ -1,6 +1,6 @@
 import { Color, MeshStandardMaterial, type Texture, Vector2, Vector4 } from 'three';
 
-import { PRINT_ATLAS_HEIGHT, PRINT_ATLAS_WIDTH } from '@constants/printAtlas';
+import { PRINT_ATLAS_HEIGHT, PRINT_ATLAS_WIDTH } from '@constants';
 
 import type { PbrMaps } from '../pbrMaps';
 

@@ -3,9 +3,12 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 
 import { AccordionAtom, AtomPopover, AtomPopoverContent, AtomPopoverTrigger, Button, Flex, SvgIcon, Text } from '@atoms';
-import { ColorTabControl, FontSelectRow, PartColorSwitch, RangeControl } from '@molecules';
+import { ColorTabControl } from '../../ConfigurationTools/ColorTabControl';
+import { FontSelectRow } from '../../ConfigurationTools/FontSelectRow';
+import { PartColorSwitch } from '../../ConfigurationTools/PartColorSwitch';
+import { RangeControl } from '../../ConfigurationTools/RangeControl';
 import { createNameInstance, resolveNameDefaults, resolveNameLimits, useConfiguratorProduct, useGarmentName } from '@store';
-import type { NamePosition } from '@store';
+import type { NamePosition } from '@types';
 import { cn } from '@utils';
 
 interface NamePartFormProps {

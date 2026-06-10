@@ -19,9 +19,8 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"],
-      "@styles/*": ["./src/ui/styles/*"],
-      "@types": ["./src/ui/types"],
+      "@styles": ["./src/ui/styles/globals.css"],
+      "@types": ["./src/types"],
       "@atoms": ["./src/ui/components/atomic/atoms"],
       "@molecules": ["./src/ui/components/atomic/molecules"],
       "@organisms": ["./src/ui/components/atomic/organisms"],
@@ -33,15 +32,12 @@
       "@fonts": ["./src/fonts"],
       "@hooks": ["./src/hooks"],
       "@skeletons": ["./src/ui/components/skeletons"],
-      "@skeletons/*": ["./src/ui/components/skeletons/*"],
       "@gizmo": ["./src/gizmo"],
       "@providers": ["./src/providers"],
       "@shaders": ["./src/shaders"],
       "@constants": ["./src/constants"],
-      "@constants/*": ["./src/constants/*"],
       "@data": ["./src/data"],
-      "@compositing": ["./src/compositing"],
-      "@compositing/*": ["./src/compositing/*"]
+      "@compositing": ["./src/compositing"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "**/*.d.ts", ".next/types/**/*.ts", ".next/dev/types/**/*.ts", "**/*.mts"],

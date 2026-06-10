@@ -1,4 +1,4 @@
-import type { StyleId } from '@data';
+import type { StyleId } from '@types';
 
 interface CartItem {
   id: string;

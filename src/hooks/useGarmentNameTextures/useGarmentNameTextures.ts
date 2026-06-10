@@ -11,8 +11,8 @@ import {
   setGizmoButtonsRevealTarget,
   subscribeGizmoButtonHover,
   subscribeGizmoButtonReveal,
-  useGizmoIconAtlas,
 } from '@gizmo';
+import { useGizmoIconAtlas } from '@hooks';
 import { useGarmentMaterialRegistry, useMaterialRegistryRevision } from '@providers';
 import {
   resolveInstancesForRender,
@@ -22,7 +22,7 @@ import {
   useGarmentName,
   useGarmentNumber,
 } from '@store';
-import type { GarmentTextRenderInstance } from '@store';
+import type { GarmentTextRenderInstance } from '@types';
 import {
   applyGarmentGizmoButtonsReveal,
   applyGarmentGizmoFrame,
@@ -39,11 +39,11 @@ import {
   canvasToMaskTexture,
   composeNameMaskAtlas,
   getEmptyPrintTexture,
+  NAME_SLOT_COUNT,
   repairPrintInstancePlacement,
   resolveNameStampSize,
   resolvePrintAtlasSize,
 } from '@utils';
-import { NAME_SLOT_COUNT } from '../../utils/garmentPrint/nameSlotConstants';
 
 const NAME_STEP = 4;
 const NUMBER_STEP = 5;

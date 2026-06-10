@@ -3,9 +3,11 @@
 import { type ChangeEvent, useMemo, useRef, useState } from 'react';
 
 import { AtomImage, Button, Flex, Grid, SvgIcon, Text } from '@atoms';
-import { HiddenLogoFileInput, LogoEditPanel, LogoUpload, useLogoFileHandler } from '@molecules';
+import { useLogoFileHandler } from '@hooks';
+import { HiddenLogoFileInput, LogoUpload } from '../../ConfigurationTools/LogoUpload';
+import { LogoEditPanel } from '../../ConfigurationTools/LogoEditPanel';
 import { useStepLogo } from '@store';
-import type { StepLogoPartState } from '@store';
+import type { StepLogoPartState } from '@types';
 
 type FilePickContext = { mode: 'upload' } | { mode: 'replace'; partId: string };
 

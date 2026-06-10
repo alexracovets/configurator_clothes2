@@ -1,9 +1,10 @@
 'use client';
 
+import type { GarmentConfig } from '@types';
+
 import { create } from 'zustand';
 
 import { PALETTE_COLORS } from '@constants';
-import { GarmentConfig } from '@data';
 
 import { buildDefaultGradients } from './mapPartGradientDefaults';
 import { DISABLED_PART_GRADIENT, type PartGradient } from './partGradientTypes';

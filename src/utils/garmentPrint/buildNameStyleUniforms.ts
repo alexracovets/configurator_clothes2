@@ -1,5 +1,4 @@
-import type { GarmentPartConfig } from '@data';
-import type { GarmentTextRenderInstance } from '@store';
+import type { GarmentPartConfig, GarmentTextRenderInstance } from '@types';
 
 import type { StampPixelSize } from '../drawNameOnAtlas/measureNameStampBounds';
 import { FULL_UV_BOUNDS, resolvePartPrintRotation, resolvePartUvBounds } from '../resolveProductRenderConfig/resolveProductRenderConfig';

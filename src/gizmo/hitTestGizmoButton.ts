@@ -1,6 +1,6 @@
 import { NAME_GIZMO_BTN_HALF_ATLAS, NAME_GIZMO_BTN_OUTSET_ATLAS } from '@utils';
 
-import type { PrintGizmoElement } from './types';
+import type { GizmoButtonHit, PrintGizmoElement } from '@types';
 
 const GIZMO_CORNERS = [
   { kind: 'duplicate', cornerIndex: 0, sx: -1, sy: 1 },
@@ -8,11 +8,6 @@ const GIZMO_CORNERS = [
   { kind: 'rotate', cornerIndex: 2, sx: 1, sy: 1 },
   { kind: 'scale', cornerIndex: 3, sx: 1, sy: -1 },
 ] as const;
-
-interface GizmoButtonHit {
-  slotIndex: number;
-  cornerIndex: number;
-}
 
 const hitTestGizmoButton = (world: { x: number; y: number }, element: PrintGizmoElement): GizmoButtonHit | null => {
   const halfWorld = { x: element.half.x * element.scale, y: element.half.y * element.scale };
@@ -53,4 +48,4 @@ const getGizmoHoverCursor = (world: { x: number; y: number }, element: PrintGizm
 };
 
 export { GIZMO_CORNERS, getGizmoHoverCursor, hitTestGizmoButton, hitTestGizmoFrame };
-export type { GizmoButtonHit };
+export type { GizmoButtonHit } from '@types';
