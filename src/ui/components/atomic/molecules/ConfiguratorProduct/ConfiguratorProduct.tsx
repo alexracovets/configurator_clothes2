@@ -4,12 +4,19 @@ import { memo } from 'react';
 
 import { Flex, Grid, Text } from '@atoms';
 
+import { useShowConfigurationSkeleton } from '@hooks';
+import { ConfiguratorProductSkeleton } from '@skeletons';
 import { priceFormat } from '@utils';
 import { useConfigurationControl, useConfiguratorProduct } from '@store';
 
 const ConfiguratorProduct = memo(() => {
   const { price, name, bonus_count, minimum_count, bonus_discount } = useConfiguratorProduct((state) => state.product);
   const numberProduct = useConfigurationControl((state) => state.numberProduct);
+  const showSkeleton = useShowConfigurationSkeleton();
+
+  if (showSkeleton) {
+    return <ConfiguratorProductSkeleton />;
+  }
 
   return (
     <Flex className="flex-col">

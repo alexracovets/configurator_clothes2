@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import { motion } from 'motion/react';
 
@@ -31,8 +31,16 @@ const ConfiguratorCanvasLoader = () => {
   const productPath = useConfiguratorProduct((state) => state.product.path);
   const activePatternKey = useGarmentDesign((state) => state.activePattern?.key ?? null);
 
-  useSceneTransitionTrigger(productPath, beginSceneTransitionLoad, isInitialSceneLoading);
-  useSceneTransitionTrigger(activePatternKey, beginSceneTransitionLoad, isInitialSceneLoading);
+  const beginProductTransition = useCallback(() => {
+    beginSceneTransitionLoad({ affectsConfigurationPanel: true });
+  }, [beginSceneTransitionLoad]);
+
+  const beginPatternTransition = useCallback(() => {
+    beginSceneTransitionLoad({ affectsConfigurationPanel: false });
+  }, [beginSceneTransitionLoad]);
+
+  useSceneTransitionTrigger(productPath, beginProductTransition, isInitialSceneLoading);
+  useSceneTransitionTrigger(activePatternKey, beginPatternTransition, isInitialSceneLoading);
 
   const isVisible = isSceneTransitionLoading && !isInitialSceneLoading;
 

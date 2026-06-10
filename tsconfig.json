@@ -32,6 +32,8 @@
       "@utils": ["./src/utils"],
       "@fonts": ["./src/fonts"],
       "@hooks": ["./src/hooks"],
+      "@skeletons": ["./src/ui/components/skeletons"],
+      "@skeletons/*": ["./src/ui/components/skeletons/*"],
       "@gizmo": ["./src/gizmo"],
       "@providers": ["./src/providers"],
       "@shaders": ["./src/shaders"],

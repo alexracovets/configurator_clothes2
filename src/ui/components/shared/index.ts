@@ -1,3 +1,4 @@
+export { Skeleton } from './Skeleton';
 export { Slider } from './Slider';
 export { Input } from './Input';
 export * from './Accordion';

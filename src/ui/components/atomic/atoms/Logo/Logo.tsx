@@ -12,7 +12,7 @@ const Logo = () => {
   return (
     <Flex className="w-full">
       <Link href={href}>
-        <AtomImage src="./png/logo.png" alt="Logo" width={170} height={38} priority />
+        <AtomImage src="./svg/logo_full.svg" alt="Logo" variant="logo_full" priority />
       </Link>
     </Flex>
   );

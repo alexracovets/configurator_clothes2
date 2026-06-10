@@ -4,10 +4,13 @@ import { Grid, ScrollArea } from '@atoms';
 import { CardAddProduct, ConfiguratorProduct } from '@molecules';
 
 import { STEPS_CONFIGURATION } from '@constants';
+import { useShowConfigurationSkeleton } from '@hooks';
+import { ConfigurationStepSkeleton } from '@skeletons';
 import { useConfigurationControl } from '@store';
 
 const ActiveStepContent = () => {
   const activeStep = useConfigurationControl((state) => state.activeStep);
+  const showSkeleton = useShowConfigurationSkeleton();
   const stepConfig = STEPS_CONFIGURATION.find(({ step }) => step === activeStep);
 
   if (!stepConfig) return null;
@@ -16,9 +19,7 @@ const ActiveStepContent = () => {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col py-1">
-      <ScrollArea className="min-h-0 flex-1 w-full pt-0">
-        <Content />
-      </ScrollArea>
+      <ScrollArea className="min-h-0 flex-1 w-full pt-0">{showSkeleton ? <ConfigurationStepSkeleton step={activeStep} /> : <Content />}</ScrollArea>
     </div>
   );
 };

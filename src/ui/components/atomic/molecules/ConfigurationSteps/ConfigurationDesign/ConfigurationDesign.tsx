@@ -1,30 +1,44 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 
 import { AtomImage, Button, Flex, Grid, SvgIcon } from '@atoms';
 import { ColorControl, ColorTabControl, PatternLayerColorControl, RangeControl } from '@molecules';
 import { PALETTE_COLORS } from '@constants';
 import { useConfiguratorProduct, useGarmentDesign } from '@store';
 import type { DesignPatternPart } from '@store';
+import { PatternPreviewSkeleton } from '@skeletons';
 import { cn } from '@utils';
 
 const DEFAULT_PART_COLOR = PALETTE_COLORS[1];
 
+const getPatternPreviewKey = (parts: DesignPatternPart[]) => parts.map((part) => `${part.key}:${part.previewSrc}`).join('|');
+
+const PatternPreviewContent = ({ parts, eager }: { parts: DesignPatternPart[]; eager?: boolean }) => {
+  const [loadedCount, setLoadedCount] = useState(0);
+  const isLoaded = loadedCount >= parts.length;
+
+  return (
+    <div className="relative h-full w-full">
+      {!isLoaded && <PatternPreviewSkeleton />}
+      {parts.map((part, index) => (
+        <AtomImage
+          key={part.key}
+          src={part.previewSrc}
+          alt=""
+          loading={eager ? 'eager' : 'lazy'}
+          fetchPriority={eager ? 'high' : 'low'}
+          className={cn(index > 0 && 'absolute inset-0', !isLoaded && 'opacity-0')}
+          draggable={false}
+          onLoad={() => setLoadedCount((count) => count + 1)}
+        />
+      ))}
+    </div>
+  );
+};
+
 const PatternPreview = ({ parts, eager }: { parts: DesignPatternPart[]; eager?: boolean }) => (
-  <div className="relative w-full h-full">
-    {parts.map((part, index) => (
-      <AtomImage
-        key={part.key}
-        src={part.previewSrc}
-        alt=""
-        loading={eager ? 'eager' : 'lazy'}
-        fetchPriority={eager ? 'high' : 'low'}
-        className={cn(index > 0 && 'absolute inset-0')}
-        draggable={false}
-      />
-    ))}
-  </div>
+  <PatternPreviewContent key={getPatternPreviewKey(parts)} parts={parts} eager={eager} />
 );
 
 const ConfigurationDesign = () => {

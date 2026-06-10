@@ -6,16 +6,21 @@ const MIN_LOADER_VISIBLE_MS = 400;
 
 type LoaderKind = 'initial' | 'transition';
 
+type SceneTransitionOptions = {
+  affectsConfigurationPanel?: boolean;
+};
+
 interface ConfiguratorSceneLoadState {
   isInitialSceneLoading: boolean;
   isSceneTransitionLoading: boolean;
+  transitionAffectsConfigurationPanel: boolean;
   loaderSession: number;
   loaderVisibleUntil: number;
   transitionSession: number;
   transitionVisibleUntil: number;
   beginInitialSceneLoad: () => void;
   markInitialSceneLoaded: () => void;
-  beginSceneTransitionLoad: () => void;
+  beginSceneTransitionLoad: (options?: SceneTransitionOptions) => void;
   markSceneTransitionLoaded: () => void;
 }
 
@@ -76,6 +81,7 @@ const beginLoader = (
 const useConfiguratorSceneLoad = create<ConfiguratorSceneLoadState>((set, get) => ({
   isInitialSceneLoading: true,
   isSceneTransitionLoading: false,
+  transitionAffectsConfigurationPanel: false,
   loaderSession: 0,
   loaderVisibleUntil: 0,
   transitionSession: 0,
@@ -102,14 +108,18 @@ const useConfiguratorSceneLoad = create<ConfiguratorSceneLoadState>((set, get) =
       get,
     );
   },
-  beginSceneTransitionLoad: () => {
+  beginSceneTransitionLoad: (options) => {
+    const affectsConfigurationPanel = options?.affectsConfigurationPanel ?? false;
     const { patch } = beginLoader('transition', get, (transitionSession, transitionVisibleUntil) => ({
       isSceneTransitionLoading: true,
       transitionSession,
       transitionVisibleUntil,
     }));
 
-    set(patch);
+    set({
+      ...patch,
+      transitionAffectsConfigurationPanel: get().transitionAffectsConfigurationPanel || affectsConfigurationPanel,
+    });
   },
   markSceneTransitionLoaded: () => {
     const { isSceneTransitionLoading, transitionSession, transitionVisibleUntil } = get();
@@ -120,7 +130,7 @@ const useConfiguratorSceneLoad = create<ConfiguratorSceneLoadState>((set, get) =
       transitionSession,
       transitionVisibleUntil,
       (state) => state.isSceneTransitionLoading,
-      () => set({ isSceneTransitionLoading: false }),
+      () => set({ isSceneTransitionLoading: false, transitionAffectsConfigurationPanel: false }),
       get,
     );
   },

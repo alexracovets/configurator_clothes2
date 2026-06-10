@@ -6,6 +6,7 @@ export { ColorPicker } from './ColorPicker';
 export { AtomSelect } from './AtomSelect';
 export { ScrollArea } from './ScrollArea';
 export { AtomImage } from './AtomImage';
+export { AtomSkeleton, type AtomSkeletonProps } from './Skeleton';
 export { Container } from './Container';
 export { SvgIcon } from './SvgIcon';
 export { Button } from './Button';

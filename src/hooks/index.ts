@@ -6,6 +6,7 @@ export { resolvePbrTexturePaths, useAsyncGarmentPbrMaps, useGarmentPbrMaps } fro
 export { useGarmentLogoTextures } from './useGarmentLogoTextures/useGarmentLogoTextures';
 export { useGarmentNameTextures } from './useGarmentNameTextures/useGarmentNameTextures';
 export { useGarmentTextures } from './useGarmentTextures';
+export { useShowConfigurationSkeleton } from './useShowConfigurationSkeleton';
 export { useGizmoButtonHover } from './useGizmoButtonHover/useGizmoButtonHover';
 export { useGizmoSelection } from './useGizmoSelection/useGizmoSelection';
 export { usePrintGizmoDrag } from './usePrintGizmoDrag/usePrintGizmoDrag';

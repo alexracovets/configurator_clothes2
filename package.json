@@ -16,7 +16,9 @@
     "generate:design-thumbnails": "node scripts/generate-design-thumbnails.mjs",
     "prepare": "husky",
     "postinstall": "pnpm copy:logo-assets",
-    "copy:logo-assets": "node scripts/copy-logo-assets.mjs"
+    "copy:logo-assets": "node scripts/copy-logo-assets.mjs",
+    "test:e2e": "playwright test",
+    "test:e2e:skeletons": "playwright test playwright/configurator-skeletons.spec.ts"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx,mjs}": [
@@ -71,6 +73,7 @@
     "husky": "^9.1.7",
     "knip": "^6.14.2",
     "lint-staged": "^17.0.5",
+    "@playwright/test": "^1.60.0",
     "playwright": "^1.60.0",
     "prettier": "^3.8.3",
     "sharp": "0.34.5",

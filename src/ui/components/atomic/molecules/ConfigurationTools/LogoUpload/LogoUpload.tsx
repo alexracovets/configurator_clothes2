@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import { Box, Button, Flex, Grid, SvgIcon, Text } from '@atoms';
+import { LogoUploadSkeleton } from '@skeletons';
 import { cn, LOGO_MAX_FILE_SIZE, LOGO_SUPPORTED_LABEL, warmupGhostscriptWorker } from '@utils';
 
 type LogoUploadProps = {
@@ -30,6 +31,10 @@ const LogoUpload = ({ canUpload, loading, error, onOpenFilePicker, onFileSelecte
     onOpenFilePicker();
   };
 
+  if (loading) {
+    return <LogoUploadSkeleton />;
+  }
+
   return (
     <Flex className="flex w-full flex-col items-start justify-start gap-2">
       <Text className="text-[14px] leading-[15px] text-gray-10">Logo</Text>
@@ -49,14 +54,12 @@ const LogoUpload = ({ canUpload, loading, error, onOpenFilePicker, onFileSelecte
           setDragOver(false);
           void handleFile(e.dataTransfer.files[0]);
         }}
-        className={cn('w-full cursor-pointer', (!canUpload || loading) && 'cursor-not-allowed opacity-60', dragOver && 'ring-2 ring-active/30 rounded-[8px]')}
+        className={cn('w-full cursor-pointer', !canUpload && 'cursor-not-allowed opacity-60', dragOver && 'ring-2 ring-active/30 rounded-[8px]')}
       >
-        <Button variant="upload" type="button" disabled={!canUpload || loading} className="pointer-events-none">
+        <Button variant="upload" type="button" disabled={!canUpload} className="pointer-events-none">
           <SvgIcon name="upload" />
           <Box>
-            <Text className="text-[11px] leading-[15px] font-medium text-center">
-              {loading ? 'Conversione in corso…' : 'Trascina qui il tuo logo o fai click per caricare un elemento'}
-            </Text>
+            <Text className="text-[11px] leading-[15px] font-medium text-center">Trascina qui il tuo logo o fai click per caricare un elemento</Text>
             <Text className="text-[10px] leading-[15px] text-center text-gray-10 text-wrap">
               (Dimensione max {Math.round(LOGO_MAX_FILE_SIZE / (1024 * 1024))} MB — form. {LOGO_SUPPORTED_LABEL})
             </Text>

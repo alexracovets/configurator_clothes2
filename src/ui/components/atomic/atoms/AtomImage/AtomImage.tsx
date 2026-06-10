@@ -12,6 +12,7 @@ const variantAtomImage = cva('', {
     variant: {
       default: 'w-full h-full',
       logo: 'relative h-[109px] aspect-[143/154] shrink-0',
+      logo_full: 'relative h-[38px] aspect-[170/38] shrink-0',
     },
   },
   defaultVariants: {
@@ -58,7 +59,7 @@ const AtomImage = ({
       sizes={useFill ? '100%' : undefined}
       loading={resolvedLoading}
       {...(hasDimensions ? { width, height } : { fill: true })}
-      className={cn(variant === 'logo' ? 'object-contain' : 'object-cover', !useFill && className)}
+      className={cn(!useFill && className)}
       style={resolvedStyle}
       unoptimized={unoptimized}
       {...props}
