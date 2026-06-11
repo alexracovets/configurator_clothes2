@@ -18,7 +18,8 @@ type svgIconNameType =
   | 'delete'
   | 'upload'
   | 'edit'
-  | 'question';
+  | 'question'
+  | 'three_dots';
 
 interface svgIconPropsType {
   name: svgIconNameType;

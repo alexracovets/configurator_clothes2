@@ -19,6 +19,7 @@ const inputVariants = cva(
         ghost: 'border border-transparent bg-transparent',
         filled: 'border border-input-border rounded-full bg-primary',
         color_picker: 'max-w-[80px] min-w-auto border border-gray-30 rounded-full bg-white shadow-[inset_0_-2px_4px_rgba(0,0,0,0.2)] pr-1',
+        checkout: 'h-10 rounded-[8px] border border-input-border bg-white px-3 text-sm',
       },
       size: {
         default: '',

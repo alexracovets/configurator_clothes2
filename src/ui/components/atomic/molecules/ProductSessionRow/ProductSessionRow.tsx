@@ -34,7 +34,7 @@ const ProductSessionRow = ({ name, previewSrc, active = false, canRemove = true,
         {canRemove && (
           <Button
             type="button"
-            variant="ghost"
+            variant="outline"
             size="icon"
             className="mr-2 size-8 shrink-0 opacity-0 transition-opacity duration-200 group-hover:opacity-100"
             onClick={onRemove}

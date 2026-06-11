@@ -160,7 +160,7 @@ const ConfigurationNumbers = () => {
           {availablePositions.map((position) => (
             <Button
               key={position.key}
-              variant="ghost"
+              variant="outline"
               className={cn('w-full justify-start rounded-[8px] bg-gray-100 px-3 py-2', 'hover:bg-gray-200')}
               onClick={() => createInstanceForPosition(position)}
             >

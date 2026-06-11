@@ -197,6 +197,14 @@ const ICONS: Record<svgIconNameType, React.ReactNode> = {
       />
     </svg>
   ),
+  three_dots: (
+    <svg width="27" height="27" viewBox="0 0 27 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0.675" y="0.675" width="25.65" height="25.65" rx="12.825" stroke="#4B5563" stroke-width="1.35" />
+      <circle cx="13.5" cy="6.7501" r="2.025" fill="#4B5563" />
+      <circle cx="13.5" cy="13.5001" r="2.025" fill="#4B5563" />
+      <circle cx="13.5" cy="20.2501" r="2.025" fill="#4B5563" />
+    </svg>
+  ),
 };
 
 const SvgIcon = ({ name, className }: svgIconPropsType) => {

@@ -1,3 +1,6 @@
+export { Badge, badgeVariants } from './Badge';
+export { Card, CardAction, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './Card';
+export { Separator } from './Separator';
 export { Skeleton } from './Skeleton';
 export { Slider } from './Slider';
 export { Input } from './Input';

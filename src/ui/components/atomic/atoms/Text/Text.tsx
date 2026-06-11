@@ -27,6 +27,8 @@ const variantText = cva('font-inter font-[400] leading-none', {
       ),
       h2: 'text-[40px] leading-[1] font-[700] text-base-black mb-8 uppercase tracking-[-1px]',
       h3: 'text-[24px] leading-[1] font-semibold text-base-black mb-3',
+      small: 'text-[14px] text-gray',
+      small_secondary: 'text-[16px] leading-[15px] text-gray',
     },
   },
   defaultVariants: {

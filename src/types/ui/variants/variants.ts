@@ -7,7 +7,9 @@ type textVariantType =
   | 'slider_label'
   | 'configurator_part_label'
   | 'h2'
-  | 'h3';
+  | 'h3'
+  | 'small'
+  | 'small_secondary';
 
 type boxVariantType = 'default' | 'header' | 'footer' | 'toggle_handle';
 
@@ -30,7 +32,7 @@ type atomTabsVariantType = 'default' | 'line' | 'configurator' | 'modal';
 
 type atomTabsSlidingListPresetType = 'configurator' | 'modal';
 
-type atomTableVariantType = 'default' | 'size_chart' | 'discounts';
+type atomTableVariantType = 'default' | 'size_chart' | 'discounts' | 'checkout';
 
 type atomListVariantType = 'default' | 'faq';
 

@@ -9,3 +9,4 @@ export { ConfiguratorInitialLoader } from './ConfiguratorInitialLoader';
 export { ConfiguratorView } from './ConfiguratorView';
 export { Footer } from './Footer';
 export { Header } from './Header';
+export { CheckoutView } from './CheckoutView';

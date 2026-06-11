@@ -1,13 +1,18 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useCallback } from 'react';
 
 import { Button, Container, Flex, SvgIcon } from '@atoms';
 
-import { useConfigurationCart, useInfoDialog } from '@store';
+import { captureGarmentConfiguration, useCheckout, useConfigurationCart, useInfoDialog } from '@store';
 
 const FooterConfiguration = () => {
+  const router = useRouter();
   const duplicateActiveItem = useConfigurationCart((state) => state.duplicateActiveItem);
+  const activeItemId = useConfigurationCart((state) => state.activeItemId);
+  const saveConfiguration = useConfigurationCart((state) => state.saveConfiguration);
+  const initializeFromCart = useCheckout((state) => state.initializeFromCart);
   const setIsOpen = useInfoDialog((state) => state.setIsOpen);
 
   const handleDuplicate = useCallback(() => {
@@ -17,6 +22,12 @@ const FooterConfiguration = () => {
   const handleInfo = useCallback(() => {
     setIsOpen(true);
   }, [setIsOpen]);
+
+  const handleComplete = useCallback(() => {
+    saveConfiguration(activeItemId, captureGarmentConfiguration());
+    initializeFromCart();
+    router.push('/checkout');
+  }, [activeItemId, initializeFromCart, router, saveConfiguration]);
 
   return (
     <Container>
@@ -37,7 +48,7 @@ const FooterConfiguration = () => {
           <SvgIcon name="info" />
           Info
         </Button>
-        <Button variant="primary" size="sm">
+        <Button variant="primary" size="sm" onClick={handleComplete}>
           <SvgIcon name="cart" />
           Completa Config.
         </Button>

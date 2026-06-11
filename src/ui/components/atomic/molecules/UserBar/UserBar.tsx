@@ -8,10 +8,10 @@ import { UserIcon } from './UserIcon';
 const UserBar = () => {
   return (
     <Flex variant="user_bar">
-      <Button variant="ghost" size="icon">
+      <Button variant="outline" size="icon">
         <UserIcon />
       </Button>
-      <Button variant="ghost" size="icon">
+      <Button variant="outline" size="icon">
         <CartIcon />
       </Button>
     </Flex>

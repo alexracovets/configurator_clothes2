@@ -1,3 +1,4 @@
+export { useCheckoutConfigurationTable } from './useCheckoutConfigurationTable';
 export { useConfigurationCartSync } from './useConfigurationCartSync';
 export { useControlledState } from './useControlledState';
 export { useSlidingIndicator } from './useSlidingIndicator';

@@ -18,7 +18,7 @@ const LogoListRow = ({ part, onEdit, onDelete }: { part: stepLogoPartStateType; 
       <Flex className="gap-1 shrink-0">
         <Button
           type="button"
-          variant="ghost"
+          variant="outline"
           size="icon"
           className="w-[26px] h-[26px] border border-gray-30 hover:bg-white"
           onClick={onEdit}
@@ -28,7 +28,7 @@ const LogoListRow = ({ part, onEdit, onDelete }: { part: stepLogoPartStateType; 
         </Button>
         <Button
           type="button"
-          variant="ghost"
+          variant="outline"
           size="icon"
           className="w-[26px] h-[26px] border border-error text-error hover:bg-white hover:text-error"
           onClick={onDelete}

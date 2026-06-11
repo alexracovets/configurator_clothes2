@@ -22,7 +22,7 @@ const LogoEditPanel = ({ partId, onClose, onReplaceImage, replacing = false }: l
         <Text className="text-[14px] leading-[15px] text-gray">File caricati</Text>
         <Button
           type="button"
-          variant="ghost"
+          variant="outline"
           className="h-auto gap-1 px-0 py-0 text-[16px] font-semibold hover:text-error hover:bg-transparent"
           onClick={onClose}
         >
@@ -33,7 +33,7 @@ const LogoEditPanel = ({ partId, onClose, onReplaceImage, replacing = false }: l
 
       <Button
         type="button"
-        variant="ghost"
+        variant="outline"
         disabled={replacing}
         onClick={onReplaceImage}
         aria-label="Sostituisci immagine"

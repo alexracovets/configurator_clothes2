@@ -27,9 +27,9 @@ const buttonVariants = cva(
           'before:opacity-0 before:transition-opacity before:duration-300 before:ease-in-out',
           'hover:before:opacity-100',
         ),
-        outline: '',
+        outline: 'bg-white',
         secondary: '',
-        ghost: 'bg-white',
+        ghost: '',
         select_part: cn(
           'w-full h-[80px] rounded-[8px] border-[2px] border-gray-200 shadow-sm',
           'data-[active=true]:border-active hover:border-active data-[active=true]:shadow-md hover:shadow-md',
@@ -75,7 +75,7 @@ const buttonVariants = cva(
       },
       size: {
         default: '',
-        xs: '',
+        xs: 'py-1.5 px-2.5 text-[14px] leading-[15px] rounded-[8px] gap-2 h-[31px]',
         sm: 'py-3 px-4 text-4 leading-4 rounded-[8px] gap-2 h-10',
         lg: '',
         icon: 'p-1 rounded-sm',

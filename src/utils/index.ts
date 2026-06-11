@@ -68,6 +68,7 @@ export {
 export { resolveDesignThumbSrc } from './resolveDesignThumbSrc/resolveDesignThumbSrc';
 export { resolveProductFlipCardSrc } from './resolveProductFlipCardSrc/resolveProductFlipCardSrc';
 export type { productFlipCardSideType } from './resolveProductFlipCardSrc/resolveProductFlipCardSrc';
+export { getCheckoutDeliveryTimeline } from './checkoutDeliveryDates';
 export { priceFormat } from './priceFormat';
 export { resolveModelUrl } from './resolveModelUrl';
 export { resolvePbrTexturePaths } from './resolvePbrTexturePaths';
