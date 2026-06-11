@@ -68,6 +68,8 @@ export type {
   productCatalogPopoverPropsType,
   productSessionAddButtonPropsType,
   productSessionRowPropsType,
+  videoPlayerPropsType,
+  videoPlayerVariantType,
 } from './moleculesProps';
 export type {
   garmentPartMeshPropsType,

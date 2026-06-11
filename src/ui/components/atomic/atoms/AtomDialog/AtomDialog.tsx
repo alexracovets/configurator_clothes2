@@ -112,7 +112,7 @@ const dialogDescriptionVariants = cva('text-sm', {
 });
 
 const dialogCloseVariants = cva(
-  'absolute cursor-pointer rounded-xs transition-opacity focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0',
+  'absolute bg-white rounded-full z-50 cursor-pointer transition-opacity focus:outline-hidden disabled:pointer-events-none [&_svg]:pointer-events-none [&_svg]:shrink-0',
   {
     variants: {
       variant: {
@@ -126,7 +126,7 @@ const dialogCloseVariants = cva(
         inside: 'top-5 right-5',
       },
       size: {
-        default: "[&_svg:not([class*='size-'])]:size-4 p-1",
+        default: "[&_svg:not([class*='size-'])]:size-4 p-2",
       },
     },
     defaultVariants: {

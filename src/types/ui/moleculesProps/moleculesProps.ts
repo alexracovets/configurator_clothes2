@@ -1,6 +1,15 @@
-import type { ButtonHTMLAttributes } from 'react';
+import type { ButtonHTMLAttributes, ReactElement } from 'react';
 
 import type { catalogProductRefType } from '@types';
+import type { ReactPlayerProps } from 'react-player/types';
+
+type videoPlayerVariantType = 'default' | 'tutorial';
+
+type videoPlayerPropsType = Omit<ReactPlayerProps, 'width' | 'height' | 'style' | 'wrapper' | 'light' | 'poster'> & {
+  variant?: videoPlayerVariantType;
+  className?: string;
+  poster?: string | false | ReactElement;
+};
 
 interface productCatalogOptionPropsType {
   name: string;
@@ -24,4 +33,11 @@ interface productSessionRowPropsType {
   onRemove: () => void;
 }
 
-export type { productCatalogOptionPropsType, productCatalogPopoverPropsType, productSessionAddButtonPropsType, productSessionRowPropsType };
+export type {
+  productCatalogOptionPropsType,
+  productCatalogPopoverPropsType,
+  productSessionAddButtonPropsType,
+  productSessionRowPropsType,
+  videoPlayerPropsType,
+  videoPlayerVariantType,
+};

@@ -12,6 +12,7 @@ export { ModalInfo } from './Modals/ModalInfo/ModalInfo';
 export { ModalTutorial } from './Modals/ModalTutorial/ModalTutorial';
 export { CanvasLoaderBackground } from './Loaders/CanvasLoader';
 export { MainLoader, MainLoaderBackground } from './Loaders/MainLoader';
+export { VideoPlayer, VideoPlayerPreview } from './VideoPlayer';
 export { HiddenLogoFileInput, LogoUpload } from './ConfigurationTools/LogoUpload';
 export {
   ConfigurationColorize,

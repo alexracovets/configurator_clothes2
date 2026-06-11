@@ -1,18 +1,23 @@
 'use client';
 
-import { AtomDialog, AtomDialogContent, AtomDialogTitle, ScrollArea } from '@atoms';
+import { useMemo } from 'react';
 
+import { AtomDialog, AtomDialogContent, AtomDialogTitle } from '@atoms';
+import { VideoPlayer, VideoPlayerPreview } from '@molecules';
+
+import { TUTORIAL_VIDEO_URL } from '@constants';
 import { useTutorialDialog } from '@store';
 
 const ModalTutorial = () => {
   const isOpen = useTutorialDialog((state) => state.isOpen);
   const setIsOpen = useTutorialDialog((state) => state.setIsOpen);
+  const tutorialPoster = useMemo(() => <VideoPlayerPreview />, []);
 
   return (
     <AtomDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AtomDialogContent aria-describedby={undefined}>
+      <AtomDialogContent aria-describedby={undefined} className="p-0 h-auto">
         <AtomDialogTitle visuallyHidden>Tutorial Dialog</AtomDialogTitle>
-        <ScrollArea className="min-h-0 flex-1 w-full" fadeEdges />
+        {isOpen ? <VideoPlayer src={TUTORIAL_VIDEO_URL} variant="tutorial" className="w-full" poster={tutorialPoster} /> : null}
       </AtomDialogContent>
     </AtomDialog>
   );
