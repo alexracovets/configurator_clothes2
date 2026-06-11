@@ -1,3 +1,5 @@
+export { ProductFlipCard } from './ProductFlipCard';
+export { ProductGalleryBlock } from './ProductGalleryBlock';
 export { ConfiguratorProduct } from './ConfiguratorProduct';
 export { CardAddProduct } from './CardAddProduct';
 export { ProductCatalogOption } from './ProductCatalogOption';

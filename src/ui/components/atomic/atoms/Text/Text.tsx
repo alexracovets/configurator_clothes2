@@ -25,7 +25,7 @@ const variantText = cva('font-inter font-[400] leading-none', {
         'group-aria-expanded/accordion-trigger:text-default',
         'transition-all duration-200 ease-in-out',
       ),
-      h2: 'text-[32px] leading-[1] font-semibold text-base-black mb-8',
+      h2: 'text-[40px] leading-[1] font-[700] text-base-black mb-8 uppercase tracking-[-1px]',
       h3: 'text-[24px] leading-[1] font-semibold text-base-black mb-3',
     },
   },

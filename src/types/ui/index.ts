@@ -66,6 +66,8 @@ export type { filePickContextType, namePartFormPropsType, numberPartFormPropsTyp
 export type {
   productCatalogOptionPropsType,
   productCatalogPopoverPropsType,
+  productFlipCardPropsType,
+  productGalleryBlockPropsType,
   productSessionAddButtonPropsType,
   productSessionRowPropsType,
   videoPlayerPropsType,

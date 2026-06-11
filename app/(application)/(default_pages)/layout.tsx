@@ -4,7 +4,7 @@ import type { childrenType } from '@types';
 const FrontEndLayout = async ({ children }: childrenType) => {
   return (
     <>
-      <main className="min-h-0">{children}</main>
+      <main className="flex-1">{children}</main>
       <Footer />
     </>
   );

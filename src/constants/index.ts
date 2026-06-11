@@ -1,3 +1,5 @@
+export { HOME_PRODUCT_GALLERY_BLOCKS } from './HOME_PRODUCT_GALLERY';
+export type { homeProductGalleryBlockType, homeProductGalleryItemType } from './HOME_PRODUCT_GALLERY';
 export { DESIGN_THUMB_WIDTH } from './DESIGN_THUMB_WIDTH';
 export { FONT_FAMILY_BY_NAME } from './FONT_FAMILY_BY_NAME';
 export { STEPS_CONFIGURATION } from './STEPS_CONFIGURATION';

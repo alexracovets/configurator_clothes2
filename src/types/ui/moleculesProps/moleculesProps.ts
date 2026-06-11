@@ -33,9 +33,28 @@ interface productSessionRowPropsType {
   onRemove: () => void;
 }
 
+interface productFlipCardPropsType {
+  collection: string;
+  slug: string;
+  alt: string;
+  className?: string;
+}
+
+interface productGalleryBlockPropsType {
+  title: string;
+  items: Array<{
+    collection: string;
+    slug: string;
+    alt: string;
+  }>;
+  className?: string;
+}
+
 export type {
   productCatalogOptionPropsType,
   productCatalogPopoverPropsType,
+  productFlipCardPropsType,
+  productGalleryBlockPropsType,
   productSessionAddButtonPropsType,
   productSessionRowPropsType,
   videoPlayerPropsType,

@@ -66,6 +66,8 @@ export {
   resolvePrintAtlasSize,
 } from './resolveProductRenderConfig/resolveProductRenderConfig';
 export { resolveDesignThumbSrc } from './resolveDesignThumbSrc/resolveDesignThumbSrc';
+export { resolveProductFlipCardSrc } from './resolveProductFlipCardSrc/resolveProductFlipCardSrc';
+export type { productFlipCardSideType } from './resolveProductFlipCardSrc/resolveProductFlipCardSrc';
 export { priceFormat } from './priceFormat';
 export { resolveModelUrl } from './resolveModelUrl';
 export { resolvePbrTexturePaths } from './resolvePbrTexturePaths';

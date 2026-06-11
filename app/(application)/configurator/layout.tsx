@@ -10,7 +10,7 @@ import {
 
 const ConfiguratorLayout = ({ children }: childrenType) => {
   return (
-    <div className="relative grid grid-cols-1 grid-rows-[auto_1fr_auto] h-full min-h-0 bg-linear-to-t from-[#E8E8E8] to-white">
+    <div className="relative grid min-h-0 flex-1 grid-cols-1 grid-rows-[auto_1fr_auto] bg-linear-to-t from-[#E8E8E8] to-white">
       <ConfiguratorInitialLoader />
       <CartConfigurationSync />
       <HeaderConfiguration />

@@ -13,7 +13,7 @@ const RootLayout = ({ children }: childrenType) => {
     <html
       lang="en"
       className={cn(
-        'h-full',
+        'min-h-full',
         'antialiased',
         'bg-white',
         inter.variable,
