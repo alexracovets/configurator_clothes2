@@ -2,10 +2,10 @@
 
 import { Slot } from '@radix-ui/react-slot';
 
-import { cva, VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 
 import { cn } from '@utils';
-import type { ChildrenType } from '@types';
+import type { textPropsType } from '@types';
 
 const variantText = cva('font-inter font-[400] leading-none', {
   variants: {
@@ -34,14 +34,7 @@ const variantText = cva('font-inter font-[400] leading-none', {
   },
 });
 
-interface TextProps extends ChildrenType {
-  variant?: VariantProps<typeof variantText>['variant'];
-  style?: React.CSSProperties;
-  className?: string;
-  asChild?: boolean;
-}
-
-const Text = ({ className, variant, asChild = false, children, ...props }: TextProps) => {
+const Text = ({ className, variant, asChild = false, children, ...props }: textPropsType) => {
   const Comp = asChild ? Slot : 'p';
 
   return (

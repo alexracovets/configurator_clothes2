@@ -7,12 +7,9 @@ import { ColorControl } from '../../ConfigurationTools/ColorControl';
 import { PartColorSwitch } from '../../ConfigurationTools/PartColorSwitch';
 
 import { DEFAULT_COLOR, useConfiguratorProduct, useGarmentColor } from '@store';
+import type { partColorControlPropsType } from '@types';
 
-interface PartColorControlProps {
-  partId: string;
-}
-
-const PartColorControl = memo(({ partId }: PartColorControlProps) => {
+const PartColorControl = memo(({ partId }: partColorControlPropsType) => {
   const color = useGarmentColor((state) => state.byPart[partId] ?? DEFAULT_COLOR);
   const setPartColor = useGarmentColor((state) => state.setPartColor);
 

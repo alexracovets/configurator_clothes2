@@ -1,6 +1,6 @@
-import type { GarmentConfig } from '@types';
+import type { garmentConfigType } from '@types';
 
-const resolveModelUrl = (product: GarmentConfig): string => {
+const resolveModelUrl = (product: garmentConfigType): string => {
   const base = product.path.endsWith('/') ? product.path : `${product.path}/`;
   return `${base}${product.modelFile ?? 'model.gltf'}`;
 };

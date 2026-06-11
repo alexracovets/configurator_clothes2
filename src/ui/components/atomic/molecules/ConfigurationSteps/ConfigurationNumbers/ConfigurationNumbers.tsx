@@ -8,16 +8,10 @@ import { FontSelectRow } from '../../ConfigurationTools/FontSelectRow';
 import { PartColorSwitch } from '../../ConfigurationTools/PartColorSwitch';
 import { RangeControl } from '../../ConfigurationTools/RangeControl';
 import { createNumberInstance, resolveNumberDefaults, resolveNumberLimits, sanitizeNumberText, useConfiguratorProduct, useGarmentNumber } from '@store';
-import type { NumberPosition } from '@types';
+import type { numberPartFormPropsType, numberPositionType } from '@types';
 import { cn } from '@utils';
 
-interface NumberPartFormProps {
-  instanceId: string;
-  limits: ReturnType<typeof resolveNumberLimits>;
-  placeholder: string;
-}
-
-const NumberPartForm = ({ instanceId, limits, placeholder }: NumberPartFormProps) => {
+const NumberPartForm = ({ instanceId, limits, placeholder }: numberPartFormPropsType) => {
   const instance = useGarmentNumber((state) => state.instances.find((item) => item.id === instanceId));
   const updateInstance = useGarmentNumber((state) => state.updateInstance);
   const removeInstance = useGarmentNumber((state) => state.removeInstance);
@@ -131,7 +125,7 @@ const ConfigurationNumbers = () => {
     return openItems.filter((id) => validIds.has(id));
   }, [instances, openItems]);
 
-  const createInstanceForPosition = (position: NumberPosition) => {
+  const createInstanceForPosition = (position: numberPositionType) => {
     if (!position.interactive) return;
 
     nextInstanceIdRef.current += 1;

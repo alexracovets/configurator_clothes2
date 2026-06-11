@@ -1,31 +1,26 @@
 'use client';
 
-import type { StyleId } from '@types';
+import type { cartItemConfigurationType, cartItemType, styleIdType } from '@types';
 import { getProduct } from '@data';
 
 import { create } from 'zustand';
 
 import { activateCartItem } from './activateCartItem';
-import {
-  captureGarmentConfiguration,
-  type CartItemConfiguration,
-  cloneCartItemConfiguration,
-  createDefaultCartItemConfiguration,
-} from './cartItemConfiguration';
+import { captureGarmentConfiguration, cloneCartItemConfiguration, createDefaultCartItemConfiguration } from './cartItemConfiguration';
 import { inheritCartItemConfiguration } from './inheritCartItemConfiguration';
-import { type CartItem, createCartItem, createDefaultCartItem } from './mapCartItems';
+import { createCartItem, createDefaultCartItem } from './mapCartItems';
 
 interface ConfigurationCartState {
-  items: CartItem[];
+  items: cartItemType[];
   activeItemId: string;
-  configurations: Record<string, CartItemConfiguration>;
-  addItem: (styleId: StyleId, productIndex: number) => void;
+  configurations: Record<string, cartItemConfigurationType>;
+  addItem: (styleId: styleIdType, productIndex: number) => void;
   duplicateActiveItem: () => void;
   selectItem: (id: string) => void;
   removeItem: (id: string) => void;
   getActiveItemIndex: () => number;
-  saveConfiguration: (itemId: string, configuration: CartItemConfiguration) => void;
-  getConfiguration: (itemId: string) => CartItemConfiguration | undefined;
+  saveConfiguration: (itemId: string, configuration: cartItemConfigurationType) => void;
+  getConfiguration: (itemId: string) => cartItemConfigurationType | undefined;
 }
 
 const initialItem = createDefaultCartItem();
@@ -41,7 +36,7 @@ const useConfigurationCart = create<ConfigurationCartState>((set, get) => ({
     const newProduct = getProduct(styleId, productIndex);
     if (!newProduct) return;
 
-    const nextConfigurations: Record<string, CartItemConfiguration> = {
+    const nextConfigurations: Record<string, cartItemConfigurationType> = {
       ...configurations,
       [activeItemId]: captureGarmentConfiguration(),
     };
@@ -73,7 +68,7 @@ const useConfigurationCart = create<ConfigurationCartState>((set, get) => ({
     if (!activeItem) return;
 
     const currentConfiguration = captureGarmentConfiguration();
-    const nextConfigurations: Record<string, CartItemConfiguration> = {
+    const nextConfigurations: Record<string, cartItemConfigurationType> = {
       ...configurations,
       [activeItemId]: currentConfiguration,
     };

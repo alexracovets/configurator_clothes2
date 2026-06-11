@@ -3,19 +3,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import { AtomPopover, AtomPopoverContent, AtomPopoverTrigger } from '@atoms';
+import type { colorPickerPropsType } from '@types';
 
 import { hexToHsva, hsvaToHex, ShadeSlider, Wheel } from '@uiw/react-color';
 
-interface ColorPickerProps {
-  color: string;
-  onChange: (color: string) => void;
-  onPreviewChange?: (color: string) => void;
-  trigger: React.ReactElement;
-}
-
 const isValidHex = (hex: string) => /^#?[0-9a-fA-F]{3,8}$/.test(hex);
 
-const ColorPicker = ({ color, onChange, onPreviewChange, trigger }: ColorPickerProps) => {
+const ColorPicker = ({ color, onChange, onPreviewChange, trigger }: colorPickerPropsType) => {
   const safeColor = isValidHex(color) ? color : '#000000';
   const [wheelHsva, setWheelHsva] = useState(() => ({ ...hexToHsva(safeColor), v: 100 }));
   const [brightness, setBrightness] = useState(() => hexToHsva(safeColor).v);

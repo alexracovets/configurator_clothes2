@@ -1,15 +1,14 @@
-import type { StyleId } from '@types';
+import type { cartItemConfigurationType, styleIdType } from '@types';
 import { getProduct } from '@data';
 
 import { useConfigurationControl } from '../useConfigurationControl';
 import { useConfiguratorProduct } from '../useConfiguratorProduct';
 import { applyGarmentConfiguration, captureGarmentConfiguration } from './cartItemConfiguration';
-import type { CartItemConfiguration } from './cartItemConfiguration';
 
 interface ActivateCartItemGetState {
-  items: Array<{ id: string; styleId: StyleId; productIndex: number }>;
-  saveConfiguration: (itemId: string, configuration: CartItemConfiguration) => void;
-  getConfiguration: (itemId: string) => CartItemConfiguration | undefined;
+  items: Array<{ id: string; styleId: styleIdType; productIndex: number }>;
+  saveConfiguration: (itemId: string, configuration: cartItemConfigurationType) => void;
+  getConfiguration: (itemId: string) => cartItemConfigurationType | undefined;
 }
 
 const activateCartItem = (get: () => ActivateCartItemGetState, itemId: string, options?: { savePreviousId?: string | null }) => {

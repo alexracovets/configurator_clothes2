@@ -3,29 +3,19 @@
 import { useEffect, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 
-import {
-  GIZMO_CORNERS,
-  type GizmoButtonHit,
-  type PrintablePartMeshes,
-  type PrintDragMoveState,
-  type PrintGizmoElement,
-  raycastPrintUv,
-  resolveGizmoPointerTarget,
-  resolvePrintDragMove,
-  setGizmoButtonDragActive,
-  toPrintLocalPx,
-} from '@gizmo';
+import { GIZMO_CORNERS, raycastPrintUv, resolveGizmoPointerTarget, resolvePrintDragMove, setGizmoButtonDragActive, toPrintLocalPx } from '@gizmo';
+import type { gizmoButtonHitType, printablePartMeshesType, printDragMoveStateType, printGizmoElementType } from '@types';
 import { useGarmentLogo, useGarmentName } from '@store';
 
 type DragMode = 'move' | 'rotate' | 'scale';
 
-const resolvePrintRotation = (printableParts: PrintablePartMeshes[], partId: string, fallback: number) =>
+const resolvePrintRotation = (printableParts: printablePartMeshesType[], partId: string, fallback: number) =>
   printableParts.find((part) => part.partId === partId)?.printRotation ?? fallback;
 
 interface UsePrintGizmoDragOptions {
-  element: PrintGizmoElement;
-  elements: PrintGizmoElement[];
-  printableParts: PrintablePartMeshes[];
+  element: printGizmoElementType;
+  elements: printGizmoElementType[];
+  printableParts: printablePartMeshesType[];
   atlasSize: { width: number; height: number };
   gizmoStep: number | null;
   selectedInstanceId: string | null;
@@ -86,7 +76,7 @@ const usePrintGizmoDrag = ({ element, elements, printableParts, atlasSize, gizmo
       if (ctx.current.controls) ctx.current.controls.enabled = enabled;
     };
 
-    const startDrag = (mode: DragMode, clientX: number, clientY: number, buttonHit: GizmoButtonHit | null) => {
+    const startDrag = (mode: DragMode, clientX: number, clientY: number, buttonHit: gizmoButtonHitType | null) => {
       const el = ctx.current.element;
 
       if (el.kind === 'name') {
@@ -97,7 +87,7 @@ const usePrintGizmoDrag = ({ element, elements, printableParts, atlasSize, gizmo
         const startFontSize = instance.fontSize;
         const centerUv = { ...instance.uv };
         const grab = raycastPrintUv(clientX, clientY, ctx.current.printableParts, raycastContext());
-        let dragMoveState: PrintDragMoveState = {
+        let dragMoveState: printDragMoveStateType = {
           offset: grab ? { x: instance.uv.x - grab.uv.x, y: instance.uv.y - grab.uv.y } : { x: 0, y: 0 },
           activePartId: grab?.partId ?? instance.partId,
         };
@@ -163,7 +153,7 @@ const usePrintGizmoDrag = ({ element, elements, printableParts, atlasSize, gizmo
       const startScale = instance.scale;
       const centerUv = { ...instance.uv };
       const grab = raycastPrintUv(clientX, clientY, ctx.current.printableParts, raycastContext());
-      let dragMoveState: PrintDragMoveState = {
+      let dragMoveState: printDragMoveStateType = {
         offset: grab ? { x: instance.uv.x - grab.uv.x, y: instance.uv.y - grab.uv.y } : { x: 0, y: 0 },
         activePartId: grab?.partId ?? instance.partId,
       };

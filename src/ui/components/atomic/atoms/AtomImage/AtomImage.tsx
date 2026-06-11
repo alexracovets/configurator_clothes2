@@ -1,11 +1,11 @@
 'use client';
 
-import Image, { ImageProps } from 'next/image';
+import Image from 'next/image';
 
-import { cva, VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 
 import { cn } from '@utils';
-import type { ChildrenType } from '@types';
+import type { atomImagePropsType } from '@types';
 
 const variantAtomImage = cva('', {
   variants: {
@@ -20,18 +20,6 @@ const variantAtomImage = cva('', {
   },
 });
 
-interface AtomImageProps extends ChildrenType, ImageProps {
-  src: string;
-  alt: string;
-  variant?: VariantProps<typeof variantAtomImage>['variant'];
-  priority?: boolean;
-  className?: string;
-  width?: number;
-  height?: number;
-  unoptimized?: boolean;
-  'data-active'?: boolean;
-}
-
 const AtomImage = ({
   src,
   alt,
@@ -45,7 +33,7 @@ const AtomImage = ({
   'data-active': dataActive,
   style,
   ...props
-}: AtomImageProps) => {
+}: atomImagePropsType) => {
   const hasDimensions = width != null && height != null;
   const useFill = !hasDimensions;
   const resolvedLoading = loading ?? (priority ? 'eager' : 'lazy');

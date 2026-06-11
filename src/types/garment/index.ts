@@ -1,19 +1,15 @@
 export type {
-  MappedGizmoFlags,
-  NameInstance,
-  NameLimits,
-  NamePosition,
-  NamePreview,
-  NumberInstance,
-  NumberLimits,
-  NumberPosition,
-  NumberPreview,
-  TextPrintInstance,
-  TextPrintLimits,
-  TextPrintPosition,
-  TextPrintPreview,
-  GarmentTextRenderInstance,
+  garmentTextRenderInstanceType,
+  mappedGizmoFlagsType,
+  nameInstanceType,
+  nameLimitsType,
+  namePositionType,
+  namePreviewType,
+  numberInstanceType,
+  numberLimitsType,
+  numberPositionType,
+  numberPreviewType,
 } from './textPrint';
-export type { LogoInstance, LogoPosition, LogoPreview, StepLogoPartState, StepLogoPositionState, StepLogoStoreView, StepLogoUv } from './logo';
-export type { PartGradient } from './gradient';
-export type { DesignPatternItem, DesignPatternPart } from './design';
+export type { logoInstanceType, logoPositionType, logoPreviewType, stepLogoPartStateType, stepLogoPositionStateType, stepLogoStoreViewType } from './logo';
+export type { partGradientType } from './gradient';
+export type { designPatternItemType, designPatternPartType } from './design';

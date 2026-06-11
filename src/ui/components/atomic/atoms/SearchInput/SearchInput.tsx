@@ -1,8 +1,9 @@
 'use client';
 
-import { cva, VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 
 import { Input } from '@shared';
+import type { searchInputPropsType } from '@types';
 import { cn } from '@utils';
 
 const variantSearchInput = cva('border-border', {
@@ -18,12 +19,7 @@ const variantSearchInput = cva('border-border', {
   },
 });
 
-interface SearchInputProps extends React.ComponentProps<'input'> {
-  className?: string;
-  variant?: VariantProps<typeof variantSearchInput>['variant'];
-}
-
-const SearchInput = ({ variant = 'default', className, ...props }: SearchInputProps) => {
+const SearchInput = ({ variant = 'default', className, ...props }: searchInputPropsType) => {
   return <Input className={cn(variantSearchInput({ variant, className }))} {...props} />;
 };
 

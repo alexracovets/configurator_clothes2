@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 
 import { NoColorSpace, Texture } from 'three';
 
-import type { PbrMaps, PbrTexturePaths } from '@utils';
+import type { pbrMapsType, pbrTexturePathsType } from '@types';
 import { yieldToMain } from '@utils';
 
 const loadPbrTexture = async (url: string): Promise<Texture> => {
@@ -22,8 +22,8 @@ const loadPbrTexture = async (url: string): Promise<Texture> => {
   return texture;
 };
 
-const useAsyncGarmentPbrMaps = (paths: PbrTexturePaths): PbrMaps | null => {
-  const [maps, setMaps] = useState<PbrMaps | null>(null);
+const useAsyncGarmentPbrMaps = (paths: pbrTexturePathsType): pbrMapsType | null => {
+  const [maps, setMaps] = useState<pbrMapsType | null>(null);
 
   useEffect(() => {
     let cancelled = false;

@@ -1,8 +1,8 @@
-import type { GarmentConfig, LogoInstance, LogoPosition, LogoPositionConfig, UvPoint } from '@types';
+import type { garmentConfigType, logoInstanceType, logoPositionConfigType, logoPositionType, uvPointType } from '@types';
 
 import { resolvePartUvBounds } from '@utils';
 
-const resolvePartIdForAtlasUv = (product: GarmentConfig, uv: UvPoint): string => {
+const resolvePartIdForAtlasUv = (product: garmentConfigType, uv: uvPointType): string => {
   const match = product.parts.find((part) => {
     const bounds = resolvePartUvBounds(part);
     return uv.x >= bounds.minX && uv.x <= bounds.maxX && uv.y >= bounds.minY && uv.y <= bounds.maxY;
@@ -15,7 +15,7 @@ const resolvePartIdForAtlasUv = (product: GarmentConfig, uv: UvPoint): string =>
   return match.id;
 };
 
-const mapLogoPosition = (product: GarmentConfig, position: LogoPositionConfig, index: number): LogoPosition => {
+const mapLogoPosition = (product: garmentConfigType, position: logoPositionConfigType, index: number): logoPositionType => {
   const isDefault = position.default ?? Boolean(position.src);
 
   return {
@@ -33,7 +33,7 @@ const mapLogoPosition = (product: GarmentConfig, position: LogoPositionConfig, i
   };
 };
 
-const mapProductLogoPositions = (product: GarmentConfig): LogoPosition[] =>
+const mapProductLogoPositions = (product: garmentConfigType): logoPositionType[] =>
   (product.logoPositions ?? []).map((position, index) => mapLogoPosition(product, position, index));
 
 const resolveLogoFileName = (src: string) => {
@@ -42,7 +42,7 @@ const resolveLogoFileName = (src: string) => {
 };
 
 const createLogoInstance = (
-  position: LogoPosition,
+  position: logoPositionType,
   id: string,
   options: {
     src: string;
@@ -52,7 +52,7 @@ const createLogoInstance = (
     naturalHeight?: number;
     uploadRotation?: number;
   },
-): LogoInstance => ({
+): logoInstanceType => ({
   id,
   positionKey: position.key,
   label: position.label,
@@ -71,7 +71,7 @@ const createLogoInstance = (
   opacity: 1,
 });
 
-const createDefaultLogoInstances = (positions: LogoPosition[]): LogoInstance[] =>
+const createDefaultLogoInstances = (positions: logoPositionType[]): logoInstanceType[] =>
   positions
     .filter((position) => position.src)
     .map((position) =>
@@ -81,7 +81,7 @@ const createDefaultLogoInstances = (positions: LogoPosition[]): LogoInstance[] =
       }),
     );
 
-const resolveLogoDefaults = (product: GarmentConfig) => {
+const resolveLogoDefaults = (product: garmentConfigType) => {
   const frontPart = product.parts.find((part) => part.label === 'Front') ?? product.parts[0];
 
   if (!frontPart) {
@@ -101,7 +101,7 @@ const resolveLogoDefaults = (product: GarmentConfig) => {
   };
 };
 
-const createDynamicUserLogoPosition = (product: GarmentConfig, index: number): LogoPosition => {
+const createDynamicUserLogoPosition = (product: garmentConfigType, index: number): logoPositionType => {
   const defaults = resolveLogoDefaults(product);
   const offset = index * 0.03;
 
@@ -120,4 +120,3 @@ const createDynamicUserLogoPosition = (product: GarmentConfig, index: number): L
 };
 
 export { createDefaultLogoInstances, createDynamicUserLogoPosition, createLogoInstance, mapProductLogoPositions, resolveLogoDefaults, resolvePartIdForAtlasUv };
-export type { LogoInstance, LogoPosition, LogoPreview } from '@types';

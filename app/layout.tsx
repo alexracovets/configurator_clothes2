@@ -3,12 +3,12 @@ import { Geist } from 'next/font/google';
 import '@styles';
 
 import { anton, bebasNeue, blackOpsOne, inter, oswald, russoOne } from '@fonts';
-import type { ChildrenType } from '@types';
+import type { childrenType } from '@types';
 
 import { cn } from '@utils';
 
 const geist = Geist({ subsets: ['latin'], variable: '--font-sans' });
-const RootLayout = ({ children }: ChildrenType) => {
+const RootLayout = ({ children }: childrenType) => {
   return (
     <html
       lang="en"

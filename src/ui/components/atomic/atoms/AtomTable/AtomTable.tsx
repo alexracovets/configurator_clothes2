@@ -2,14 +2,23 @@
 
 import { createContext, useContext } from 'react';
 
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 
 import { Table, TableBody, TableCaption, TableCell, TableFooter, TableHead, TableHeader, TableRow } from '@shared';
+import type {
+  atomTableBodyPropsType,
+  atomTableCaptionPropsType,
+  atomTableCellPropsType,
+  atomTableFooterPropsType,
+  atomTableHeadPropsType,
+  atomTablePropsType,
+  atomTableRowPropsType,
+  atomTableSectionPropsType,
+  atomTableVariantType,
+} from '@types';
 import { cn } from '@utils';
 
-type AtomTableVariant = NonNullable<VariantProps<typeof atomTableVariants>['variant']>;
-
-const AtomTableVariantContext = createContext<AtomTableVariant>('default');
+const AtomTableVariantContext = createContext<atomTableVariantType>('default');
 
 const useAtomTableVariant = () => useContext(AtomTableVariantContext);
 
@@ -97,9 +106,7 @@ const atomTableCaptionVariants = cva('mt-4 text-sm', {
   },
 });
 
-type AtomTableProps = React.ComponentProps<typeof Table> & VariantProps<typeof atomTableVariants>;
-
-const AtomTable = ({ className, variant = 'default', children, ...props }: AtomTableProps) => {
+const AtomTable = ({ className, variant = 'default', children, ...props }: atomTablePropsType) => {
   return (
     <AtomTableVariantContext.Provider value={variant ?? 'default'}>
       <Table className={cn(atomTableVariants({ variant }), className)} {...props}>
@@ -109,63 +116,49 @@ const AtomTable = ({ className, variant = 'default', children, ...props }: AtomT
   );
 };
 
-type AtomTableSectionProps = React.ComponentProps<typeof TableHeader> & VariantProps<typeof atomTableHeaderVariants>;
-
-const AtomTableHeader = ({ className, variant: variantProp, ...props }: AtomTableSectionProps) => {
+const AtomTableHeader = ({ className, variant: variantProp, ...props }: atomTableSectionPropsType) => {
   const contextVariant = useAtomTableVariant();
   const variant = variantProp ?? contextVariant;
 
   return <TableHeader className={cn(atomTableHeaderVariants({ variant }), className)} {...props} />;
 };
 
-type AtomTableBodyProps = React.ComponentProps<typeof TableBody> & VariantProps<typeof atomTableBodyVariants>;
-
-const AtomTableBody = ({ className, variant: variantProp, ...props }: AtomTableBodyProps) => {
+const AtomTableBody = ({ className, variant: variantProp, ...props }: atomTableBodyPropsType) => {
   const contextVariant = useAtomTableVariant();
   const variant = variantProp ?? contextVariant;
 
   return <TableBody className={cn(atomTableBodyVariants({ variant }), className)} {...props} />;
 };
 
-type AtomTableFooterProps = React.ComponentProps<typeof TableFooter> & VariantProps<typeof atomTableBodyVariants>;
-
-const AtomTableFooter = ({ className, variant: variantProp, ...props }: AtomTableFooterProps) => {
+const AtomTableFooter = ({ className, variant: variantProp, ...props }: atomTableFooterPropsType) => {
   const contextVariant = useAtomTableVariant();
   const variant = variantProp ?? contextVariant;
 
   return <TableFooter className={cn(atomTableBodyVariants({ variant }), className)} {...props} />;
 };
 
-type AtomTableRowProps = React.ComponentProps<typeof TableRow> & VariantProps<typeof atomTableRowVariants>;
-
-const AtomTableRow = ({ className, variant: variantProp, ...props }: AtomTableRowProps) => {
+const AtomTableRow = ({ className, variant: variantProp, ...props }: atomTableRowPropsType) => {
   const contextVariant = useAtomTableVariant();
   const variant = variantProp ?? contextVariant;
 
   return <TableRow className={cn(atomTableRowVariants({ variant }), className)} {...props} />;
 };
 
-type AtomTableHeadProps = React.ComponentProps<typeof TableHead> & VariantProps<typeof atomTableHeadVariants>;
-
-const AtomTableHead = ({ className, variant: variantProp, ...props }: AtomTableHeadProps) => {
+const AtomTableHead = ({ className, variant: variantProp, ...props }: atomTableHeadPropsType) => {
   const contextVariant = useAtomTableVariant();
   const variant = variantProp ?? contextVariant;
 
   return <TableHead className={cn(atomTableHeadVariants({ variant }), className)} {...props} />;
 };
 
-type AtomTableCellProps = React.ComponentProps<typeof TableCell> & VariantProps<typeof atomTableCellVariants>;
-
-const AtomTableCell = ({ className, variant: variantProp, ...props }: AtomTableCellProps) => {
+const AtomTableCell = ({ className, variant: variantProp, ...props }: atomTableCellPropsType) => {
   const contextVariant = useAtomTableVariant();
   const variant = variantProp ?? contextVariant;
 
   return <TableCell className={cn(atomTableCellVariants({ variant }), className)} {...props} />;
 };
 
-type AtomTableCaptionProps = React.ComponentProps<typeof TableCaption> & VariantProps<typeof atomTableCaptionVariants>;
-
-const AtomTableCaption = ({ className, variant: variantProp, ...props }: AtomTableCaptionProps) => {
+const AtomTableCaption = ({ className, variant: variantProp, ...props }: atomTableCaptionPropsType) => {
   const contextVariant = useAtomTableVariant();
   const variant = variantProp ?? contextVariant;
 
@@ -188,16 +181,4 @@ export {
   atomTableHeadVariants,
   atomTableCellVariants,
   atomTableCaptionVariants,
-};
-
-export type {
-  AtomTableProps,
-  AtomTableBodyProps,
-  AtomTableCaptionProps,
-  AtomTableCellProps,
-  AtomTableFooterProps,
-  AtomTableHeadProps,
-  AtomTableRowProps,
-  AtomTableSectionProps,
-  AtomTableVariant,
 };

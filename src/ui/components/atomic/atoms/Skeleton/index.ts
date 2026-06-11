@@ -1,1 +1,1 @@
-export { AtomSkeleton, type AtomSkeletonProps } from './AtomSkeleton';
+export { AtomSkeleton } from './AtomSkeleton';

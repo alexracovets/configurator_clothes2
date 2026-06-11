@@ -1,5 +1,3 @@
-'use client';
-
 const PALETTE_COLORS = [
   '#FFFFFF',
   '#000000',

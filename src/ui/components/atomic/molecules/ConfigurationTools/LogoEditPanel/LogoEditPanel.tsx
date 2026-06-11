@@ -2,16 +2,10 @@
 
 import { AtomImage, Button, Flex, Grid, SvgIcon, Text } from '@atoms';
 import { RangeControl } from '../RangeControl';
-import { useStepLogo } from '@store';
+import { useStepLogo } from '@hooks';
+import type { logoEditPanelPropsType } from '@types';
 
-interface LogoEditPanelProps {
-  partId: string;
-  onClose: () => void;
-  onReplaceImage: () => void;
-  replacing?: boolean;
-}
-
-const LogoEditPanel = ({ partId, onClose, onReplaceImage, replacing = false }: LogoEditPanelProps) => {
+const LogoEditPanel = ({ partId, onClose, onReplaceImage, replacing = false }: logoEditPanelPropsType) => {
   const part = useStepLogo((state) => state.parts.find((item) => item.id === partId));
   const updatePart = useStepLogo((state) => state.updatePart);
 

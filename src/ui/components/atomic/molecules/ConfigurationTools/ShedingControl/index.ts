@@ -1,1 +1,0 @@
-export { ShedingControl } from './ShedingControl';

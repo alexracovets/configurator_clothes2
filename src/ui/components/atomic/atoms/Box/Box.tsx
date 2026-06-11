@@ -2,10 +2,10 @@
 
 import { Slot } from '@radix-ui/react-slot';
 
-import { cva, VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 
 import { cn } from '@utils';
-import type { ChildrenType } from '@types';
+import type { boxPropsType } from '@types';
 
 const variantBox = cva('block', {
   variants: {
@@ -25,14 +25,7 @@ const variantBox = cva('block', {
   },
 });
 
-interface BoxProps extends ChildrenType {
-  variant?: VariantProps<typeof variantBox>['variant'];
-  style?: React.CSSProperties;
-  className?: string;
-  asChild?: boolean;
-}
-
-const Box = ({ variant = 'default', asChild = false, className, children, style, ...props }: BoxProps) => {
+const Box = ({ variant = 'default', asChild = false, className, children, style, ...props }: boxPropsType) => {
   const Component = asChild ? Slot : 'div';
 
   return (

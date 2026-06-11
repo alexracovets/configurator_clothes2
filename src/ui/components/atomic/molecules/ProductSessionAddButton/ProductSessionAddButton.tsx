@@ -1,14 +1,12 @@
 'use client';
 
-import { type ButtonHTMLAttributes, forwardRef } from 'react';
+import { forwardRef } from 'react';
 
 import { SvgIcon } from '@atoms';
-
+import type { productSessionAddButtonPropsType } from '@types';
 import { cn } from '@utils';
 
-type ProductSessionAddButtonProps = ButtonHTMLAttributes<HTMLButtonElement>;
-
-const ProductSessionAddButton = forwardRef<HTMLButtonElement, ProductSessionAddButtonProps>(({ className, ...props }, ref) => {
+const ProductSessionAddButton = forwardRef<HTMLButtonElement, productSessionAddButtonPropsType>(({ className, ...props }, ref) => {
   return (
     <button
       ref={ref}

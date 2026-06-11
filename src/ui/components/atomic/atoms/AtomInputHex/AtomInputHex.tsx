@@ -3,13 +3,9 @@
 import { useState } from 'react';
 
 import { AtomInput } from '@atoms';
+import type { atomInputHexPropsType } from '@types';
 
-interface AtomInputHexProps {
-  value: string;
-  onChange: (color: string) => void;
-}
-
-const AtomInputHex = ({ value, onChange }: AtomInputHexProps) => {
+const AtomInputHex = ({ value, onChange }: atomInputHexPropsType) => {
   const [draft, setDraft] = useState<string | null>(null);
   const displayValue = draft ?? value;
 

@@ -4,12 +4,9 @@ import {
   ConfigurationLogoStepSkeleton,
   ConfigurationNamingStepSkeleton,
 } from '@skeletons';
+import type { configurationStepSkeletonPropsType } from '@types';
 
-type ConfigurationStepSkeletonProps = {
-  step: number;
-};
-
-const ConfigurationStepSkeleton = ({ step }: ConfigurationStepSkeletonProps) => {
+const ConfigurationStepSkeleton = ({ step }: configurationStepSkeletonPropsType) => {
   switch (step) {
     case 1:
       return <ConfigurationAccordionStepSkeleton expandedContent="color" />;

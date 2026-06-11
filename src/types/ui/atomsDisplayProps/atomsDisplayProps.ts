@@ -1,0 +1,71 @@
+import type { ImageProps } from 'next/image';
+import type { ComponentProps, ReactNode } from 'react';
+
+import type { atomImageVariantType, atomListVariantType, childrenType, slidingIndicatorTrackVariantType, slidingIndicatorVariantType } from '@types';
+
+type svgIconNameType =
+  | 'colori'
+  | 'contorno'
+  | 'close'
+  | 'select_color'
+  | 'share'
+  | 'plus'
+  | 'duplicate'
+  | 'info'
+  | 'cart'
+  | 'ruler'
+  | 'none'
+  | 'delete'
+  | 'upload'
+  | 'edit';
+
+interface svgIconPropsType {
+  name: svgIconNameType;
+  className?: string;
+}
+
+type atomImagePropsType = childrenType &
+  ImageProps & {
+    src: string;
+    alt: string;
+    variant?: atomImageVariantType;
+    priority?: boolean;
+    className?: string;
+    width?: number;
+    height?: number;
+    'data-active'?: boolean;
+  };
+
+interface atomListPropsType {
+  variant?: atomListVariantType;
+  items: ReactNode[];
+  icon?: ReactNode;
+  wrapperClassName?: string;
+  itemClassName?: string;
+  iconClassName?: string;
+  contentClassName?: string;
+}
+
+type slidingIndicatorPropsType = ComponentProps<'span'> & {
+  variant?: slidingIndicatorVariantType;
+};
+
+type slidingIndicatorTrackPropsType = ComponentProps<'span'> & {
+  variant?: slidingIndicatorTrackVariantType;
+};
+
+interface scrollAreaPropsType {
+  children: ReactNode;
+  className?: string;
+  fadeEdges?: boolean;
+}
+
+export type {
+  atomImagePropsType,
+  atomListPropsType,
+  scrollAreaPropsType,
+  slidingIndicatorPropsType,
+  slidingIndicatorTrackPropsType,
+  svgIconNameType,
+  svgIconPropsType,
+};

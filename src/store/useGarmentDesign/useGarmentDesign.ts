@@ -1,6 +1,6 @@
 'use client';
 
-import type { DesignPatternItem, GarmentConfig } from '@types';
+import type { designPatternItemType, garmentConfigType, garmentDesignSnapshotType } from '@types';
 
 import { create } from 'zustand';
 
@@ -11,34 +11,26 @@ import { resolveDesignThumbSrc } from '@utils';
 const DEFAULT_COLOR = PALETTE_COLORS[1];
 const DEFAULT_OPACITY = 1;
 
-interface GarmentDesignSnapshot {
-  activePatternKey: string | null;
-  patternColors: Record<string, string>;
-  designLayerColors: Record<number, string>;
-  activeOpacity: number;
-  designOpacity: number;
-}
-
 interface UseGarmentDesignStore {
   productPath: string | null;
-  patterns: DesignPatternItem[];
-  activePattern: DesignPatternItem | null;
+  patterns: designPatternItemType[];
+  activePattern: designPatternItemType | null;
   patternColors: Record<string, string>;
   designLayerColors: Record<number, string>;
   activeOpacity: number;
   designOpacity: number;
-  defaultPattern: DesignPatternItem | null;
-  initForProduct: (product: GarmentConfig) => void;
-  restoreSnapshot: (product: GarmentConfig, snapshot: GarmentDesignSnapshot) => void;
-  setPatterns: (patterns: DesignPatternItem[]) => void;
-  setActivePattern: (pattern: DesignPatternItem | null) => void;
+  defaultPattern: designPatternItemType | null;
+  initForProduct: (product: garmentConfigType) => void;
+  restoreSnapshot: (product: garmentConfigType, snapshot: garmentDesignSnapshotType) => void;
+  setPatterns: (patterns: designPatternItemType[]) => void;
+  setActivePattern: (pattern: designPatternItemType | null) => void;
   setPartColor: (partKey: string, color: string) => void;
   getPartColor: (partKey: string) => string;
   setActiveOpacity: (opacity: number) => void;
-  setDefaultPattern: (pattern: DesignPatternItem | null) => void;
+  setDefaultPattern: (pattern: designPatternItemType | null) => void;
 }
 
-const mapProductDesigns = (product: GarmentConfig): DesignPatternItem[] =>
+const mapProductDesigns = (product: garmentConfigType): designPatternItemType[] =>
   product.patterns.map((pattern, patternIndex) => ({
     key: `pattern-${patternIndex}`,
     name: pattern.name,
@@ -52,7 +44,7 @@ const mapProductDesigns = (product: GarmentConfig): DesignPatternItem[] =>
     }),
   }));
 
-const mapDefaultPattern = (product: GarmentConfig): DesignPatternItem | null => {
+const mapDefaultPattern = (product: garmentConfigType): designPatternItemType | null => {
   const pattern = product.default_pattern?.[0];
   if (!pattern) return null;
 
@@ -70,7 +62,7 @@ const mapDefaultPattern = (product: GarmentConfig): DesignPatternItem | null => 
   };
 };
 
-const buildPatternColors = (pattern: DesignPatternItem, layerColors: Record<number, string>): Record<string, string> =>
+const buildPatternColors = (pattern: designPatternItemType, layerColors: Record<number, string>): Record<string, string> =>
   Object.fromEntries(pattern.parts.map((part, index) => [part.key, layerColors[index] ?? DEFAULT_COLOR]));
 
 const useGarmentDesign = create<UseGarmentDesignStore>((set, get) => ({
@@ -157,4 +149,3 @@ const useGarmentDesign = create<UseGarmentDesignStore>((set, get) => ({
 }));
 
 export { useGarmentDesign };
-export type { DesignPatternItem, DesignPatternPart } from '@types';

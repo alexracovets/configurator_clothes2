@@ -1,14 +1,10 @@
 'use client';
 
 import { AtomSelect, Flex, Text } from '@atoms';
-import { FONTS_CONFIGURATION } from '../../../../../../fonts/FONTS_CONFIGURATION';
+import type { fontSelectRowPropsType } from '@types';
+import { FONTS_CONFIGURATION } from '@fonts';
 
-interface FontSelectRowProps {
-  font: string;
-  onChange: (font: string) => void;
-}
-
-const FontSelectRow = ({ font, onChange }: FontSelectRowProps) => {
+const FontSelectRow = ({ font, onChange }: fontSelectRowPropsType) => {
   return (
     <Flex variant="configurator_part">
       <Text variant="configurator_part_label">Carattere</Text>

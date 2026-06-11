@@ -22,7 +22,8 @@ import {
   useGarmentName,
   useGarmentNumber,
 } from '@store';
-import type { GarmentTextRenderInstance } from '@types';
+import type { garmentTextRenderInstanceType, stampPixelSizeType } from '@types';
+import { NAME_SLOT_COUNT } from '@constants';
 import {
   applyGarmentGizmoButtonsReveal,
   applyGarmentGizmoFrame,
@@ -39,7 +40,6 @@ import {
   canvasToMaskTexture,
   composeNameMaskAtlas,
   getEmptyPrintTexture,
-  NAME_SLOT_COUNT,
   repairPrintInstancePlacement,
   resolveNameStampSize,
   resolvePrintAtlasSize,
@@ -48,16 +48,13 @@ import {
 const NAME_STEP = 4;
 const NUMBER_STEP = 5;
 const LOGO_STEP = 6;
-import type { NameMaskAtlas } from '@utils';
 
-type StampPixelSize = NameMaskAtlas['stampSize'];
+const DEFAULT_STAMP_SIZE: stampPixelSizeType = { width: 1, height: 1 };
 
-const DEFAULT_STAMP_SIZE: StampPixelSize = { width: 1, height: 1 };
-
-const buildFillSignature = (instances: GarmentTextRenderInstance[]) =>
+const buildFillSignature = (instances: garmentTextRenderInstanceType[]) =>
   JSON.stringify(instances.map((instance) => ({ text: instance.text, font: instance.font })));
 
-const buildStrokeSignature = (instances: GarmentTextRenderInstance[]) =>
+const buildStrokeSignature = (instances: garmentTextRenderInstanceType[]) =>
   JSON.stringify(
     instances.map((instance) => ({
       text: instance.text,
@@ -67,7 +64,7 @@ const buildStrokeSignature = (instances: GarmentTextRenderInstance[]) =>
     })),
   );
 
-const buildStyleSignature = (instances: GarmentTextRenderInstance[]) =>
+const buildStyleSignature = (instances: garmentTextRenderInstanceType[]) =>
   JSON.stringify(
     instances.map((instance) => ({
       textColor: instance.textColor,
@@ -79,7 +76,7 @@ const buildStyleSignature = (instances: GarmentTextRenderInstance[]) =>
     })),
   );
 
-const stampSizeChanged = (previous: StampPixelSize, next: StampPixelSize) => previous.width !== next.width || previous.height !== next.height;
+const stampSizeChanged = (previous: stampPixelSizeType, next: stampPixelSizeType) => previous.width !== next.width || previous.height !== next.height;
 
 const useGarmentNameTextures = () => {
   const product = useConfiguratorProduct((state) => state.product);
@@ -101,13 +98,13 @@ const useGarmentNameTextures = () => {
   const nameStrokeCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const nameFillTextureRef = useRef<Texture | null>(null);
   const nameStrokeTextureRef = useRef<Texture | null>(null);
-  const nameStampSizeRef = useRef<StampPixelSize>(DEFAULT_STAMP_SIZE);
+  const nameStampSizeRef = useRef<stampPixelSizeType>(DEFAULT_STAMP_SIZE);
 
   const numberFillCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const numberStrokeCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const numberFillTextureRef = useRef<Texture | null>(null);
   const numberStrokeTextureRef = useRef<Texture | null>(null);
-  const numberStampSizeRef = useRef<StampPixelSize>(DEFAULT_STAMP_SIZE);
+  const numberStampSizeRef = useRef<stampPixelSizeType>(DEFAULT_STAMP_SIZE);
 
   const nameMaskGenerationRef = useRef(0);
   const numberMaskGenerationRef = useRef(0);
@@ -173,13 +170,13 @@ const useGarmentNameTextures = () => {
 
   const ensureMaskResources = useCallback(
     (
-      stampSize: StampPixelSize,
+      stampSize: stampPixelSizeType,
       refs: {
         fillCanvasRef: { current: HTMLCanvasElement | null };
         strokeCanvasRef: { current: HTMLCanvasElement | null };
         fillTextureRef: { current: Texture | null };
         strokeTextureRef: { current: Texture | null };
-        stampSizeRef: { current: StampPixelSize };
+        stampSizeRef: { current: stampPixelSizeType };
       },
     ) => {
       if (!refs.fillCanvasRef.current) {
@@ -232,7 +229,7 @@ const useGarmentNameTextures = () => {
   );
 
   const applyNameStyleToMaterials = useCallback(
-    (stampSize: StampPixelSize = nameStampSizeRef.current) => {
+    (stampSize: stampPixelSizeType = nameStampSizeRef.current) => {
       for (const part of product.parts) {
         const style = buildNameStyleUniforms(nameInstancesForRender, product.parts, stampSize, part.id);
 
@@ -248,7 +245,7 @@ const useGarmentNameTextures = () => {
   );
 
   const applyNumberStyleToMaterials = useCallback(
-    (stampSize: StampPixelSize = numberStampSizeRef.current) => {
+    (stampSize: stampPixelSizeType = numberStampSizeRef.current) => {
       for (const part of product.parts) {
         const style = buildNameStyleUniforms(numberInstancesForRender, product.parts, stampSize, part.id);
 

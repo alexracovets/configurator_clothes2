@@ -1,10 +1,11 @@
 import type { WebGLRenderer } from 'three';
 
-import { type ComposePrintAtlasFboInput, PrintAtlasFbo } from './PrintAtlasFbo';
+import type { composePrintAtlasFboInputType } from '@types';
 
-const composePrintAtlasFbo = async (renderer: WebGLRenderer, fbo: PrintAtlasFbo, input: ComposePrintAtlasFboInput) => {
+import { PrintAtlasFbo } from './printAtlasFbo';
+
+const composePrintAtlasFbo = async (renderer: WebGLRenderer, fbo: PrintAtlasFbo, input: composePrintAtlasFboInputType) => {
   return fbo.compose(input);
 };
 
 export { composePrintAtlasFbo };
-export type { ComposePrintAtlasFboInput };

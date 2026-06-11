@@ -1,10 +1,10 @@
-import type { GarmentConfig, NumberInstance, NumberLimits, NumberPosition, TextDefaultsConfig, UvPoint } from '@types';
+import type { garmentConfigType, numberInstanceType, numberLimitsType, numberPositionType, textDefaultsConfigType, uvPointType } from '@types';
 
 import { resolvePartUvBounds } from '@utils';
 
 const NUMBER_MAX_LENGTH = 2;
 
-const resolveZonePartId = (product: GarmentConfig, zone: string): string => {
+const resolveZonePartId = (product: garmentConfigType, zone: string): string => {
   const normalized = zone.toLowerCase();
   const part = product.parts.find((item) => item.id.toLowerCase().includes(normalized));
 
@@ -16,7 +16,7 @@ const resolveZonePartId = (product: GarmentConfig, zone: string): string => {
 };
 
 // numberPositions UV is 0..1 inside the zone part; shader expects print-atlas coordinates.
-const resolveZoneLocalUvToAtlas = (product: GarmentConfig, zone: string, localUv: UvPoint): UvPoint => {
+const resolveZoneLocalUvToAtlas = (product: garmentConfigType, zone: string, localUv: uvPointType): uvPointType => {
   const partId = resolveZonePartId(product, zone);
   const part = product.parts.find((item) => item.id === partId);
 
@@ -32,7 +32,7 @@ const resolveZoneLocalUvToAtlas = (product: GarmentConfig, zone: string, localUv
   };
 };
 
-const resolveNumberDefaults = (product: GarmentConfig): TextDefaultsConfig => {
+const resolveNumberDefaults = (product: garmentConfigType): textDefaultsConfigType => {
   if (!product.numberDefaults) {
     throw new Error(`Product "${product.path}" defines numberPositions but is missing numberDefaults.`);
   }
@@ -40,7 +40,7 @@ const resolveNumberDefaults = (product: GarmentConfig): TextDefaultsConfig => {
   return product.numberDefaults;
 };
 
-const resolveNumberLimits = (product: GarmentConfig): NumberLimits => {
+const resolveNumberLimits = (product: garmentConfigType): numberLimitsType => {
   const defaults = resolveNumberDefaults(product);
 
   return {
@@ -51,7 +51,7 @@ const resolveNumberLimits = (product: GarmentConfig): NumberLimits => {
   };
 };
 
-const mapProductNumberPositions = (product: GarmentConfig): NumberPosition[] =>
+const mapProductNumberPositions = (product: garmentConfigType): numberPositionType[] =>
   (product.numberPositions ?? []).map((position, index) => ({
     key: `number-pos-${index}`,
     label: position.label,
@@ -66,7 +66,7 @@ const mapProductNumberPositions = (product: GarmentConfig): NumberPosition[] =>
 
 const sanitizeNumberText = (value: string) => value.replace(/\D/g, '').slice(0, NUMBER_MAX_LENGTH);
 
-const createNumberInstance = (product: GarmentConfig, position: NumberPosition, id: string): NumberInstance => {
+const createNumberInstance = (product: garmentConfigType, position: numberPositionType, id: string): numberInstanceType => {
   const defaults = resolveNumberDefaults(product);
 
   return {
@@ -97,4 +97,3 @@ export {
   sanitizeNumberText,
   NUMBER_MAX_LENGTH,
 };
-export type { NumberInstance, NumberLimits, NumberPosition, NumberPreview } from '@types';

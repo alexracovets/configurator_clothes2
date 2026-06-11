@@ -1,17 +1,7 @@
-import type { DesignPatternItem, PrintAtlasConfig } from '@types';
-
+import type { composePrintAtlasInputType, designPatternItemType, printAtlasConfigType } from '@types';
 import { loadCachedImage } from '../loadCachedImage/loadCachedImage';
 
-interface ComposePrintAtlasInput {
-  atlasSize: PrintAtlasConfig;
-  activePattern: DesignPatternItem | null;
-  patternColors: Record<string, string>;
-  activeOpacity: number;
-  defaultPattern: DesignPatternItem | null;
-  targetCanvas?: HTMLCanvasElement;
-}
-
-const createWorkCanvas = (size: PrintAtlasConfig) => {
+const createWorkCanvas = (size: printAtlasConfigType) => {
   const canvas = document.createElement('canvas');
   canvas.width = size.width;
   canvas.height = size.height;
@@ -39,7 +29,7 @@ const drawTinted = (ctx: CanvasRenderingContext2D, tintBuffer: HTMLCanvasElement
 const drawPattern = async (
   ctx: CanvasRenderingContext2D,
   tintBuffer: HTMLCanvasElement,
-  pattern: DesignPatternItem,
+  pattern: designPatternItemType,
   colors: Record<string, string>,
   opacity: number,
   width: number,
@@ -62,7 +52,7 @@ const drawPattern = async (
   ctx.restore();
 };
 
-const composePrintAtlas = async (input: ComposePrintAtlasInput): Promise<HTMLCanvasElement> => {
+const composePrintAtlas = async (input: composePrintAtlasInputType): Promise<HTMLCanvasElement> => {
   const canvas = input.targetCanvas ?? createWorkCanvas(input.atlasSize);
   const tintBuffer = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -88,4 +78,3 @@ const composePrintAtlas = async (input: ComposePrintAtlasInput): Promise<HTMLCan
 };
 
 export { composePrintAtlas };
-export type { ComposePrintAtlasInput };

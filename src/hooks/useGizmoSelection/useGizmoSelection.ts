@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 
 import { clearGizmoButtonHover, resolveGizmoPointerTarget } from '@gizmo';
-import type { PrintGizmoElement } from '@gizmo';
+import type { printGizmoElementType } from '@types';
 
 interface GizmoSelectionStore {
   selectedInstanceId: string | null;
@@ -14,7 +14,7 @@ interface GizmoSelectionStore {
 }
 
 interface UseGizmoSelectionOptions {
-  elements: PrintGizmoElement[];
+  elements: printGizmoElementType[];
   atlasSize: { width: number; height: number };
   gizmoStep: number | null;
   store: GizmoSelectionStore;

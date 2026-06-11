@@ -1,14 +1,12 @@
-import type { GarmentConfig } from '@types';
+import type { cartItemConfigurationType, garmentColorSnapshotType, garmentConfigType } from '@types';
 import { PALETTE_COLORS } from '@constants';
-
-import type { CartItemConfiguration, GarmentColorSnapshot } from './cartItemConfiguration';
 import { createDefaultCartItemConfiguration, createDefaultColorSnapshot } from './cartItemConfiguration';
 
 const DEFAULT_COLOR = PALETTE_COLORS[0];
 const SHIRT_TYPE = 'shirt';
 const SHORTS_TYPE = 'shorts';
 
-const resolveReferenceColorPartId = (product: GarmentConfig): string | null => {
+const resolveReferenceColorPartId = (product: garmentConfigType): string | null => {
   if (product.type === SHIRT_TYPE) {
     return product.parts.find((part) => part.label === 'Front')?.id ?? product.parts[0]?.id ?? null;
   }
@@ -20,7 +18,7 @@ const resolveReferenceColorPartId = (product: GarmentConfig): string | null => {
   return product.parts[0]?.id ?? null;
 };
 
-const copyColorSnapshotForProduct = (reference: GarmentColorSnapshot, newProduct: GarmentConfig): GarmentColorSnapshot => {
+const copyColorSnapshotForProduct = (reference: garmentColorSnapshotType, newProduct: garmentConfigType): garmentColorSnapshotType => {
   const defaults = createDefaultColorSnapshot(newProduct);
   const byPart = { ...defaults.byPart };
   const gradientsByPart = { ...defaults.gradientsByPart };
@@ -40,7 +38,11 @@ const copyColorSnapshotForProduct = (reference: GarmentColorSnapshot, newProduct
   return { byPart, gradientsByPart };
 };
 
-const applySingleReferenceColor = (reference: GarmentColorSnapshot, referenceProduct: GarmentConfig, newProduct: GarmentConfig): GarmentColorSnapshot => {
+const applySingleReferenceColor = (
+  reference: garmentColorSnapshotType,
+  referenceProduct: garmentConfigType,
+  newProduct: garmentConfigType,
+): garmentColorSnapshotType => {
   const sourcePartId = resolveReferenceColorPartId(referenceProduct);
   const sourceColor = sourcePartId ? (reference.byPart[sourcePartId] ?? DEFAULT_COLOR) : DEFAULT_COLOR;
   const defaults = createDefaultColorSnapshot(newProduct);
@@ -52,10 +54,10 @@ const applySingleReferenceColor = (reference: GarmentColorSnapshot, referencePro
 };
 
 const inheritCartItemConfiguration = (
-  referenceConfiguration: CartItemConfiguration,
-  referenceProduct: GarmentConfig,
-  newProduct: GarmentConfig,
-): CartItemConfiguration => {
+  referenceConfiguration: cartItemConfigurationType,
+  referenceProduct: garmentConfigType,
+  newProduct: garmentConfigType,
+): cartItemConfigurationType => {
   const defaults = createDefaultCartItemConfiguration(newProduct);
   const sameGarmentFamily = referenceProduct.type === newProduct.type && (newProduct.type === SHIRT_TYPE || newProduct.type === SHORTS_TYPE);
 

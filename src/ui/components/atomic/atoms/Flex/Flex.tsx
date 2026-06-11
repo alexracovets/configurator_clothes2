@@ -2,10 +2,10 @@
 
 import { Slot } from '@radix-ui/react-slot';
 
-import { cva, VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 
 import { cn } from '@utils';
-import type { ChildrenType } from '@types';
+import type { flexPropsType } from '@types';
 
 const variantFlex = cva('flex w-fit items-center justify-center', {
   variants: {
@@ -29,14 +29,7 @@ const variantFlex = cva('flex w-fit items-center justify-center', {
   },
 });
 
-interface FlexProps extends ChildrenType {
-  variant?: VariantProps<typeof variantFlex>['variant'];
-  style?: React.CSSProperties;
-  className?: string;
-  asChild?: boolean;
-}
-
-const Flex = ({ variant = 'default', asChild = false, className, children, style, ...props }: FlexProps) => {
+const Flex = ({ variant = 'default', asChild = false, className, children, style, ...props }: flexPropsType) => {
   const Component = asChild ? Slot : 'div';
 
   return (

@@ -1,1 +1,1 @@
-export { GarmentMaterialRegistryProvider, useGarmentMaterialRegistry, useGarmentSceneReady, useMaterialRegistryRevision } from './GarmentMaterialRegistry';
+export { GarmentMaterialRegistryProvider, useGarmentMaterialRegistry, useGarmentSceneReady, useMaterialRegistryRevision } from './garmentMaterialRegistry';

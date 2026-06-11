@@ -2,10 +2,10 @@
 
 import { Slot } from '@radix-ui/react-slot';
 
-import { cva, VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 
 import { cn } from '@utils';
-import type { ChildrenType } from '@types';
+import type { gridPropsType } from '@types';
 
 const variantGrid = cva('grid', {
   variants: {
@@ -26,14 +26,7 @@ const variantGrid = cva('grid', {
   },
 });
 
-interface GridProps extends ChildrenType {
-  variant?: VariantProps<typeof variantGrid>['variant'];
-  style?: React.CSSProperties;
-  className?: string;
-  asChild?: boolean;
-}
-
-const Grid = ({ variant = 'default', asChild = false, className, children, style, ...props }: GridProps) => {
+const Grid = ({ variant = 'default', asChild = false, className, children, style, ...props }: gridPropsType) => {
   const Component = asChild ? Slot : 'div';
 
   return (

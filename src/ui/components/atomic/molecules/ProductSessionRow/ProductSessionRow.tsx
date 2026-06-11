@@ -5,18 +5,10 @@ import { useState } from 'react';
 import { AtomImage, Button, SvgIcon, Text } from '@atoms';
 
 import { ProductSessionPreviewSkeleton } from '@skeletons';
+import type { productSessionRowPropsType } from '@types';
 import { cn } from '@utils';
 
-interface ProductSessionRowProps {
-  name: string;
-  previewSrc: string;
-  active?: boolean;
-  canRemove?: boolean;
-  onSelect: () => void;
-  onRemove: () => void;
-}
-
-const ProductSessionRow = ({ name, previewSrc, active = false, canRemove = true, onSelect, onRemove }: ProductSessionRowProps) => {
+const ProductSessionRow = ({ name, previewSrc, active = false, canRemove = true, onSelect, onRemove }: productSessionRowPropsType) => {
   const [isPreviewLoaded, setIsPreviewLoaded] = useState(false);
 
   return (

@@ -5,12 +5,7 @@ import { memo, useEffect, useMemo } from 'react';
 import type { Material, Mesh, Object3D } from 'three';
 
 import { DEFAULT_COLOR } from '@store';
-
-interface StaticGltfMeshProps {
-  meshName: string;
-  node: Object3D;
-  renderOrder?: number;
-}
+import type { staticGltfMeshPropsType } from '@types';
 
 const disposeMeshResources = (object: Object3D) => {
   object.traverse((child) => {
@@ -40,7 +35,7 @@ const applyStaticColor = (object: Object3D, color: string) => {
   });
 };
 
-const StaticGltfMesh = memo(({ meshName, node, renderOrder = 0 }: StaticGltfMeshProps) => {
+const StaticGltfMesh = memo(({ meshName, node, renderOrder = 0 }: staticGltfMeshPropsType) => {
   const instance = useMemo(() => {
     const clone = node.clone(true);
     applyStaticColor(clone, DEFAULT_COLOR);

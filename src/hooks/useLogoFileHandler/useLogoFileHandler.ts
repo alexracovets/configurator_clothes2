@@ -3,11 +3,11 @@
 import { useCallback, useState } from 'react';
 
 import { useConfiguratorProduct, useGarmentLogo } from '@store';
-import type { StepLogoPositionState } from '@types';
+import type { stepLogoPositionStateType } from '@types';
 import { LogoFileError, logoFileToDisplayUrl, preloadLogoDisplayUrl, yieldToMain } from '@utils';
 
 interface UploadLogoOptions {
-  position?: StepLogoPositionState;
+  position?: stepLogoPositionStateType;
   partId?: string;
 }
 

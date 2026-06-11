@@ -15,15 +15,3 @@ export {
   atomTableCellVariants,
   atomTableCaptionVariants,
 } from './AtomTable';
-
-export type {
-  AtomTableProps,
-  AtomTableBodyProps,
-  AtomTableCaptionProps,
-  AtomTableCellProps,
-  AtomTableFooterProps,
-  AtomTableHeadProps,
-  AtomTableRowProps,
-  AtomTableSectionProps,
-  AtomTableVariant,
-} from './AtomTable';

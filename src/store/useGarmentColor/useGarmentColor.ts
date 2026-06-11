@@ -1,26 +1,21 @@
 'use client';
 
-import type { GarmentConfig } from '@types';
+import type { garmentColorSnapshotType, garmentConfigType, partGradientType } from '@types';
 
 import { create } from 'zustand';
 
 import { PALETTE_COLORS } from '@constants';
 
 import { buildDefaultGradients } from './mapPartGradientDefaults';
-import { DISABLED_PART_GRADIENT, type PartGradient } from './partGradientTypes';
+import { DISABLED_PART_GRADIENT } from './partGradientTypes';
 
 const DEFAULT_COLOR = PALETTE_COLORS[0];
 
-interface GarmentColorSnapshot {
-  byPart: Record<string, string>;
-  gradientsByPart: Record<string, PartGradient>;
-}
-
 interface GarmentColorState {
   byPart: Record<string, string>;
-  gradientsByPart: Record<string, PartGradient>;
-  initForProduct: (product: GarmentConfig) => void;
-  restoreSnapshot: (snapshot: GarmentColorSnapshot) => void;
+  gradientsByPart: Record<string, partGradientType>;
+  initForProduct: (product: garmentConfigType) => void;
+  restoreSnapshot: (snapshot: garmentColorSnapshotType) => void;
   setPartColor: (partId: string, color: string) => void;
   getPartColor: (partId: string) => string;
   setPartGradientEnabled: (partId: string, enabled: boolean) => void;
@@ -29,12 +24,12 @@ interface GarmentColorState {
   setPartGradientPosition: (partId: string, position: number) => void;
   setPartGradientSoftness: (partId: string, softness: number) => void;
   setPartGradientOpacity: (partId: string, opacity: number) => void;
-  getPartGradient: (partId: string) => PartGradient;
+  getPartGradient: (partId: string) => partGradientType;
 }
 
-const buildDefaultColors = (product: GarmentConfig): Record<string, string> => Object.fromEntries(product.parts.map((part) => [part.id, DEFAULT_COLOR]));
+const buildDefaultColors = (product: garmentConfigType): Record<string, string> => Object.fromEntries(product.parts.map((part) => [part.id, DEFAULT_COLOR]));
 
-const getOrCreateGradient = (gradientsByPart: Record<string, PartGradient>, partId: string): PartGradient => {
+const getOrCreateGradient = (gradientsByPart: Record<string, partGradientType>, partId: string): partGradientType => {
   return gradientsByPart[partId] ?? DISABLED_PART_GRADIENT;
 };
 
@@ -146,4 +141,3 @@ const useGarmentColor = create<GarmentColorState>((set, get) => ({
 }));
 
 export { useGarmentColor, DEFAULT_COLOR };
-export type { PartGradient };

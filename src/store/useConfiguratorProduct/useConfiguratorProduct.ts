@@ -1,22 +1,22 @@
 'use client';
 
-import type { GarmentConfig, StyleId } from '@types';
+import type { garmentConfigType, styleIdType } from '@types';
 import { getProduct } from '@data';
 
 import { create } from 'zustand';
 
 interface ConfiguratorProductState {
-  styleId: StyleId;
+  styleId: styleIdType;
   productIndex: number;
-  product: GarmentConfig;
+  product: garmentConfigType;
   setProductIndex: (index: number) => void;
-  setProduct: (styleId: StyleId, productIndex: number) => void;
+  setProduct: (styleId: styleIdType, productIndex: number) => void;
 }
 
-const DEFAULT_STYLE_ID: StyleId = 'crewneck';
+const DEFAULT_STYLE_ID: styleIdType = 'crewneck';
 const DEFAULT_PRODUCT_INDEX = 1;
 
-const resolveProduct = (styleId: StyleId, productIndex: number): GarmentConfig => {
+const resolveProduct = (styleId: styleIdType, productIndex: number): garmentConfigType => {
   const product = getProduct(styleId, productIndex);
   if (!product) throw new Error(`Product not found: ${styleId} #${productIndex}`);
   return product;

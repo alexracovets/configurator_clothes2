@@ -3,15 +3,12 @@
 import { type ChangeEvent, useMemo, useRef, useState } from 'react';
 
 import { AtomImage, Button, Flex, Grid, SvgIcon, Text } from '@atoms';
-import { useLogoFileHandler } from '@hooks';
+import { useLogoFileHandler, useStepLogo } from '@hooks';
 import { HiddenLogoFileInput, LogoUpload } from '../../ConfigurationTools/LogoUpload';
 import { LogoEditPanel } from '../../ConfigurationTools/LogoEditPanel';
-import { useStepLogo } from '@store';
-import type { StepLogoPartState } from '@types';
+import type { filePickContextType, stepLogoPartStateType } from '@types';
 
-type FilePickContext = { mode: 'upload' } | { mode: 'replace'; partId: string };
-
-const LogoListRow = ({ part, onEdit, onDelete }: { part: StepLogoPartState; onEdit?: () => void; onDelete?: () => void }) => (
+const LogoListRow = ({ part, onEdit, onDelete }: { part: stepLogoPartStateType; onEdit?: () => void; onDelete?: () => void }) => (
   <Grid className="grid-cols-[1fr_auto] items-center min-h-[24px] px-2 gap-5 w-full">
     <Grid className="grid-cols-[auto_1fr] items-center gap-2 min-w-0">
       <AtomImage src={part.src} alt={part.fileName} width={16} height={16} className="object-contain shrink-0" />
@@ -54,7 +51,7 @@ const ConfigurationLogo = () => {
   const [editingPartId, setEditingPartId] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const pickContextRef = useRef<FilePickContext>({ mode: 'upload' });
+  const pickContextRef = useRef<filePickContextType>({ mode: 'upload' });
 
   const brandLogos = useMemo(() => parts.filter((part) => part.isDefault), [parts]);
   const userLogos = useMemo(() => parts.filter((part) => !part.isDefault), [parts]);

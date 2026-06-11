@@ -2,14 +2,10 @@
 
 import { forwardRef } from 'react';
 
-import { LOGO_ACCEPTED_INPUT } from '@utils';
+import { LOGO_ACCEPTED_INPUT } from '@constants';
+import type { hiddenLogoFileInputPropsType } from '@types';
 
-interface HiddenLogoFileInputProps {
-  disabled?: boolean;
-  onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
-const HiddenLogoFileInput = forwardRef<HTMLInputElement, HiddenLogoFileInputProps>(({ disabled, onChange }, ref) => (
+const HiddenLogoFileInput = forwardRef<HTMLInputElement, hiddenLogoFileInputPropsType>(({ disabled, onChange }, ref) => (
   <input ref={ref} type="file" accept={LOGO_ACCEPTED_INPUT} className="hidden" disabled={disabled} onChange={onChange} />
 ));
 

@@ -4,15 +4,9 @@ import { memo } from 'react';
 
 import { AtomInputHex, Button, ColorPicker, Flex, Grid, SvgIcon, Text } from '@atoms';
 import { PALETTE_COLORS } from '@constants';
+import type { colorControlPropsType } from '@types';
 
-interface ColorControlProps {
-  color: string;
-  label?: string;
-  onSelect?: (color: string) => void;
-  onPreviewSelect?: (color: string) => void;
-}
-
-const ColorControl = memo(({ color, label, onSelect, onPreviewSelect }: ColorControlProps) => {
+const ColorControl = memo(({ color, label, onSelect, onPreviewSelect }: colorControlPropsType) => {
   return (
     <Flex variant="configurator_part">
       {label && <Text variant="configurator_part_label">{label}</Text>}

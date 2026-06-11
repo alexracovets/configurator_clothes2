@@ -1,10 +1,10 @@
 'use client';
 
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@shared';
+import type { accordionAtomPropsType } from '@types';
 import { cn } from '@utils';
-import type { AccordionItem as AccordionItemConfig } from '@types';
 
 const accordionItemVariants = cva('', {
   variants: {
@@ -42,16 +42,7 @@ const accordionContentVariants = cva('', {
   },
 });
 
-interface AccordionAtomProps extends VariantProps<typeof accordionItemVariants> {
-  items: AccordionItemConfig[];
-  className?: string;
-  defaultValue?: string[];
-  value?: string[];
-  onValueChange?: (value: string[]) => void;
-  multiple?: boolean;
-}
-
-const AccordionAtom = ({ items, variant = 'default', className, defaultValue, value, onValueChange, multiple = false }: AccordionAtomProps) => {
+const AccordionAtom = ({ items, variant = 'default', className, defaultValue, value, onValueChange, multiple = false }: accordionAtomPropsType) => {
   return (
     <Accordion className={cn(className)} multiple={multiple} defaultValue={defaultValue} value={value} onValueChange={onValueChange}>
       {items.map(({ value, trigger, content }) => (

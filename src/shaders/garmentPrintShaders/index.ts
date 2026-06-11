@@ -1,0 +1,1 @@
+export { garmentPrintMapFragment } from './garmentPrintShaders';

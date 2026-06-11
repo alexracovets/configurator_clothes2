@@ -1,38 +1,15 @@
 'use client';
 
-import type { FaqContentSection } from '@types';
-
-import type { ReactNode } from 'react';
-
-import { type VariantProps } from 'class-variance-authority';
+import type { atomRichTextPropsType, atomRichTextTextPropsType, faqContentSectionType, richTextSectionType, textVariantType } from '@types';
 
 import { cn } from '@utils';
 
-import { AtomList, atomListWrapperVariants, Text } from '@atoms';
+import { AtomList, Text } from '@atoms';
 
-type RichTextSection = { type: 'list'; items: string[] } | { type: 'paragraphs'; paragraphs: string[] };
-
-type TextVariant = NonNullable<React.ComponentProps<typeof Text>['variant']>;
-
-const getSectionContent = (section: RichTextSection | FaqContentSection) => {
+const getSectionContent = (section: richTextSectionType | faqContentSectionType) => {
   if (section.type === 'list') return section.items;
   return section.paragraphs;
 };
-
-type AtomRichTextTextProps = Omit<React.ComponentProps<typeof Text>, 'children' | 'asChild'> & {
-  content: string;
-  section?: never;
-  listIcon?: never;
-};
-
-type AtomRichTextSectionProps = Omit<React.ComponentProps<typeof Text>, 'children' | 'asChild'> & {
-  section: RichTextSection | FaqContentSection;
-  content?: never;
-  listVariant?: VariantProps<typeof atomListWrapperVariants>['variant'];
-  listIcon?: ReactNode;
-};
-
-type AtomRichTextProps = AtomRichTextTextProps | AtomRichTextSectionProps;
 
 const defaultListIcon = (
   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden className="text-default">
@@ -41,7 +18,7 @@ const defaultListIcon = (
   </svg>
 );
 
-const RichTextItem = ({ content, className, variant = 'default', ...props }: AtomRichTextTextProps) => {
+const RichTextItem = ({ content, className, variant = 'default', ...props }: atomRichTextTextPropsType) => {
   return (
     <Text variant={variant} className={cn('leading-[1.4]', className)} asChild {...props}>
       <span dangerouslySetInnerHTML={{ __html: content }} />
@@ -49,11 +26,11 @@ const RichTextItem = ({ content, className, variant = 'default', ...props }: Ato
   );
 };
 
-const AtomRichText = (props: AtomRichTextProps) => {
+const AtomRichText = (props: atomRichTextPropsType) => {
   if ('section' in props && props.section) {
     const { section, variant = 'default', listVariant = 'default', listIcon, className, ...rest } = props;
     const items = getSectionContent(section);
-    const textVariant = variant as TextVariant;
+    const textVariant = variant as textVariantType;
 
     if (section.type === 'list') {
       return (
@@ -75,4 +52,3 @@ const AtomRichText = (props: AtomRichTextProps) => {
 };
 
 export { AtomRichText };
-export type { AtomRichTextProps, RichTextSection };

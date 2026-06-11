@@ -1,7 +1,7 @@
-import type { UvBounds } from '@types';
+import type { uvBoundsType } from '@types';
 import { DEFAULT_PART_TEXTURE_SIZE } from '@constants';
 
-const drawPrintOnPart = (ctx: CanvasRenderingContext2D, size: number, printCanvas: HTMLCanvasElement, bounds: UvBounds) => {
+const drawPrintOnPart = (ctx: CanvasRenderingContext2D, size: number, printCanvas: HTMLCanvasElement, bounds: uvBoundsType) => {
   const pw = printCanvas.width;
   const ph = printCanvas.height;
   const sx = bounds.minX * pw;
@@ -18,7 +18,7 @@ const drawPrintOnPart = (ctx: CanvasRenderingContext2D, size: number, printCanva
 const composePartAlbedo = (
   color: string,
   printCanvas: HTMLCanvasElement | null,
-  bounds: UvBounds,
+  bounds: uvBoundsType,
   size = DEFAULT_PART_TEXTURE_SIZE,
   targetCanvas?: HTMLCanvasElement,
 ): HTMLCanvasElement => {

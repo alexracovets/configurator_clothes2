@@ -1,14 +1,14 @@
-import type { ChildrenType } from '@types';
+import type { childrenType } from '@types';
 import {
   AsideConfiguration,
   AsideConfigurationUtility,
   CartConfigurationSync,
   ConfiguratorInitialLoader,
-  FooterCoinfiguration,
+  FooterConfiguration,
   HeaderConfiguration,
 } from '@organisms';
 
-const ConfiguratorLayout = ({ children }: ChildrenType) => {
+const ConfiguratorLayout = ({ children }: childrenType) => {
   return (
     <div className="relative grid grid-cols-1 grid-rows-[auto_1fr_auto] h-full min-h-0 bg-linear-to-t from-[#E8E8E8] to-white">
       <ConfiguratorInitialLoader />
@@ -19,7 +19,7 @@ const ConfiguratorLayout = ({ children }: ChildrenType) => {
         {children}
         <AsideConfigurationUtility />
       </main>
-      <FooterCoinfiguration />
+      <FooterConfiguration />
     </div>
   );
 };

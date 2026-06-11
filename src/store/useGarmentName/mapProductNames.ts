@@ -1,6 +1,6 @@
-import type { GarmentConfig, NameInstance, NameLimits, NamePosition, TextDefaultsConfig } from '@types';
+import type { garmentConfigType, nameInstanceType, nameLimitsType, namePositionType, textDefaultsConfigType } from '@types';
 
-const resolveNameDefaults = (product: GarmentConfig): TextDefaultsConfig => {
+const resolveNameDefaults = (product: garmentConfigType): textDefaultsConfigType => {
   if (!product.nameDefaults) {
     throw new Error(`Product "${product.path}" defines namePositions but is missing nameDefaults.`);
   }
@@ -8,7 +8,7 @@ const resolveNameDefaults = (product: GarmentConfig): TextDefaultsConfig => {
   return product.nameDefaults;
 };
 
-const resolveNameLimits = (product: GarmentConfig): NameLimits => {
+const resolveNameLimits = (product: garmentConfigType): nameLimitsType => {
   const defaults = resolveNameDefaults(product);
 
   return {
@@ -19,7 +19,7 @@ const resolveNameLimits = (product: GarmentConfig): NameLimits => {
   };
 };
 
-const mapProductNamePositions = (product: GarmentConfig): NamePosition[] =>
+const mapProductNamePositions = (product: garmentConfigType): namePositionType[] =>
   (product.namePositions ?? []).map((position, index) => ({
     key: `name-pos-${index}`,
     label: position.label,
@@ -32,7 +32,7 @@ const mapProductNamePositions = (product: GarmentConfig): NamePosition[] =>
     interactive: position.interactive ?? true,
   }));
 
-const createNameInstance = (product: GarmentConfig, position: NamePosition, id: string): NameInstance => {
+const createNameInstance = (product: garmentConfigType, position: namePositionType, id: string): nameInstanceType => {
   const defaults = resolveNameDefaults(product);
 
   return {
@@ -55,4 +55,3 @@ const createNameInstance = (product: GarmentConfig, position: NamePosition, id: 
 };
 
 export { createNameInstance, mapProductNamePositions, resolveNameDefaults, resolveNameLimits };
-export type { NameInstance, NameLimits, NamePosition, NamePreview } from '@types';

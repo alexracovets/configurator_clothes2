@@ -1,8 +1,8 @@
-import type { GarmentConfig, GarmentPartConfig, PartGradientConfig } from '@types';
+import type { garmentConfigType, garmentPartConfigType, partGradientConfigType, partGradientType } from '@types';
 
-import { DEFAULT_GRADIENT_COLOR2, type PartGradient } from './partGradientTypes';
+import { DEFAULT_GRADIENT_COLOR2 } from './partGradientTypes';
 
-const FALLBACK_GRADIENT_CONFIG: PartGradientConfig = {
+const FALLBACK_GRADIENT_CONFIG: partGradientConfigType = {
   reversed: false,
   rotation: 0,
   position: 0.5,
@@ -10,7 +10,7 @@ const FALLBACK_GRADIENT_CONFIG: PartGradientConfig = {
   opacity: 1,
 };
 
-const mapPartGradientDefaults = (part: GarmentPartConfig): PartGradient => {
+const mapPartGradientDefaults = (part: garmentPartConfigType): partGradientType => {
   const config = part.gradient ?? FALLBACK_GRADIENT_CONFIG;
 
   return {
@@ -24,10 +24,10 @@ const mapPartGradientDefaults = (part: GarmentPartConfig): PartGradient => {
   };
 };
 
-const buildDefaultGradients = (product: GarmentConfig): Record<string, PartGradient> =>
+const buildDefaultGradients = (product: garmentConfigType): Record<string, partGradientType> =>
   Object.fromEntries(product.parts.map((part) => [part.id, mapPartGradientDefaults(part)]));
 
-const resolveGradientColors = (baseColor: string, gradient: PartGradient) => {
+const resolveGradientColors = (baseColor: string, gradient: partGradientType) => {
   if (!gradient.enabled || !gradient.reversed) {
     return { fabricColor: baseColor, gradientColor2: gradient.color2 };
   }

@@ -2,19 +2,10 @@
 
 import { createContext, useCallback, useContext, useMemo, useRef, useSyncExternalStore } from 'react';
 
+import type { garmentMaterialRegistryValueType } from '@types';
 import type { MeshStandardMaterial } from 'three';
 
-interface GarmentMaterialRegistryValue {
-  register: (key: string, material: MeshStandardMaterial) => void;
-  unregister: (key: string, material: MeshStandardMaterial) => void;
-  getMaterials: (key: string) => readonly MeshStandardMaterial[];
-  hasMaterialsForParts: (partIds: readonly string[]) => boolean;
-  subscribeMaterials: (listener: () => void) => () => void;
-  getRevision: () => number;
-  bumpRevision: () => void;
-}
-
-const GarmentMaterialRegistryContext = createContext<GarmentMaterialRegistryValue | null>(null);
+const GarmentMaterialRegistryContext = createContext<garmentMaterialRegistryValueType | null>(null);
 
 const GarmentMaterialRegistryProvider = ({ children }: { children: React.ReactNode }) => {
   const materialsRef = useRef<Map<string, Set<MeshStandardMaterial>>>(new Map());
@@ -85,7 +76,7 @@ const GarmentMaterialRegistryProvider = ({ children }: { children: React.ReactNo
   return <GarmentMaterialRegistryContext.Provider value={value}>{children}</GarmentMaterialRegistryContext.Provider>;
 };
 
-const useGarmentMaterialRegistry = (): GarmentMaterialRegistryValue => {
+const useGarmentMaterialRegistry = (): garmentMaterialRegistryValueType => {
   const context = useContext(GarmentMaterialRegistryContext);
   if (!context) throw new Error('useGarmentMaterialRegistry must be used within GarmentMaterialRegistryProvider');
   return context;

@@ -1,39 +1,34 @@
 'use client';
 
-import type { GarmentConfig } from '@types';
+import type { garmentConfigType, garmentNumberSnapshotType, numberInstanceType, numberPositionType, numberPreviewType } from '@types';
 
 import { create } from 'zustand';
 
 import { mapProductNumberPositions } from './mapProductNumbers';
-import type { NumberInstance, NumberPosition, NumberPreview } from './mapProductNumbers';
-
-interface GarmentNumberSnapshot {
-  instances: NumberInstance[];
-}
 
 interface GarmentNumberState {
   productPath: string | null;
   positionsKey: string | null;
-  positions: NumberPosition[];
-  instances: NumberInstance[];
-  preview: NumberPreview | null;
-  initForProduct: (product: GarmentConfig) => void;
-  restoreSnapshot: (product: GarmentConfig, snapshot: GarmentNumberSnapshot) => void;
-  addInstance: (instance: NumberInstance) => void;
+  positions: numberPositionType[];
+  instances: numberInstanceType[];
+  preview: numberPreviewType | null;
+  initForProduct: (product: garmentConfigType) => void;
+  restoreSnapshot: (product: garmentConfigType, snapshot: garmentNumberSnapshotType) => void;
+  addInstance: (instance: numberInstanceType) => void;
   removeInstance: (id: string) => void;
-  updateInstance: (id: string, patch: Partial<NumberInstance>) => void;
-  setPreview: (instanceId: string, patch: NumberPreview['patch']) => void;
+  updateInstance: (id: string, patch: Partial<numberInstanceType>) => void;
+  setPreview: (instanceId: string, patch: numberPreviewType['patch']) => void;
   clearPreview: () => void;
-  getInstancesForRender: () => NumberInstance[];
+  getInstancesForRender: () => numberInstanceType[];
 }
 
-const resolveNumberInstancesForRender = (instances: NumberInstance[], preview: NumberPreview | null): NumberInstance[] => {
+const resolveNumberInstancesForRender = (instances: numberInstanceType[], preview: numberPreviewType | null): numberInstanceType[] => {
   if (!preview) return instances;
 
   return instances.map((instance) => (instance.id === preview.instanceId ? { ...instance, ...preview.patch } : instance));
 };
 
-const buildPositionsKey = (product: GarmentConfig) => JSON.stringify(product.numberPositions ?? []);
+const buildPositionsKey = (product: garmentConfigType) => JSON.stringify(product.numberPositions ?? []);
 
 const useGarmentNumber = create<GarmentNumberState>((set, get) => ({
   productPath: null,
@@ -46,7 +41,7 @@ const useGarmentNumber = create<GarmentNumberState>((set, get) => ({
     const positions = mapProductNumberPositions(product);
     const state = get();
 
-    const syncInstancesFromPositions = (instances: NumberInstance[]) =>
+    const syncInstancesFromPositions = (instances: numberInstanceType[]) =>
       instances.map((instance) => {
         const position = positions.find((item) => item.key === instance.positionKey);
         if (!position) return instance;
@@ -107,4 +102,3 @@ const useGarmentNumber = create<GarmentNumberState>((set, get) => ({
 }));
 
 export { resolveNumberInstancesForRender, useGarmentNumber };
-export type { NumberInstance, NumberPosition, NumberPreview };

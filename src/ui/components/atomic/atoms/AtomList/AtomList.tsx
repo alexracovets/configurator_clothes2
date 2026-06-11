@@ -1,10 +1,9 @@
 'use client';
 
-import type { ReactNode } from 'react';
-
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 
 import { cn } from '@utils';
+import type { atomListPropsType } from '@types';
 
 const atomListWrapperVariants = cva('flex w-full flex-col', {
   variants: {
@@ -18,16 +17,7 @@ const atomListWrapperVariants = cva('flex w-full flex-col', {
   },
 });
 
-interface AtomListProps extends VariantProps<typeof atomListWrapperVariants> {
-  items: ReactNode[];
-  icon?: ReactNode;
-  wrapperClassName?: string;
-  itemClassName?: string;
-  iconClassName?: string;
-  contentClassName?: string;
-}
-
-const AtomList = ({ items, icon, variant, wrapperClassName, itemClassName, iconClassName, contentClassName }: AtomListProps) => {
+const AtomList = ({ items, icon, variant, wrapperClassName, itemClassName, iconClassName, contentClassName }: atomListPropsType) => {
   return (
     <ul className={cn(atomListWrapperVariants({ variant }), wrapperClassName)}>
       {items.map((item, index) => (

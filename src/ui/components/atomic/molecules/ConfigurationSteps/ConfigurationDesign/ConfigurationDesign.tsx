@@ -9,15 +9,15 @@ import { PatternLayerColorControl } from '../../ConfigurationTools/PatternLayerC
 import { RangeControl } from '../../ConfigurationTools/RangeControl';
 import { PALETTE_COLORS } from '@constants';
 import { useConfiguratorProduct, useGarmentDesign } from '@store';
-import type { DesignPatternPart } from '@types';
+import type { designPatternPartType } from '@types';
 import { PatternPreviewSkeleton } from '@skeletons';
 import { cn } from '@utils';
 
 const DEFAULT_PART_COLOR = PALETTE_COLORS[1];
 
-const getPatternPreviewKey = (parts: DesignPatternPart[]) => parts.map((part) => `${part.key}:${part.previewSrc}`).join('|');
+const getPatternPreviewKey = (parts: designPatternPartType[]) => parts.map((part) => `${part.key}:${part.previewSrc}`).join('|');
 
-const PatternPreviewContent = ({ parts, eager }: { parts: DesignPatternPart[]; eager?: boolean }) => {
+const PatternPreviewContent = ({ parts, eager }: { parts: designPatternPartType[]; eager?: boolean }) => {
   const [loadedCount, setLoadedCount] = useState(0);
   const isLoaded = loadedCount >= parts.length;
 
@@ -40,7 +40,7 @@ const PatternPreviewContent = ({ parts, eager }: { parts: DesignPatternPart[]; e
   );
 };
 
-const PatternPreview = ({ parts, eager }: { parts: DesignPatternPart[]; eager?: boolean }) => (
+const PatternPreview = ({ parts, eager }: { parts: designPatternPartType[]; eager?: boolean }) => (
   <PatternPreviewContent key={getPatternPreviewKey(parts)} parts={parts} eager={eager} />
 );
 

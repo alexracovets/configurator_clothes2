@@ -1,8 +1,6 @@
-import type { GarmentConfig } from '@types';
+import type { garmentConfigType, pbrTexturePathsType } from '@types';
 
-import type { PbrTexturePaths } from '../pbrMaps/types';
-
-const resolvePbrTexturePaths = (product: GarmentConfig): PbrTexturePaths | null => {
+const resolvePbrTexturePaths = (product: garmentConfigType): pbrTexturePathsType | null => {
   const files = product.pbrTextures;
   if (!files) return null;
 

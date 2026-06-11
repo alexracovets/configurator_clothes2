@@ -1,21 +1,16 @@
-export type { CatalogProductRef } from './catalog';
-export type { FaqContentData, FaqContentListSection, FaqContentParagraphsSection, FaqContentSection } from './faq';
+export type { catalogProductRefType } from './catalog';
+export type { faqContentDataType, faqContentSectionType, richTextSectionType } from './faq';
 export type {
-  GarmentConfig,
-  GarmentPbrTexturesConfig,
-  GarmentPartConfig,
-  GarmentStaticMeshConfig,
-  LogoPositionConfig,
-  NamePositionConfig,
-  NumberPositionConfig,
-  PartGradientConfig,
-  PatternConfig,
-  PatternPartConfig,
-  PrintAtlasConfig,
-  StyleConfig,
-  StyleId,
-  TextDefaultsConfig,
-  TextPositionConfig,
-  UvBounds,
-  UvPoint,
+  garmentConfigType,
+  garmentPartConfigType,
+  logoPositionConfigType,
+  partGradientConfigType,
+  patternConfigType,
+  printAtlasConfigType,
+  styleConfigType,
+  styleIdType,
+  textDefaultsConfigType,
+  textPositionConfigType,
+  uvBoundsType,
+  uvPointType,
 } from './garment';

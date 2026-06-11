@@ -2,9 +2,10 @@
 
 import { forwardRef } from 'react';
 
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cva } from 'class-variance-authority';
 
 import { cn } from '@utils';
+import type { slidingIndicatorPropsType, slidingIndicatorTrackPropsType } from '@types';
 
 const slidingIndicatorVariants = cva(
   'absolute bottom-0 left-0 pointer-events-none will-change-transform transition-[transform,width] duration-300 ease-in-out',
@@ -33,17 +34,13 @@ const slidingIndicatorTrackVariants = cva('absolute bottom-0 left-0 right-0 poin
   },
 });
 
-type SlidingIndicatorProps = React.ComponentProps<'span'> & VariantProps<typeof slidingIndicatorVariants>;
-
-const SlidingIndicator = forwardRef<HTMLSpanElement, SlidingIndicatorProps>(({ className, variant, ...props }, ref) => {
+const SlidingIndicator = forwardRef<HTMLSpanElement, slidingIndicatorPropsType>(({ className, variant, ...props }, ref) => {
   return <span ref={ref} aria-hidden className={cn(slidingIndicatorVariants({ variant }), className)} {...props} />;
 });
 
 SlidingIndicator.displayName = 'SlidingIndicator';
 
-type SlidingIndicatorTrackProps = React.ComponentProps<'span'> & VariantProps<typeof slidingIndicatorTrackVariants>;
-
-const SlidingIndicatorTrack = ({ className, variant, ...props }: SlidingIndicatorTrackProps) => {
+const SlidingIndicatorTrack = ({ className, variant, ...props }: slidingIndicatorTrackPropsType) => {
   return <span aria-hidden className={cn(slidingIndicatorTrackVariants({ variant }), className)} {...props} />;
 };
 

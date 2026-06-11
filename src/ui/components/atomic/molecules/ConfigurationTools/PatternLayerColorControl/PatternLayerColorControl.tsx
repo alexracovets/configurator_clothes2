@@ -5,22 +5,10 @@ import { useState } from 'react';
 import { Flex, Text } from '@atoms';
 import { ColorControl } from '../ColorControl';
 
+import type { patternLayerColorControlPropsType } from '@types';
 import { cn } from '@utils';
 
-interface PatternLayer {
-  key: string;
-  label: string;
-}
-
-interface PatternLayerColorControlProps {
-  layers: PatternLayer[];
-  colors: Record<string, string>;
-  onColorChange: (layerKey: string, color: string) => void;
-  onPreviewColorChange?: (layerKey: string, color: string) => void;
-  label?: string;
-}
-
-const PatternLayerColorControl = ({ layers, colors, onColorChange, onPreviewColorChange, label = 'Colore design' }: PatternLayerColorControlProps) => {
+const PatternLayerColorControl = ({ layers, colors, onColorChange, onPreviewColorChange, label = 'Colore design' }: patternLayerColorControlPropsType) => {
   const [activeLayerKey, setActiveLayerKey] = useState(layers[0]?.key ?? '');
 
   const activeLayer = layers.find((layer) => layer.key === activeLayerKey) ?? layers[0];
@@ -58,4 +46,3 @@ const PatternLayerColorControl = ({ layers, colors, onColorChange, onPreviewColo
 };
 
 export { PatternLayerColorControl };
-export type { PatternLayer, PatternLayerColorControlProps };

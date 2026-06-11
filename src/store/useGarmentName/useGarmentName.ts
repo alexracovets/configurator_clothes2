@@ -1,45 +1,39 @@
 'use client';
 
-import type { GarmentConfig } from '@types';
+import type { garmentConfigType, garmentNameSnapshotType, nameInstanceType, namePositionType, namePreviewType } from '@types';
 
 import { create } from 'zustand';
 
 import { mapProductNamePositions } from './mapProductNames';
-import type { NameInstance, NamePosition, NamePreview } from './mapProductNames';
-
-interface GarmentNameSnapshot {
-  instances: NameInstance[];
-  selectedInstanceId: string | null;
-}
 
 interface GarmentNameState {
   productPath: string | null;
   positionsKey: string | null;
-  positions: NamePosition[];
-  instances: NameInstance[];
-  preview: NamePreview | null;
+  positions: namePositionType[];
+  instances: nameInstanceType[];
+  preview: namePreviewType | null;
   selectedInstanceId: string | null;
-  initForProduct: (product: GarmentConfig) => void;
-  restoreSnapshot: (product: GarmentConfig, snapshot: GarmentNameSnapshot) => void;
-  addInstance: (instance: NameInstance) => void;
+  initForProduct: (product: garmentConfigType) => void;
+  restoreSnapshot: (product: garmentConfigType, snapshot: garmentNameSnapshotType) => void;
+  addInstance: (instance: nameInstanceType) => void;
   removeInstance: (id: string) => void;
   duplicateInstance: (id: string) => void;
-  updateInstance: (id: string, patch: Partial<NameInstance>) => void;
+  updateInstance: (id: string, patch: Partial<nameInstanceType>) => void;
   setSelectedInstance: (id: string | null) => void;
   clearSelectedInstance: () => void;
   bringInstanceToFront: (id: string) => void;
-  setPreview: (instanceId: string, patch: NamePreview['patch']) => void;
+  setPreview: (instanceId: string, patch: namePreviewType['patch']) => void;
   clearPreview: () => void;
-  getInstancesForRender: () => NameInstance[];
+  getInstancesForRender: () => nameInstanceType[];
 }
 
-const resolveInstancesForRender = (instances: NameInstance[], preview: NamePreview | null): NameInstance[] => {
+const resolveInstancesForRender = (instances: nameInstanceType[], preview: namePreviewType | null): nameInstanceType[] => {
   if (!preview) return instances;
 
   return instances.map((instance) => (instance.id === preview.instanceId ? { ...instance, ...preview.patch } : instance));
 };
 
-const buildPositionsKey = (product: GarmentConfig) => JSON.stringify(product.namePositions ?? []);
+const buildPositionsKey = (product: garmentConfigType) => JSON.stringify(product.namePositions ?? []);
 
 const useGarmentName = create<GarmentNameState>((set, get) => ({
   productPath: null,
@@ -92,7 +86,7 @@ const useGarmentName = create<GarmentNameState>((set, get) => ({
       const source = state.instances.find((instance) => instance.id === id);
       if (!source) return state;
 
-      const copy: NameInstance = {
+      const copy: nameInstanceType = {
         ...source,
         id: `${source.id}-copy-${Date.now()}`,
         uv: { x: source.uv.x, y: Math.min(0.98, source.uv.y + 0.04) },
@@ -138,4 +132,3 @@ const useGarmentName = create<GarmentNameState>((set, get) => ({
 }));
 
 export { resolveInstancesForRender, useGarmentName };
-export type { NameInstance, NamePosition, NamePreview };

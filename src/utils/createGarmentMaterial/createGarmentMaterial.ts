@@ -1,28 +1,31 @@
 import { Color, MeshStandardMaterial, type Texture, Vector2, Vector4 } from 'three';
 
-import { PRINT_ATLAS_HEIGHT, PRINT_ATLAS_WIDTH } from '@constants';
+import {
+  LOGO_SLOT_COUNT,
+  NAME_GIZMO_BTN_ACTIVE_COLOR,
+  NAME_GIZMO_BTN_FILL_COLOR,
+  NAME_GIZMO_ICON_COLOR,
+  NAME_SLOT_COUNT,
+  PRINT_ATLAS_HEIGHT,
+  PRINT_ATLAS_WIDTH,
+} from '@constants';
 
-import type { PbrMaps } from '../pbrMaps';
-
-import { garmentGradientMapFragment } from '../garmentGradient/garmentGradientShaders';
-import type { GarmentPrintState } from '../garmentPrint/applyGarmentPrint';
-import { getEmptyPrintTexture } from '../garmentPrint/emptyPrintTexture';
-import { NAME_SLOT_COUNT } from '../garmentPrint/nameSlotConstants';
-import { hydrateGarmentLogoUniforms } from '../garmentPrint/applyGarmentLogos';
-import { hydrateGarmentNameUniforms, hydrateGarmentNumberUniforms } from '../garmentPrint/applyGarmentNames';
-import { LOGO_SLOT_COUNT } from '../garmentPrint/logoStampConstants';
-import { garmentPrintMapFragment } from '../garmentPrint/garmentPrintShaders';
-
-import { applyGarmentPrintBase, applyPbrMaps, createDummyNormal } from './applyPbrMaps';
-import { NAME_GIZMO_BTN_ACTIVE_COLOR, NAME_GIZMO_BTN_FILL_COLOR, NAME_GIZMO_ICON_COLOR } from '../garmentPrint/nameStampConstants';
+import type { garmentPrintStateType, pbrMapsType } from '@types';
 import {
   garmentFragmentUvPars,
   garmentGizmoLightsFragment,
+  garmentGradientMapFragment,
   garmentNormalFragment,
+  garmentPrintMapFragment,
   garmentRoughnessFragment,
   garmentVertexUv,
   garmentVertexUvPars,
-} from './garmentShaders';
+} from '@shaders';
+import { hydrateGarmentLogoUniforms } from '../garmentPrint/applyGarmentLogos';
+import { hydrateGarmentNameUniforms, hydrateGarmentNumberUniforms } from '../garmentPrint/applyGarmentNames';
+import { getEmptyPrintTexture } from '../garmentPrint/emptyPrintTexture';
+
+import { applyGarmentPrintBase, applyPbrMaps, createDummyNormal } from './applyPbrMaps';
 
 const SLEEVE_POLYGON_OFFSET = { factor: -1, units: -1 } as const;
 
@@ -50,7 +53,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
 
   material.onBeforeCompile = (shader) => {
     const bakeNormal = (material.userData.pbrBakeNormal as Texture | undefined) ?? createDummyNormal();
-    const printState = material.userData.garmentPrintState as GarmentPrintState | undefined;
+    const printState = material.userData.garmentPrintState as garmentPrintStateType | undefined;
     const gradient = material.userData.garmentGradient as GarmentGradientState | undefined;
 
     shader.defines = { ...shader.defines, USE_UV1: '', USE_GRADIENT: '', USE_PRINT: '' };
@@ -256,7 +259,7 @@ const configureGarmentShader = (material: MeshStandardMaterial) => {
   material.customProgramCacheKey = () => 'garment-pbr-print-v57-logo-gizmo-fixed';
 };
 
-const createGarmentMaterial = (pbrMaps: PbrMaps | null, source: MeshStandardMaterial | null | undefined, meshName = ''): MeshStandardMaterial => {
+const createGarmentMaterial = (pbrMaps: pbrMapsType | null, source: MeshStandardMaterial | null | undefined, meshName = ''): MeshStandardMaterial => {
   const material = source ? source.clone() : new MeshStandardMaterial({ color: 0xffffff });
 
   if (isSleeveMesh(meshName)) {

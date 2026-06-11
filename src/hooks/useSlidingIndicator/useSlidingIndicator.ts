@@ -2,9 +2,9 @@
 
 import { useCallback, useLayoutEffect, useRef } from 'react';
 
-import type { SlidingIndicatorReturnType } from '@types';
+import type { slidingIndicatorReturnType } from '@types';
 
-const useSlidingIndicator = (activeIndex: number): SlidingIndicatorReturnType => {
+const useSlidingIndicator = (activeIndex: number): slidingIndicatorReturnType => {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLElement | null)[]>([]);
   const indicatorRef = useRef<HTMLSpanElement>(null);

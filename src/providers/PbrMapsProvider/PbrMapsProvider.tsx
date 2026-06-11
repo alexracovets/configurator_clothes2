@@ -2,15 +2,15 @@
 
 import { createContext, useContext, useMemo } from 'react';
 
-import type { PbrMaps } from '@utils';
+import type { pbrMapsType } from '@types';
 
-const PbrMapsContext = createContext<PbrMaps | null>(null);
+const PbrMapsContext = createContext<pbrMapsType | null>(null);
 
-const PbrMapsProvider = ({ maps, children }: { maps: PbrMaps | null; children: React.ReactNode }) => {
+const PbrMapsProvider = ({ maps, children }: { maps: pbrMapsType | null; children: React.ReactNode }) => {
   const value = useMemo(() => maps, [maps]);
   return <PbrMapsContext.Provider value={value}>{children}</PbrMapsContext.Provider>;
 };
 
-const usePbrMaps = (): PbrMaps | null => useContext(PbrMapsContext);
+const usePbrMaps = (): pbrMapsType | null => useContext(PbrMapsContext);
 
 export { PbrMapsProvider, usePbrMaps };

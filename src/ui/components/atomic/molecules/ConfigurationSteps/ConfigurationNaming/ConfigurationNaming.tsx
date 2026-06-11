@@ -8,16 +8,10 @@ import { FontSelectRow } from '../../ConfigurationTools/FontSelectRow';
 import { PartColorSwitch } from '../../ConfigurationTools/PartColorSwitch';
 import { RangeControl } from '../../ConfigurationTools/RangeControl';
 import { createNameInstance, resolveNameDefaults, resolveNameLimits, useConfiguratorProduct, useGarmentName } from '@store';
-import type { NamePosition } from '@types';
+import type { namePartFormPropsType, namePositionType } from '@types';
 import { cn } from '@utils';
 
-interface NamePartFormProps {
-  instanceId: string;
-  limits: ReturnType<typeof resolveNameLimits>;
-  placeholder: string;
-}
-
-const NamePartForm = ({ instanceId, limits, placeholder }: NamePartFormProps) => {
+const NamePartForm = ({ instanceId, limits, placeholder }: namePartFormPropsType) => {
   const instance = useGarmentName((state) => state.instances.find((item) => item.id === instanceId));
   const updateInstance = useGarmentName((state) => state.updateInstance);
   const removeInstance = useGarmentName((state) => state.removeInstance);
@@ -129,7 +123,7 @@ const ConfigurationNaming = () => {
     return openItems.filter((id) => validIds.has(id));
   }, [instances, openItems]);
 
-  const createInstanceForPosition = (position: NamePosition) => {
+  const createInstanceForPosition = (position: namePositionType) => {
     if (!position.interactive) return;
 
     nextInstanceIdRef.current += 1;

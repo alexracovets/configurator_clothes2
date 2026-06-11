@@ -4,11 +4,7 @@ import { memo, useEffect, useMemo } from 'react';
 
 import type { Mesh, Object3D } from 'three';
 
-interface PreserveGltfMeshProps {
-  meshName: string;
-  node: Object3D;
-  renderOrder?: number;
-}
+import type { preserveGltfMeshPropsType } from '@types';
 
 const disposeMeshResources = (object: Object3D) => {
   object.traverse((child) => {
@@ -24,7 +20,7 @@ const disposeMeshResources = (object: Object3D) => {
   });
 };
 
-const PreserveGltfMesh = memo(({ meshName, node, renderOrder = 0 }: PreserveGltfMeshProps) => {
+const PreserveGltfMesh = memo(({ meshName, node, renderOrder = 0 }: preserveGltfMeshPropsType) => {
   const instance = useMemo(() => node.clone(true), [node]);
 
   useEffect(() => {

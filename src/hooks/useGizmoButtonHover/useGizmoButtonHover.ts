@@ -3,7 +3,7 @@
 import { useEffect, useRef } from 'react';
 import { useThree } from '@react-three/fiber';
 
-import type { PrintGizmoElement } from '@gizmo';
+import type { printGizmoElementType } from '@types';
 import {
   clearGizmoButtonHover,
   getGizmoButtonReveal,
@@ -15,7 +15,7 @@ import {
 } from '@gizmo';
 
 interface UseGizmoButtonHoverOptions {
-  elements: PrintGizmoElement[];
+  elements: printGizmoElementType[];
   atlasSize: { width: number; height: number };
   gizmoStep: number | null;
   selectedInstanceId: string | null;

@@ -1,10 +1,10 @@
-import type { GarmentConfig } from '@types';
+import type { garmentConfigType } from '@types';
 import type { MeshStandardMaterial } from 'three';
 
-import { upgradeGarmentMaterialShader } from '../createGarmentMaterial';
+import { upgradeGarmentMaterialShader } from '../createGarmentMaterial/createGarmentMaterial';
 
 type ScheduleGarmentShaderUpgradeOptions = {
-  parts: GarmentConfig['parts'];
+  parts: garmentConfigType['parts'];
   getMaterials: (registryKey: string) => readonly MeshStandardMaterial[];
   invalidate: () => void;
   onComplete: () => void;

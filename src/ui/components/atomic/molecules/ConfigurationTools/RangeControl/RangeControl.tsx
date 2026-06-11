@@ -3,20 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { Flex, Range, Text } from '@atoms';
-
-interface RangeControlProps {
-  label?: string;
-  value: number;
-  onChange: (value: number) => void;
-  onCommit?: (value: number) => void;
-  min?: number;
-  max?: number;
-  unit?: string;
-}
+import type { rangeControlPropsType } from '@types';
 
 const clamp = (v: number, safeMin: number, safeMax: number) => Math.min(Math.max(v, safeMin), safeMax);
 
-const RangeControl = ({ label, value, onChange, onCommit, min = 0, max = 100, unit = '' }: RangeControlProps) => {
+const RangeControl = ({ label, value, onChange, onCommit, min = 0, max = 100, unit = '' }: rangeControlPropsType) => {
   const safeMin = Math.min(min, max);
   const safeMax = Math.max(min, max);
 

@@ -5,9 +5,8 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef } from 'react'
 import { useFrame, useThree } from '@react-three/fiber';
 import type { Texture } from 'three';
 
-import { resolvePbrTexturePaths } from '@utils';
 import { useGarmentMaterialRegistry, useMaterialRegistryRevision, usePbrMaps } from '@providers';
-import type { DesignPatternItem } from '@types';
+import type { designPatternItemType, garmentPrintStateType, patternColorPairType, patternMaskPairType } from '@types';
 import {
   DEFAULT_COLOR,
   DISABLED_PART_GRADIENT,
@@ -18,19 +17,17 @@ import {
   useGarmentColor,
   useGarmentDesign,
 } from '@store';
+import { PATTERN_LAYER_COUNT } from '@constants';
 import {
   applyGarmentGradient,
   applyGarmentPartUvBounds,
   applyGarmentPatternTints,
   applyGarmentPrint,
   emptyMaskPair,
-  type GarmentPrintState,
   imageToTexture,
-  PATTERN_LAYER_COUNT,
-  type PatternColorPair,
-  type PatternMaskPair,
   readProductAppearanceTextures,
   resolvePartUvBounds,
+  resolvePbrTexturePaths,
   resolveRasterDesignSrc,
   scheduleGarmentShaderUpgrade,
   syncProductAppearanceTextures,
@@ -38,7 +35,7 @@ import {
 
 const DEFAULT_PATTERN_COLOR = '#000000';
 
-const buildPatternColors = (pattern: DesignPatternItem | null, patternColors: Record<string, string>): PatternColorPair => {
+const buildPatternColors = (pattern: designPatternItemType | null, patternColors: Record<string, string>): patternColorPairType => {
   const colors: [string, string] = [DEFAULT_PATTERN_COLOR, DEFAULT_PATTERN_COLOR];
 
   if (!pattern) return colors;
@@ -74,7 +71,7 @@ const useGarmentTextures = () => {
   const textureAnisotropy = gl.capabilities.getMaxAnisotropy();
 
   const logosTextureRef = useRef<Texture | null>(null);
-  const maskTexturesRef = useRef<PatternMaskPair>(emptyMaskPair());
+  const maskTexturesRef = useRef<patternMaskPairType>(emptyMaskPair());
   const masksPatternKeyRef = useRef<string | null>(null);
   const loadSessionRef = useRef(0);
   const pendingFrameReapplyRef = useRef(false);
@@ -98,7 +95,7 @@ const useGarmentTextures = () => {
     [product.path],
   );
 
-  const buildPrintState = useCallback((): GarmentPrintState => {
+  const buildPrintState = useCallback((): garmentPrintStateType => {
     return {
       defaultLogos: logosTextureRef.current ?? emptyMaskPair()[0],
       patternMasks: maskTexturesRef.current,
@@ -108,7 +105,7 @@ const useGarmentTextures = () => {
   }, [activeOpacity, activePattern, patternColors]);
 
   const applyPrintState = useCallback(
-    (state: GarmentPrintState) => {
+    (state: garmentPrintStateType) => {
       for (const part of product.parts) {
         for (const material of getMaterials(part.id)) {
           applyGarmentPrint(material, state);

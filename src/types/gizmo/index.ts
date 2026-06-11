@@ -1,11 +1,13 @@
-export type { GizmoHandleKind, PrintGizmoElement, PrintGizmoElementKind } from './gizmo';
+export type { buildLogoGizmoElementsInputType, buildNameGizmoElementsInputType } from './buildGizmoElements';
+export type { gizmoHandleKindType, printGizmoElementType } from './gizmo';
 export type {
-  GizmoButtonHit,
-  GizmoButtonHoverTarget,
-  GizmoPointerTarget,
-  PrintablePartMeshes,
-  PrintDragMoveState,
-  PrintUvHit,
-  ResolveGizmoPointerTargetContext,
-  ResolveGizmoPointerTargetOptions,
+  gizmoButtonHitType,
+  gizmoButtonHoverTargetType,
+  gizmoPointerTargetType,
+  printablePartMeshesType,
+  printDragMoveResultType,
+  printDragMoveStateType,
+  printUvHitType,
+  resolveGizmoPointerTargetContextType,
+  resolveGizmoPointerTargetOptionsType,
 } from './runtime';

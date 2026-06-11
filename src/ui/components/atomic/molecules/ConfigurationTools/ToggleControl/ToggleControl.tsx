@@ -1,14 +1,9 @@
 'use client';
 
 import { Box, Button, Flex, Text } from '@atoms';
+import type { toggleControlPropsType } from '@types';
 
-interface ToggleControlProps {
-  label: string;
-  active: boolean;
-  onChange: (value: boolean) => void;
-}
-
-const ToggleControl = ({ label, active, onChange }: ToggleControlProps) => {
+const ToggleControl = ({ label, active, onChange }: toggleControlPropsType) => {
   return (
     <Flex className="justify-between items-center w-full">
       <Text variant="configurator_part_label">{label}</Text>

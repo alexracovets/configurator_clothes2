@@ -12,3 +12,11 @@ export { ModalInfo } from './Modals/ModalInfo/ModalInfo';
 export { CanvasLoaderBackground } from './Loaders/CanvasLoader';
 export { MainLoader, MainLoaderBackground } from './Loaders/MainLoader';
 export { HiddenLogoFileInput, LogoUpload } from './ConfigurationTools/LogoUpload';
+export {
+  ConfigurationColorize,
+  ConfigurationDesign,
+  ConfigurationLogo,
+  ConfigurationNaming,
+  ConfigurationNumbers,
+  ConfigurationShading,
+} from './ConfigurationSteps';

@@ -1,19 +1,13 @@
 'use client';
 
 import { memo, useEffect, useLayoutEffect, useMemo } from 'react';
-import type { Mesh, MeshStandardMaterial, Object3D } from 'three';
+import type { Mesh, MeshStandardMaterial } from 'three';
 
 import { useGarmentMaterialRegistry, usePbrMaps } from '@providers';
+import type { garmentPartMeshPropsType } from '@types';
 import { createGarmentMaterial } from '@utils';
 
-interface GarmentPartMeshProps {
-  registryKey: string;
-  meshName: string;
-  node: Object3D;
-  renderOrder?: number;
-}
-
-const GarmentPartMesh = memo(({ registryKey, meshName, node, renderOrder = 0 }: GarmentPartMeshProps) => {
+const GarmentPartMesh = memo(({ registryKey, meshName, node, renderOrder = 0 }: garmentPartMeshPropsType) => {
   const pbrMaps = usePbrMaps();
   const { register, unregister } = useGarmentMaterialRegistry();
 

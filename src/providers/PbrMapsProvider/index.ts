@@ -1,1 +1,1 @@
-export { PbrMapsProvider, usePbrMaps } from './PbrMapsProvider';
+export { PbrMapsProvider, usePbrMaps } from './pbrMapsProvider';

@@ -1,57 +1,52 @@
 'use client';
 
-import type { GarmentConfig } from '@types';
+import type { garmentConfigType, garmentLogoSnapshotType, logoInstanceType, logoPositionType, logoPreviewType } from '@types';
 
 import { create } from 'zustand';
 
-import { loadCachedImage, LOGO_SLOT_COUNT, LOGO_UPLOAD_ROTATION_DEG } from '@utils';
+import { LOGO_SLOT_COUNT, LOGO_UPLOAD_ROTATION_DEG } from '@constants';
+import { loadCachedImage } from '@utils';
 
 import { createDefaultLogoInstances, createDynamicUserLogoPosition, createLogoInstance, mapProductLogoPositions } from './mapProductLogos';
-import type { LogoInstance, LogoPosition, LogoPreview } from './mapProductLogos';
-
-interface GarmentLogoSnapshot {
-  instances: LogoInstance[];
-  selectedInstanceId: string | null;
-}
 
 interface GarmentLogoState {
   productPath: string | null;
   positionsKey: string | null;
-  positions: LogoPosition[];
-  instances: LogoInstance[];
-  preview: LogoPreview | null;
+  positions: logoPositionType[];
+  instances: logoInstanceType[];
+  preview: logoPreviewType | null;
   selectedInstanceId: string | null;
-  initForProduct: (product: GarmentConfig) => void;
-  restoreSnapshot: (product: GarmentConfig, snapshot: GarmentLogoSnapshot) => void;
-  addUserInstance: (position: LogoPosition, src: string, fileName: string) => Promise<void>;
-  addFreeUserInstance: (product: GarmentConfig, src: string, fileName: string) => Promise<void>;
+  initForProduct: (product: garmentConfigType) => void;
+  restoreSnapshot: (product: garmentConfigType, snapshot: garmentLogoSnapshotType) => void;
+  addUserInstance: (position: logoPositionType, src: string, fileName: string) => Promise<void>;
+  addFreeUserInstance: (product: garmentConfigType, src: string, fileName: string) => Promise<void>;
   replaceInstanceImage: (id: string, src: string, fileName: string) => Promise<void>;
   removeInstance: (id: string) => void;
   duplicateInstance: (id: string) => void;
   setSelectedInstance: (id: string) => void;
   clearSelectedInstance: () => void;
   bringInstanceToFront: (id: string) => void;
-  updateInstance: (id: string, patch: Partial<LogoInstance>) => void;
-  setPreview: (instanceId: string, patch: LogoPreview['patch']) => void;
+  updateInstance: (id: string, patch: Partial<logoInstanceType>) => void;
+  setPreview: (instanceId: string, patch: logoPreviewType['patch']) => void;
   clearPreview: () => void;
   canAddUserLogo: () => boolean;
-  getInstancesForRender: () => LogoInstance[];
+  getInstancesForRender: () => logoInstanceType[];
 }
 
-const resolveLogoInstancesForRender = (instances: LogoInstance[], preview: LogoPreview | null): LogoInstance[] => {
+const resolveLogoInstancesForRender = (instances: logoInstanceType[], preview: logoPreviewType | null): logoInstanceType[] => {
   if (!preview) return instances;
 
   return instances.map((instance) => (instance.id === preview.instanceId ? { ...instance, ...preview.patch } : instance));
 };
 
-const buildPositionsKey = (product: GarmentConfig) => JSON.stringify(product.logoPositions ?? []);
+const buildPositionsKey = (product: garmentConfigType) => JSON.stringify(product.logoPositions ?? []);
 
 const resolveLogoNaturalSize = async (src: string) => {
   const image = await loadCachedImage(src);
   return { width: image.naturalWidth, height: image.naturalHeight };
 };
 
-const syncInstancesFromPositions = (instances: LogoInstance[], positions: LogoPosition[]) =>
+const syncInstancesFromPositions = (instances: logoInstanceType[], positions: logoPositionType[]) =>
   instances.map((instance) => {
     const position = positions.find((item) => item.key === instance.positionKey);
     if (!position) return instance;
@@ -168,7 +163,7 @@ const useGarmentLogo = create<GarmentLogoState>((set, get) => ({
       const userCount = state.instances.filter((instance) => !instance.isDefault).length;
       if (userCount >= LOGO_SLOT_COUNT) return state;
 
-      const copy: LogoInstance = {
+      const copy: logoInstanceType = {
         ...source,
         id: `${source.id}-copy-${Date.now()}`,
         uv: { x: source.uv.x, y: Math.min(0.98, source.uv.y + 0.04) },
@@ -229,4 +224,3 @@ const useGarmentLogo = create<GarmentLogoState>((set, get) => ({
 }));
 
 export { resolveLogoInstancesForRender, useGarmentLogo };
-export type { LogoInstance, LogoPosition, LogoPreview };

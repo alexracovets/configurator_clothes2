@@ -15,6 +15,7 @@ import {
 import { useGizmoIconAtlas } from '@hooks';
 import { useGarmentMaterialRegistry, useMaterialRegistryRevision } from '@providers';
 import { resolveLogoInstancesForRender, useConfigurationControl, useConfiguratorProduct, useGarmentLogo } from '@store';
+import { LOGO_SLOT_COUNT } from '@constants';
 import {
   applyGarmentGizmoHover,
   applyGarmentGizmoIcons,
@@ -29,7 +30,6 @@ import {
   composeLogoStampAtlas,
   getEmptyPrintTexture,
   loadCachedImage,
-  LOGO_SLOT_COUNT,
   repairPrintInstancePlacement,
   resolvePrintAtlasSize,
 } from '@utils';

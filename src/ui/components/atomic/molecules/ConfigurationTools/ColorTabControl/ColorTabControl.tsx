@@ -3,23 +3,11 @@
 import { useState } from 'react';
 
 import { Flex, Text } from '@atoms';
+import type { colorTabControlPropsType, colorTabType } from '@types';
+import { cn } from '@utils';
 import { ColorControl } from '../ColorControl';
 
-import { cn } from '@utils';
-
-interface ColorTabControlProps {
-  textColor: string;
-  strokeColor: string;
-  onTextColor: (color: string) => void;
-  onStrokeColor: (color: string) => void;
-  onPreviewTextColor?: (color: string) => void;
-  onPreviewStrokeColor?: (color: string) => void;
-  label?: string;
-}
-
-type ColorTab = 'colori' | 'contorno';
-
-const COLOR_TABS: { id: ColorTab; label: string }[] = [
+const COLOR_TABS: { id: colorTabType; label: string }[] = [
   { id: 'colori', label: 'Colore 1' },
   { id: 'contorno', label: 'Colore 2' },
 ];
@@ -32,10 +20,10 @@ const ColorTabControl = ({
   onPreviewTextColor,
   onPreviewStrokeColor,
   label = 'Colore',
-}: ColorTabControlProps) => {
-  const [colorTab, setColorTab] = useState<ColorTab>('colori');
+}: colorTabControlPropsType) => {
+  const [colorTab, setColorTab] = useState<colorTabType>('colori');
 
-  const colors: Record<ColorTab, string> = { colori: textColor, contorno: strokeColor };
+  const colors: Record<colorTabType, string> = { colori: textColor, contorno: strokeColor };
 
   return (
     <Flex variant="configurator_part">

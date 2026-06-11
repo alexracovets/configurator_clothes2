@@ -1,73 +1,49 @@
-import type { GarmentConfig, LogoInstance, NameInstance, NumberInstance, PartGradient, UvPoint } from '@types';
+import type {
+  cartItemConfigurationType,
+  garmentColorSnapshotType,
+  garmentConfigType,
+  logoInstanceType,
+  nameInstanceType,
+  numberInstanceType,
+  partGradientType,
+  uvPointType,
+} from '@types';
 import { PALETTE_COLORS } from '@constants';
 
-import { useGarmentColor, useGarmentDesign, useGarmentLogo, useGarmentName, useGarmentNumber } from '@store';
-
-import { buildDefaultGradients } from '../useGarmentColor/mapPartGradientDefaults';
-
-interface GarmentColorSnapshot {
-  byPart: Record<string, string>;
-  gradientsByPart: Record<string, PartGradient>;
-}
-
-interface GarmentDesignSnapshot {
-  activePatternKey: string | null;
-  patternColors: Record<string, string>;
-  designLayerColors: Record<number, string>;
-  activeOpacity: number;
-  designOpacity: number;
-}
-
-interface GarmentNameSnapshot {
-  instances: NameInstance[];
-  selectedInstanceId: string | null;
-}
-
-interface GarmentNumberSnapshot {
-  instances: NumberInstance[];
-}
-
-interface GarmentLogoSnapshot {
-  instances: LogoInstance[];
-  selectedInstanceId: string | null;
-}
-
-interface CartItemConfiguration {
-  color: GarmentColorSnapshot;
-  design: GarmentDesignSnapshot;
-  name: GarmentNameSnapshot;
-  number: GarmentNumberSnapshot;
-  logo: GarmentLogoSnapshot;
-}
+import { buildDefaultGradients, useGarmentColor } from '../useGarmentColor';
+import { useGarmentDesign } from '../useGarmentDesign';
+import { useGarmentLogo } from '../useGarmentLogo';
+import { useGarmentName } from '../useGarmentName';
+import { useGarmentNumber } from '../useGarmentNumber';
 
 const DEFAULT_COLOR = PALETTE_COLORS[0];
 const DEFAULT_OPACITY = 1;
 
-const createDefaultColorSnapshot = (product: GarmentConfig): GarmentColorSnapshot => ({
+const createDefaultColorSnapshot = (product: garmentConfigType): garmentColorSnapshotType => ({
   byPart: Object.fromEntries(product.parts.map((part) => [part.id, DEFAULT_COLOR])),
   gradientsByPart: buildDefaultGradients(product),
 });
 
-const cloneUvPoint = (uv: UvPoint): UvPoint => ({ ...uv });
+const cloneUvPoint = (uv: uvPointType): uvPointType => ({ ...uv });
 
-const clonePartGradient = (gradient: PartGradient): PartGradient => ({ ...gradient });
+const clonePartGradient = (gradient: partGradientType): partGradientType => ({ ...gradient });
 
-const cloneNameInstance = (instance: NameInstance): NameInstance => ({
+const cloneNameInstance = (instance: nameInstanceType): nameInstanceType => ({
   ...instance,
   uv: cloneUvPoint(instance.uv),
 });
 
-const cloneNumberInstance = (instance: NumberInstance): NumberInstance => ({
+const cloneNumberInstance = (instance: numberInstanceType): numberInstanceType => ({
   ...instance,
   uv: cloneUvPoint(instance.uv),
 });
 
-const cloneLogoInstance = (instance: LogoInstance): LogoInstance => ({
+const cloneLogoInstance = (instance: logoInstanceType): logoInstanceType => ({
   ...instance,
   uv: cloneUvPoint(instance.uv),
 });
 
-const cloneCartItemConfiguration = (configuration: CartItemConfiguration): CartItemConfiguration => ({
+const cloneCartItemConfiguration = (configuration: cartItemConfigurationType): cartItemConfigurationType => ({
   color: {
     byPart: { ...configuration.color.byPart },
     gradientsByPart: Object.fromEntries(Object.entries(configuration.color.gradientsByPart).map(([partId, gradient]) => [partId, clonePartGradient(gradient)])),
@@ -92,7 +68,7 @@ const cloneCartItemConfiguration = (configuration: CartItemConfiguration): CartI
   },
 });
 
-const createDefaultCartItemConfiguration = (product: GarmentConfig): CartItemConfiguration => ({
+const createDefaultCartItemConfiguration = (product: garmentConfigType): cartItemConfigurationType => ({
   color: createDefaultColorSnapshot(product),
   design: {
     activePatternKey: null,
@@ -114,7 +90,7 @@ const createDefaultCartItemConfiguration = (product: GarmentConfig): CartItemCon
   },
 });
 
-const captureGarmentConfiguration = (): CartItemConfiguration => {
+const captureGarmentConfiguration = (): cartItemConfigurationType => {
   const color = useGarmentColor.getState();
   const design = useGarmentDesign.getState();
   const name = useGarmentName.getState();
@@ -147,7 +123,7 @@ const captureGarmentConfiguration = (): CartItemConfiguration => {
   });
 };
 
-const applyGarmentConfiguration = (product: GarmentConfig, configuration: CartItemConfiguration | undefined) => {
+const applyGarmentConfiguration = (product: garmentConfigType, configuration: cartItemConfigurationType | undefined) => {
   if (!configuration) {
     useGarmentColor.getState().initForProduct(product);
     useGarmentDesign.getState().initForProduct(product);
@@ -167,4 +143,3 @@ const applyGarmentConfiguration = (product: GarmentConfig, configuration: CartIt
 };
 
 export { applyGarmentConfiguration, captureGarmentConfiguration, cloneCartItemConfiguration, createDefaultCartItemConfiguration, createDefaultColorSnapshot };
-export type { CartItemConfiguration, GarmentColorSnapshot };

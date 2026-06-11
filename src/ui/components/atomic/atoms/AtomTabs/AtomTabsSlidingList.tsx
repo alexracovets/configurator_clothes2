@@ -6,6 +6,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 
 import { SlidingIndicator, SlidingIndicatorTrack, slidingIndicatorTrackVariants, slidingIndicatorVariants } from '@atoms';
 import { useSlidingIndicator } from '@hooks';
+import type { atomTabsSlidingListPropsType } from '@types';
 import { cn } from '@utils';
 
 import { AtomTabsList } from './AtomTabs';
@@ -39,15 +40,6 @@ const slidingListPresetMap = {
   }
 >;
 
-type AtomTabsSlidingListProps = VariantProps<typeof atomTabsSlidingListVariants> & {
-  activeValue: string;
-  className?: string;
-  listClassName?: string;
-  indicatorVariant?: VariantProps<typeof slidingIndicatorVariants>['variant'];
-  trackVariant?: VariantProps<typeof slidingIndicatorTrackVariants>['variant'];
-  children: React.ReactNode;
-};
-
 const AtomTabsSlidingList = ({
   activeValue,
   preset = 'modal',
@@ -56,7 +48,7 @@ const AtomTabsSlidingList = ({
   indicatorVariant: indicatorVariantProp,
   trackVariant: trackVariantProp,
   children,
-}: AtomTabsSlidingListProps) => {
+}: atomTabsSlidingListPropsType) => {
   const presetStyles = slidingListPresetMap[preset ?? 'modal'];
   const indicatorVariant = indicatorVariantProp ?? presetStyles.indicatorVariant;
   const trackVariant = trackVariantProp ?? presetStyles.trackVariant;

@@ -4,7 +4,7 @@ import { useCallback, useMemo } from 'react';
 
 import { AccordionAtom, Flex } from '@atoms';
 import { PartColorSwitch } from '../../ConfigurationTools/PartColorSwitch';
-import { ShedingControl } from '../../ConfigurationTools/ShedingControl';
+import { ShadingControl } from '../../ConfigurationTools/ShadingControl';
 import { DEFAULT_COLOR, useConfiguratorProduct, useGarmentColor } from '@store';
 
 const ConfigurationShading = () => {
@@ -33,7 +33,7 @@ const ConfigurationShading = () => {
       parts.map((part) => ({
         value: part.id,
         trigger: <PartColorSwitch color={getShadingPreview(part.id)} label={part.label} />,
-        content: <ShedingControl partId={part.id} />,
+        content: <ShadingControl partId={part.id} />,
       })),
     [getShadingPreview, parts],
   );

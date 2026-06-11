@@ -4,17 +4,11 @@ import { useEffect, useState } from 'react';
 
 import { Box, Button, Flex, Grid, SvgIcon, Text } from '@atoms';
 import { LogoUploadSkeleton } from '@skeletons';
-import { cn, LOGO_MAX_FILE_SIZE, LOGO_SUPPORTED_LABEL, warmupGhostscriptWorker } from '@utils';
+import type { logoUploadPropsType } from '@types';
+import { LOGO_MAX_FILE_SIZE, LOGO_SUPPORTED_LABEL } from '@constants';
+import { cn, warmupGhostscriptWorker } from '@utils';
 
-type LogoUploadProps = {
-  canUpload: boolean;
-  loading: boolean;
-  error: string | null;
-  onOpenFilePicker: () => void;
-  onFileSelected: (file: File) => void | Promise<void>;
-};
-
-const LogoUpload = ({ canUpload, loading, error, onOpenFilePicker, onFileSelected }: LogoUploadProps) => {
+const LogoUpload = ({ canUpload, loading, error, onOpenFilePicker, onFileSelected }: logoUploadPropsType) => {
   const [dragOver, setDragOver] = useState(false);
 
   useEffect(() => {
@@ -78,4 +72,3 @@ const LogoUpload = ({ canUpload, loading, error, onOpenFilePicker, onFileSelecte
 };
 
 export { LogoUpload };
-export type { LogoUploadProps };

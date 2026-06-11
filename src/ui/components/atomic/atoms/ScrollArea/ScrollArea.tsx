@@ -6,16 +6,11 @@ import 'overlayscrollbars/overlayscrollbars.css';
 import { OverlayScrollbars } from 'overlayscrollbars';
 
 import { cn } from '@utils';
+import type { scrollAreaPropsType } from '@types';
 
 const FADE_SIZE = 16;
 
-interface ScrollAreaProps {
-  children: React.ReactNode;
-  className?: string;
-  fadeEdges?: boolean;
-}
-
-const ScrollArea = ({ children, className, fadeEdges = false }: ScrollAreaProps) => {
+const ScrollArea = ({ children, className, fadeEdges = false }: scrollAreaPropsType) => {
   const targetRef = useRef<HTMLDivElement>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);

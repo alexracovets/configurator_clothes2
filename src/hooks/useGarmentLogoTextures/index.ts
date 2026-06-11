@@ -1,0 +1,1 @@
+export { useGarmentLogoTextures } from './useGarmentLogoTextures';

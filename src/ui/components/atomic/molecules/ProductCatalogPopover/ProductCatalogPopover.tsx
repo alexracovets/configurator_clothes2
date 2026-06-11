@@ -1,6 +1,6 @@
 'use client';
 
-import type { CatalogProductRef } from '@types';
+import type { productCatalogPopoverPropsType } from '@types';
 import { resolveProductPreviewSrc } from '@data';
 
 import { useState } from 'react';
@@ -10,12 +10,7 @@ import { AtomPopover, AtomPopoverContent, AtomPopoverTrigger, Grid, Text } from 
 import { ProductCatalogOption } from '../ProductCatalogOption';
 import { ProductSessionAddButton } from '../ProductSessionAddButton';
 
-interface ProductCatalogPopoverProps {
-  products: CatalogProductRef[];
-  onSelect: (styleId: CatalogProductRef['styleId'], productIndex: number) => void;
-}
-
-const ProductCatalogPopover = ({ products, onSelect }: ProductCatalogPopoverProps) => {
+const ProductCatalogPopover = ({ products, onSelect }: productCatalogPopoverPropsType) => {
   const [open, setOpen] = useState(false);
 
   return (

@@ -1,3 +1,3 @@
 export { getStrictContext } from './getStrictContext';
-export { GarmentMaterialRegistryProvider, useGarmentMaterialRegistry, useGarmentSceneReady, useMaterialRegistryRevision } from './GarmentMaterialRegistry';
-export { PbrMapsProvider, usePbrMaps } from './PbrMapsProvider';
+export { GarmentMaterialRegistryProvider, useGarmentMaterialRegistry, useGarmentSceneReady, useMaterialRegistryRevision } from './garmentMaterialRegistry';
+export { PbrMapsProvider, usePbrMaps } from './pbrMapsProvider';

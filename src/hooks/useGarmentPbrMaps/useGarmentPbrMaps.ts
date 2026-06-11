@@ -5,9 +5,9 @@ import { useMemo } from 'react';
 import { useTexture } from '@react-three/drei';
 import { NoColorSpace } from 'three';
 
-import type { PbrMaps, PbrTexturePaths } from '@utils';
+import type { pbrMapsType, pbrTexturePathsType } from '@types';
 
-const useGarmentPbrMaps = (paths: PbrTexturePaths): PbrMaps => {
+const useGarmentPbrMaps = (paths: pbrTexturePathsType): pbrMapsType => {
   const { bakeNormal, bakeAoRoughness, fabricNormal, fabricRoughness } = useTexture({
     bakeNormal: paths.bakeNormal,
     bakeAoRoughness: paths.bakeAoRoughness,

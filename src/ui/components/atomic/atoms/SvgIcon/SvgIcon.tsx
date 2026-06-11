@@ -1,29 +1,9 @@
 'use client';
 
 import { cn } from '@utils';
+import type { svgIconNameType, svgIconPropsType } from '@types';
 
-type SvgIconName =
-  | 'colori'
-  | 'contorno'
-  | 'close'
-  | 'select_color'
-  | 'share'
-  | 'plus'
-  | 'duplicate'
-  | 'info'
-  | 'cart'
-  | 'ruler'
-  | 'none'
-  | 'delete'
-  | 'upload'
-  | 'edit';
-
-interface SvgIconProps {
-  name: SvgIconName;
-  className?: string;
-}
-
-const ICONS: Record<SvgIconName, React.ReactNode> = {
+const ICONS: Record<svgIconNameType, React.ReactNode> = {
   colori: (
     <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
       <g clipPath="url(#clip-color)">
@@ -198,7 +178,7 @@ const ICONS: Record<SvgIconName, React.ReactNode> = {
   ),
 };
 
-const SvgIcon = ({ name, className }: SvgIconProps) => {
+const SvgIcon = ({ name, className }: svgIconPropsType) => {
   return <span className={cn('inline-flex items-center justify-center shrink-0', className)}>{ICONS[name]}</span>;
 };
 
