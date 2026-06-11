@@ -70,5 +70,6 @@ export { priceFormat } from './priceFormat';
 export { resolveModelUrl } from './resolveModelUrl';
 export { resolvePbrTexturePaths } from './resolvePbrTexturePaths';
 export { isAcceptedLogoFile, LogoFileError, logoFileToDisplayUrl, preloadLogoDisplayUrl, warmupGhostscriptWorker, yieldToMain } from './logoFile';
+export { withListPunctuation } from './modalInfo';
 
 export * from './orbitFlag';

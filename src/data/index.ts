@@ -2,7 +2,7 @@ import type { catalogProductRefType, garmentConfigType, styleConfigType, styleId
 
 import crewneckData from './crewneck/crewneck.json';
 
-import { faqContent } from './modalInfo';
+import { discountsContent, faqContent, measureContent, reviewsContent, shippingContent } from './modalInfo';
 
 const STYLES: Record<styleIdType, styleConfigType> = {
   crewneck: crewneckData as styleConfigType,
@@ -24,4 +24,15 @@ const listCatalogProducts = (): catalogProductRefType[] =>
 const resolveProductPreviewSrc = (product: garmentConfigType) =>
   product.previewImage ? `${product.path}${product.previewImage}` : `${product.path}designs/thumbs/crewneck_design_1.webp`;
 
-export { faqContent, getProduct, getStyle, listCatalogProducts, resolveProductPreviewSrc, STYLES };
+export {
+  discountsContent,
+  faqContent,
+  getProduct,
+  getStyle,
+  listCatalogProducts,
+  measureContent,
+  resolveProductPreviewSrc,
+  reviewsContent,
+  shippingContent,
+  STYLES,
+};

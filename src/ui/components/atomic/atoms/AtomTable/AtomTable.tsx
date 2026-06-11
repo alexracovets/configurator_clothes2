@@ -26,7 +26,8 @@ const atomTableVariants = cva('w-full caption-bottom', {
   variants: {
     variant: {
       default: 'text-sm',
-      size_chart: 'border-collapse text-center text-[14px] font-inter',
+      size_chart: 'w-full border-collapse border border-gray-20 text-center font-inter text-[14px] leading-none text-default',
+      discounts: 'w-full table-fixed border-collapse border border-gray-20 text-left font-inter text-[14px] leading-none text-default',
     },
   },
   defaultVariants: {
@@ -39,6 +40,7 @@ const atomTableHeaderVariants = cva('', {
     variant: {
       default: '',
       size_chart: '[&_tr]:border-b-0',
+      discounts: '[&_tr]:border-b-0',
     },
   },
   defaultVariants: {
@@ -51,6 +53,7 @@ const atomTableBodyVariants = cva('', {
     variant: {
       default: '',
       size_chart: '[&_tr:last-child]:border-0',
+      discounts: '[&_tr:last-child]:border-0',
     },
   },
   defaultVariants: {
@@ -63,6 +66,7 @@ const atomTableRowVariants = cva('transition-colors', {
     variant: {
       default: 'border-b hover:bg-muted/50 has-aria-expanded:bg-muted/50 data-[state=selected]:bg-muted',
       size_chart: 'border-b-0 hover:bg-transparent',
+      discounts: 'border-b-0 hover:bg-transparent',
     },
   },
   defaultVariants: {
@@ -74,7 +78,10 @@ const atomTableHeadVariants = cva('align-middle font-medium whitespace-nowrap te
   variants: {
     variant: {
       default: 'h-10 px-2 text-left [&:has([role=checkbox])]:pr-0',
-      size_chart: 'h-auto border border-gray-20 bg-gray-100 px-3 py-2 text-center font-semibold text-default whitespace-normal',
+      size_chart:
+        'h-auto border border-gray-20 bg-gray-100 px-3 py-4 text-center align-middle font-medium text-[16px] leading-none text-default whitespace-normal',
+      discounts:
+        'h-auto border border-gray-20 bg-gray-100 px-3 py-4 text-left align-middle font-medium text-[16px] leading-none text-default whitespace-normal',
     },
   },
   defaultVariants: {
@@ -86,7 +93,8 @@ const atomTableCellVariants = cva('align-middle', {
   variants: {
     variant: {
       default: 'p-2 whitespace-nowrap [&:has([role=checkbox])]:pr-0',
-      size_chart: 'border border-gray-20 px-3 py-2 text-center text-default whitespace-normal',
+      size_chart: 'border border-gray-20 bg-white px-3 py-4 text-center align-middle font-normal text-[14px] leading-none text-default whitespace-normal',
+      discounts: 'border border-gray-20 bg-white px-3 py-4 text-left align-middle font-normal text-[14px] leading-none text-default whitespace-normal',
     },
   },
   defaultVariants: {
@@ -99,6 +107,7 @@ const atomTableCaptionVariants = cva('mt-4 text-sm', {
     variant: {
       default: 'text-muted-foreground',
       size_chart: 'text-gray text-left',
+      discounts: 'text-gray text-left',
     },
   },
   defaultVariants: {

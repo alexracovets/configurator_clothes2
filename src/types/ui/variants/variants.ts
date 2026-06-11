@@ -30,7 +30,7 @@ type atomTabsVariantType = 'default' | 'line' | 'configurator' | 'modal';
 
 type atomTabsSlidingListPresetType = 'configurator' | 'modal';
 
-type atomTableVariantType = 'default' | 'size_chart';
+type atomTableVariantType = 'default' | 'size_chart' | 'discounts';
 
 type atomListVariantType = 'default' | 'faq';
 

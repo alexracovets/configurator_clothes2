@@ -39,6 +39,7 @@ export type {
   atomTableSectionPropsType,
 } from './atomTableProps';
 export type { atomRichTextPropsType, atomRichTextTextPropsType } from './atomRichTextProps';
+export type { modalInfoSectionPartsPropsType, modalInfoTabConfigType, modalInfoTabContentPropsType, modalInfoTablePropsType } from './modalInfoProps';
 export type {
   atomImagePropsType,
   atomListPropsType,

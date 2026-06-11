@@ -15,7 +15,7 @@ const atomTabsSlidingListVariants = cva('relative', {
   variants: {
     preset: {
       configurator: 'w-fit pt-2',
-      modal: 'w-full',
+      modal: 'w-fit',
     },
   },
   defaultVariants: {

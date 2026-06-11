@@ -1,1 +1,0 @@
-export { InfoContent } from './InfoContent';

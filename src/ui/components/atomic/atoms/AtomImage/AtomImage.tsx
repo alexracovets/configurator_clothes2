@@ -37,7 +37,6 @@ const AtomImage = ({
   const hasDimensions = width != null && height != null;
   const useFill = !hasDimensions;
   const resolvedLoading = loading ?? (priority ? 'eager' : 'lazy');
-  const resolvedStyle = hasDimensions ? { width, height, ...style } : style;
 
   const imageElement = (
     <Image
@@ -47,8 +46,8 @@ const AtomImage = ({
       sizes={useFill ? '100%' : undefined}
       loading={resolvedLoading}
       {...(hasDimensions ? { width, height } : { fill: true })}
-      className={cn(!useFill && className)}
-      style={resolvedStyle}
+      className={cn(useFill && 'object-contain', !useFill && className)}
+      style={style}
       unoptimized={unoptimized}
       {...props}
     />

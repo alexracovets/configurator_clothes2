@@ -8,7 +8,7 @@ import { OverlayScrollbars } from 'overlayscrollbars';
 import { cn } from '@utils';
 import type { scrollAreaPropsType } from '@types';
 
-const FADE_SIZE = 16;
+const FADE_SIZE = 2;
 
 const ScrollArea = ({ children, className, fadeEdges = false }: scrollAreaPropsType) => {
   const targetRef = useRef<HTMLDivElement>(null);

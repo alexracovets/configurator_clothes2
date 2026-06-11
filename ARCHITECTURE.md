@@ -170,14 +170,21 @@ src/types/
 
 1. **Naming:** camelCase with a `Type` suffix — e.g. `garmentConfigType`, `nameInstanceType`.
 2. **Shape:** object shapes use `interface`; unions, intersections, generics, and tuples use `type`.
-3. **Entity types** (`garmentConfigType`, `namePositionConfigType`, `uvPointType`, …) describe JSON in `src/data/` and live in `src/types/entities/`.
+3. **Entity types** (`garmentConfigType`, `modalInfoTabType`, `namePositionConfigType`, `uvPointType`, …) describe JSON in `src/data/` and live in `src/types/entities/`.
 4. **Runtime types** (`nameInstanceType`, `logoPositionType`, `partGradientType`, …) **extend or compose** entity types via `Pick`, `Omit`, or `extends` — **never duplicate fields manually**.
 5. Component prop types belong in `src/types/ui/`, not in component files.
-6. `@data` exports **data and accessor functions only** (`getProduct`, `faqContent`, …). Types are imported from `@types` — no intermediate `types.ts` in `data/`, `gizmo/`, etc.
+6. `@data` exports **data and accessor functions only** (`getProduct`, `faqContent`, `measureContent`, …). Types are imported from `@types` — no intermediate `types.ts` in `data/`, `gizmo/`, etc.
 
 ### `src/data/` (`@data`)
 
-JSON product catalogs (e.g. `crewneck/crewneck.json`), FAQ content, and accessors: `getProduct`, `getStyle`, `listCatalogProducts`. No UI logic.
+JSON product catalogs (e.g. `crewneck/crewneck.json`), modal info content (`modalInfo/*.json`), and accessors: `getProduct`, `getStyle`, `listCatalogProducts`, `faqContent`, `measureContent`, etc. No UI logic.
+
+Modal info follows the same pattern as garment catalogs:
+
+- **JSON** in `src/data/modalInfo/` — one file per tab (`faqContent.json`, `measureContent.json`, …)
+- **Types** in `src/types/entities/modalInfo/` — `modalInfoTabType`, `modalInfoPartType`, …
+- **Tab registry** in `ModalInfo/modalInfoTabs.tsx` — maps tab `value`, label, icon, and content
+- **Renderer** in `ModalInfo/Content/ModalInfoTabContent/` — shared `text`, `list`, `image`, `table` parts
 
 ### `src/utils/` (`@utils`)
 

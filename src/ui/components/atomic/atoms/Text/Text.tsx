@@ -10,7 +10,7 @@ import type { textPropsType } from '@types';
 const variantText = cva('font-inter font-[400] leading-none', {
   variants: {
     variant: {
-      default: 'text-[16px] text-gray',
+      default: 'text-[16px] text-default',
       whatsapp_badge: 'text-[14px] leading-[24px] text-white font-medium',
       product_name: 'text-[32px] leading-[1] font-[600] tracking-[-1px]',
       product_price: 'text-[32px] leading-[39px] font-semibold tracking-[-1px]',
@@ -25,7 +25,7 @@ const variantText = cva('font-inter font-[400] leading-none', {
         'group-aria-expanded/accordion-trigger:text-default',
         'transition-all duration-200 ease-in-out',
       ),
-      h2: 'text-[32px] leading-[1] font-semibold text-base-black mb-6',
+      h2: 'text-[32px] leading-[1] font-semibold text-base-black mb-8',
       h3: 'text-[24px] leading-[1] font-semibold text-base-black mb-3',
     },
   },

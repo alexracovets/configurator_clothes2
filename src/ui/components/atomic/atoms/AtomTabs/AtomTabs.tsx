@@ -46,7 +46,7 @@ const atomTabsListVariants = cva('', {
       default: '',
       line: '',
       configurator: cn('inline-flex h-auto w-fit items-center rounded-none bg-transparent p-0', 'group-data-horizontal/tabs:h-auto'),
-      modal: cn('inline-flex h-auto w-full items-center rounded-none bg-transparent', 'group-data-horizontal/tabs:h-auto'),
+      modal: cn('inline-flex h-auto w-fit items-center rounded-none bg-transparent', 'group-data-horizontal/tabs:h-auto'),
     },
   },
   defaultVariants: {
@@ -65,7 +65,11 @@ const atomTabsTriggerVariants = cva('', {
         'after:hidden',
         'focus-visible:ring-0 focus-visible:outline-none',
       ),
-      modal: cn('text-default text-[14px] font-[500] flex items-center justify-center gap-2 bg-transparent', 'px-6.5 pb-3 [&_svg]:size-5'),
+      modal: cn(
+        'flex-none text-gray-30 text-[14px] font-[500] inline-flex items-center justify-center gap-2 bg-transparent',
+        'px-6.5 pb-3 [&_svg]:size-5',
+        'data-active:text-default transition-colors duration-200',
+      ),
     },
   },
   defaultVariants: {

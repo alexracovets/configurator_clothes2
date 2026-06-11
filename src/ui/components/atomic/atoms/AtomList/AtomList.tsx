@@ -22,7 +22,7 @@ const AtomList = ({ items, icon, variant, wrapperClassName, itemClassName, iconC
     <ul className={cn(atomListWrapperVariants({ variant }), wrapperClassName)}>
       {items.map((item, index) => (
         <li key={index} className={cn('flex items-start gap-2', itemClassName)}>
-          {icon ? <span className={cn('mt-0.5 shrink-0', iconClassName)}>{icon}</span> : null}
+          {icon ? <span className={cn('shrink-0 text-[18px] mt-0.5', iconClassName)}>{icon}</span> : null}
           <span className={cn('min-w-0 flex-1', contentClassName)}>{item}</span>
         </li>
       ))}

@@ -1,5 +1,15 @@
 export type { catalogProductRefType } from './catalog';
-export type { faqContentDataType, faqContentSectionType, richTextSectionType } from './faq';
+export type {
+  modalInfoImagePartType,
+  modalInfoListPartType,
+  modalInfoPartType,
+  modalInfoSectionType,
+  modalInfoTabType,
+  modalInfoTableColumnType,
+  modalInfoTablePartType,
+  modalInfoTableRowType,
+  modalInfoTextPartType,
+} from './modalInfo';
 export type {
   garmentConfigType,
   garmentPartConfigType,
