@@ -18,6 +18,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: 'flex items-center justify-center font-semibold bg-primary-button hover:bg-primary-button/80',
+        center: 'flex items-center justify-center font-semibold bg-primary-button hover:bg-primary-button/80',
         primary: cn(
           'relative overflow-hidden',
           'text-white! border-none flex items-center justify-center font-semibold',

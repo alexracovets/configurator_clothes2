@@ -1,13 +1,14 @@
 'use client';
 
 import { ConfiguratorView } from '@organisms';
-import { ModalInfo } from '@molecules';
+import { ModalInfo, ModalTutorial } from '@molecules';
 
 const ConfiguratorPage = () => {
   return (
     <>
       <ConfiguratorView />
       <ModalInfo />
+      <ModalTutorial />
     </>
   );
 };

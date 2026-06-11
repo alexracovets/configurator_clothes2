@@ -9,6 +9,7 @@ export { Notification } from './Notification';
 export { Search } from './Search';
 export { UserBar } from './UserBar';
 export { ModalInfo } from './Modals/ModalInfo/ModalInfo';
+export { ModalTutorial } from './Modals/ModalTutorial/ModalTutorial';
 export { CanvasLoaderBackground } from './Loaders/CanvasLoader';
 export { MainLoader, MainLoaderBackground } from './Loaders/MainLoader';
 export { HiddenLogoFileInput, LogoUpload } from './ConfigurationTools/LogoUpload';

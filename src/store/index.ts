@@ -22,3 +22,4 @@ export {
 } from './useGarmentNumber';
 export { resolveLogoInstancesForRender, useGarmentLogo } from './useGarmentLogo';
 export { useInfoDialog } from './useInfoDialog';
+export { useTutorialDialog } from './useTutorialDialog';
