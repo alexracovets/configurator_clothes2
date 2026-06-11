@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { AtomImage } from '@atoms';
 import type { productFlipCardPropsType } from '@types';
 import { cn, resolveProductFlipCardSrc } from '@utils';
@@ -9,7 +11,8 @@ const ProductFlipCard = ({ collection, slug, alt, className }: productFlipCardPr
   const backSrc = resolveProductFlipCardSrc(collection, slug, 'back');
 
   return (
-    <div
+    <Link
+      href={`/configurator`}
       tabIndex={0}
       className={cn(
         'group/card aspect-3/4 w-full cursor-pointer outline-none perspective-[1000px]',
@@ -30,7 +33,7 @@ const ProductFlipCard = ({ collection, slug, alt, className }: productFlipCardPr
           <AtomImage src={backSrc} alt={alt} loading="eager" className="size-full rounded-[8px] bg-gray-20 backface-hidden" />
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
