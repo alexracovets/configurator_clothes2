@@ -1,235 +1,307 @@
-# Архітектура проєкту
+# Architecture
 
-3D-конфігуратор одягу на **Next.js 16** (App Router) з рендером через **React Three Fiber** і глобальним станом на **Zustand**.
+A browser-based **3D garment configurator** built with **Next.js 16** (App Router), **React Three Fiber** for real-time 3D rendering, and **Zustand** for global state.
 
-Проєкт організований за **Atomic Design** для UI та за шарами відповідальності для бізнес-логіки, даних і 3D.
+The codebase separates concerns into three axes:
+
+- **UI** — Atomic Design (`src/ui/`)
+- **Domain & state** — Zustand stores, hooks, types (`src/store/`, `src/hooks/`, `src/types/`)
+- **3D & assets** — shaders, gizmo logic, print pipelines (`src/shaders/`, `src/gizmo/`, `src/utils/`)
 
 ---
 
-## Коренева структура
+## Table of contents
+
+1. [Repository layout](#repository-layout)
+2. [High-level data flow](#high-level-data-flow)
+3. [UI layer (Atomic Design)](#ui-layer-atomic-design)
+4. [Non-UI layers](#non-ui-layers)
+5. [Next.js routing](#nextjs-routing)
+6. [Technology stack](#technology-stack)
+7. [Scripts & tooling](#scripts--tooling)
+8. [Path aliases](#path-aliases)
+
+---
+
+## Repository layout
 
 ```
 configurator_clothes3/
-├── app/                    # Next.js App Router — тонкі маршрути, без бізнес-логіки
-├── public/                 # Статика: моделі GLTF, текстури, WASM, логотипи
-├── scripts/                # Node-скрипти для підготовки ассетів (див. нижче)
-├── src/                    # Весь код застосунку
-│   ├── constants/          # Незмінні конфігураційні значення
-│   ├── data/               # JSON-каталоги продуктів і доступ до них
-│   ├── fonts/              # Шрифти для UI та друку на одязі
-│   ├── gizmo/              # 3D gizmo: hit-test, drag, побудова елементів
-│   ├── hooks/              # React-хуки (єдине місце для custom hooks)
-│   ├── providers/          # React Context-провайдери
-│   ├── shaders/            # GLSL-шейдери для Three.js
-│   ├── store/              # Zustand-стори (глобальний стан)
-│   ├── types/              # Усі TypeScript-типи проєкту
-│   ├── ui/                 # UI за Atomic Design
-│   └── utils/              # Чисті функції: атласи, uniform-и, конвертери файлів
-├── playwright/             # E2E-тести (Playwright)
-└── ARCHITECTURE.md         # Цей документ
+├── app/                    # Next.js App Router — thin route files, no business logic
+├── public/                 # Static assets: GLTF models, textures, WASM, logos
+├── scripts/                # Node asset-pipeline scripts (see Scripts & tooling)
+├── src/                    # Application source
+│   ├── constants/          # Immutable configuration values
+│   ├── data/               # Product JSON catalogs and accessors
+│   ├── fonts/              # UI and garment-print fonts
+│   ├── gizmo/              # 3D gizmo: hit-test, drag, mesh construction
+│   ├── hooks/              # React custom hooks (single source of truth)
+│   ├── providers/          # React Context providers
+│   ├── shaders/            # GLSL shaders for Three.js
+│   ├── store/              # Zustand stores (global state)
+│   ├── types/              # Centralized TypeScript types
+│   ├── ui/                 # UI components (Atomic Design)
+│   └── utils/              # Pure functions: atlases, uniforms, file converters
+├── playwright/             # End-to-end tests (Playwright)
+└── ARCHITECTURE.md         # This document
 ```
 
 ---
 
-## Atomic Design (UI)
+## High-level data flow
 
-UI живе в `src/ui/` і ділиться на рівні атомарного дизайну.
+```mermaid
+flowchart LR
+  subgraph routes [app/]
+    Page[Thin page.tsx]
+  end
 
-| Рівень        | Шлях                                  | Alias        | Призначення                                                                           |
-| ------------- | ------------------------------------- | ------------ | ------------------------------------------------------------------------------------- |
-| **Atoms**     | `src/ui/components/atomic/atoms/`     | `@atoms`     | Найменші блоки: `Button`, `AtomInput`, `ColorPicker`, `AtomSkeleton`                  |
-| **Molecules** | `src/ui/components/atomic/molecules/` | `@molecules` | Комбінації атомів: кроки конфігурації, `LogoUpload`, `Search`                         |
-| **Organisms** | `src/ui/components/atomic/organisms/` | `@organisms` | Великі секції: `Header`, `AsideConfiguration`, `Configurator` (3D canvas)             |
-| **Templates** | `src/ui/components/atomic/templates/` | `@templates` | Макети сторінок без прив'язки до даних                                                |
-| **Pages**     | `src/ui/components/atomic/pages/`     | `@pages`     | Сторінкові композиції: `ConfiguratorPage`, `HomePage`                                 |
-| **Shared**    | `src/ui/components/shared/`           | `@shared`    | Примітиви на базі shadcn/Radix, спільні для atoms (`Dialog`, `Accordion`, `Skeleton`) |
-| **Skeletons** | `src/ui/components/skeletons/`        | `@skeletons` | Скелетони завантаження, повторюють layout реальних компонентів                        |
+  subgraph ui [src/ui]
+    Pages[@pages]
+    Organisms[@organisms]
+    Molecules[@molecules]
+    Atoms[@atoms]
+  end
 
-### Правила UI
+  subgraph state [State & domain]
+    Hooks[@hooks]
+    Store[@store]
+    Types[@types]
+  end
 
-1. **Сторінки в `app/`** лише імпортують компонент з `@pages` — без логіки.
-2. **Atoms** не знають про store, API чи 3D — лише props.
-3. **Molecules** можуть читати store і викликати хуки з `@hooks`.
-4. **Organisms** збирають molecules/atoms у цілісні блоки (sidebar, canvas, footer).
-5. **Skeletons** дзеркалять розміри відповідних molecules/organisms; показ керується через `useShowConfigurationSkeleton`.
-6. Компонент **не містить** власних `.ts`-типів у файлі — типи props виносяться в `src/types/ui/`.
+  subgraph assets [Data & 3D]
+    Data[@data]
+    Utils[@utils]
+    Shaders[@shaders]
+    Gizmo[@gizmo]
+  end
+
+  Page --> Pages
+  Pages --> Organisms
+  Organisms --> Molecules
+  Molecules --> Atoms
+  Molecules --> Hooks
+  Hooks --> Store
+  Store --> Types
+  Data --> Types
+  Organisms --> Utils
+  Organisms --> Shaders
+  Hooks --> Gizmo
+```
+
+**Catalog data** (`src/data/`) defines products and garment options. **Entity types** in `src/types/entities/` mirror that JSON. **Runtime types** in `src/types/garment/` compose entity shapes for live configuration state held in Zustand stores. **Hooks** bridge stores to UI and 3D layers; **utils** and **shaders** apply print/color/design changes to GPU textures and materials.
 
 ---
 
-## Шари поза UI
+## UI layer (Atomic Design)
+
+All UI lives under `src/ui/` and follows Atomic Design tiers.
+
+| Layer         | Path                                  | Alias        | Responsibility                                                              |
+| ------------- | ------------------------------------- | ------------ | --------------------------------------------------------------------------- |
+| **Atoms**     | `src/ui/components/atomic/atoms/`     | `@atoms`     | Smallest blocks: `Button`, `AtomInput`, `ColorPicker`, `AtomSkeleton`       |
+| **Molecules** | `src/ui/components/atomic/molecules/` | `@molecules` | Atom compositions: configurator steps, `LogoUpload`, `Search`               |
+| **Organisms** | `src/ui/components/atomic/organisms/` | `@organisms` | Large sections: `Header`, `AsideConfiguration`, `Configurator` (3D canvas)  |
+| **Templates** | `src/ui/components/atomic/templates/` | `@templates` | Page layouts without data coupling                                          |
+| **Pages**     | `src/ui/components/atomic/pages/`     | `@pages`     | Page compositions: `ConfiguratorPage`, `HomePage`                           |
+| **Shared**    | `src/ui/components/shared/`           | `@shared`    | shadcn/Radix primitives shared by atoms (`Dialog`, `Accordion`, `Skeleton`) |
+| **Skeletons** | `src/ui/components/skeletons/`        | `@skeletons` | Loading skeletons mirroring real component layouts                          |
+
+### UI conventions
+
+1. **`app/` routes** only import a component from `@pages` — no business logic in route files.
+2. **Atoms** are presentational: props only; no store, API, or 3D dependencies.
+3. **Molecules** may read stores and use hooks from `@hooks`.
+4. **Organisms** compose molecules/atoms into cohesive blocks (sidebar, canvas, footer).
+5. **Skeletons** match the dimensions of their target molecules/organisms; visibility is controlled via `useShowConfigurationSkeleton`.
+6. **Component prop types** live in `src/types/ui/`, not inline in `.tsx` files.
+
+---
+
+## Non-UI layers
 
 ### `src/hooks/` (`@hooks`)
 
-Єдине місце для **React custom hooks**:
+The **only** place for React custom hooks:
 
-- обгортки над store (`useConfigurationCartSync`);
-- 3D/текстури (`useGarmentTextures`, `useGarmentPbrMaps`);
-- gizmo (`useGizmoSelection`, `usePrintGizmoDrag`, `useGizmoIconAtlas`);
-- UI-стан (`useSlidingIndicator`, `useControlledState`, `useShowConfigurationSkeleton`);
-- доменні дії (`useLogoFileHandler`, `useStepLogo`);
-- UI-селектори над store (`useStepLogo` — view-model для кроку Logo).
+| Category       | Examples                                                                    |
+| -------------- | --------------------------------------------------------------------------- |
+| Store wrappers | `useConfigurationCartSync`                                                  |
+| 3D / textures  | `useGarmentTextures`, `useGarmentPbrMaps`                                   |
+| Gizmo          | `useGizmoSelection`, `usePrintGizmoDrag`, `useGizmoIconAtlas`               |
+| UI state       | `useSlidingIndicator`, `useControlledState`, `useShowConfigurationSkeleton` |
+| Domain actions | `useLogoFileHandler`, `useStepLogo`                                         |
 
-> Zustand-стори в `src/store/` теж мають префікс `use*`, але це **не React-хуки** — це глобальний стан. React-хуки, що комбінують кілька сторів або `useMemo`/`useCallback`, живуть у `src/hooks/`.
+> Zustand stores in `src/store/` are named `use*` but are **not** React hooks — they are global state containers. Hooks that combine multiple stores or use `useMemo` / `useCallback` belong in `src/hooks/`.
 
 ### `src/store/` (`@store`)
 
-Zustand-стори за доменами:
+Domain-scoped Zustand stores:
 
-| Store                                                    | Відповідальність            |
+| Store                                                    | Responsibility              |
 | -------------------------------------------------------- | --------------------------- |
-| `useConfiguratorProduct`                                 | Активний продукт з каталогу |
-| `useConfigurationControl`                                | Кроки майстра, навігація    |
-| `useConfigurationCart`                                   | Кошик сесій конфігурації    |
-| `useGarmentColor`                                        | Кольори частин і градієнти  |
-| `useGarmentDesign`                                       | Патерни дизайну             |
-| `useGarmentName` / `useGarmentNumber` / `useGarmentLogo` | Текст і логотипи на одязі   |
-| `useConfiguratorSceneLoad`                               | Стан завантаження 3D-сцени  |
-| `useInfoDialog`                                          | Модальні вікна info/FAQ     |
+| `useConfiguratorProduct`                                 | Active catalog product      |
+| `useConfigurationControl`                                | Wizard steps and navigation |
+| `useConfigurationCart`                                   | Session configuration cart  |
+| `useGarmentColor`                                        | Part colors and gradients   |
+| `useGarmentDesign`                                       | Design patterns             |
+| `useGarmentName` / `useGarmentNumber` / `useGarmentLogo` | Garment text and logos      |
+| `useConfiguratorSceneLoad`                               | 3D scene loading state      |
+| `useInfoDialog`                                          | Info / FAQ modal state      |
 
-Кожен store — папка з `use*.ts` (стан + actions) і допоміжними `map*.ts` (маппінг з entity-даних).
+Each store is a folder with `use*.ts` (state + actions) and helper `map*.ts` files (mapping from entity data).
 
 ### `src/types/` (`@types`)
 
-**Усі типи проєкту** зосереджені тут:
+All project types are centralized here:
 
 ```
 src/types/
-├── cart/           # cartItemType, cartItemConfigurationType, snapshot-типи garment-стану
-├── entities/       # Типи з JSON-каталогів (джерело правди для продуктів)
-├── garment/        # Runtime-типи одягу, похідні від entities
-├── gizmo/          # Типи gizmo і drag-стану
-├── ui/             # Props, variant-union і допоміжні типи UI-компонентів
-├── utils/          # PbrMaps, GarmentPrintState, PatternMaskPair…
-└── index.ts        # Barrel-експорт
+├── cart/           # Cart item types, configuration snapshots
+├── entities/       # Types derived from JSON catalogs (source of truth)
+├── garment/        # Runtime garment types composed from entities
+├── gizmo/          # Gizmo and drag-state types
+├── ui/             # Component props, variant unions, UI helpers
+├── utils/          # PbrMaps, GarmentPrintState, PatternMaskPair, etc.
+└── index.ts        # Barrel export
 ```
 
-#### Правила типів
+#### Type conventions
 
-1. **Іменування:** camelCase + суфікс `Type` — `garmentConfigType`, `nameInstanceType`, `colorTabControlPropsType`.
-2. **Форма:** об'єктні shape — `interface`; union / intersection / generic / tuple — `type`.
-3. **Entity-типи** (`garmentConfigType`, `namePositionConfigType`, `uvPointType`…) описують JSON у `src/data/` і живуть у `src/types/entities/`.
-4. **Runtime-типи** (`nameInstanceType`, `logoPositionType`, `partGradientType`…) **успадковують або компонують** entity-типи через `Pick`, `Omit`, `extends` — **не дублюють** поля вручну.
-5. Типи props компонентів — у `src/types/ui/`, не в `.tsx`-файлах.
-6. `@data` експортує **лише дані й функції** (`getProduct`, `faqContent`…). Типи імпортуються напряму з `@types` — без проміжних `types.ts` у `data/`, `gizmo/` тощо.
+1. **Naming:** camelCase with a `Type` suffix — e.g. `garmentConfigType`, `nameInstanceType`.
+2. **Shape:** object shapes use `interface`; unions, intersections, generics, and tuples use `type`.
+3. **Entity types** (`garmentConfigType`, `namePositionConfigType`, `uvPointType`, …) describe JSON in `src/data/` and live in `src/types/entities/`.
+4. **Runtime types** (`nameInstanceType`, `logoPositionType`, `partGradientType`, …) **extend or compose** entity types via `Pick`, `Omit`, or `extends` — **never duplicate fields manually**.
+5. Component prop types belong in `src/types/ui/`, not in component files.
+6. `@data` exports **data and accessor functions only** (`getProduct`, `faqContent`, …). Types are imported from `@types` — no intermediate `types.ts` in `data/`, `gizmo/`, etc.
 
 ### `src/data/` (`@data`)
 
-JSON-каталоги (`crewneck/crewneck.json`), FAQ-контент і функції доступу: `getProduct`, `getStyle`, `listCatalogProducts`. Без UI-логіки.
+JSON product catalogs (e.g. `crewneck/crewneck.json`), FAQ content, and accessors: `getProduct`, `getStyle`, `listCatalogProducts`. No UI logic.
 
 ### `src/utils/` (`@utils`)
 
-Чисті функції без React:
+Pure, React-free utilities:
 
-- композиція атласів друку (`composePrintAtlas`, `composeNameAtlas`);
-- uniform builders і застосування друку (`garmentPrint/`);
-- конвертація логотипів (`logoFile/`);
-- PBR-матеріали (`createGarmentMaterial/`).
+- Print atlas composition (`composePrintAtlas`, `composeNameAtlas`)
+- Uniform builders and print application (`garmentPrint/`)
+- Logo file conversion (`logoFile/`)
+- PBR material creation (`createGarmentMaterial/`)
 
-**Не реекспортує** константи з `@constants` — споживачі імпортують `LOGO_SLOT_COUNT`, `FULL_UV_BOUNDS` тощо напряму з `@constants`.
+Does **not** re-export `@constants` — consumers import `LOGO_SLOT_COUNT`, `FULL_UV_BOUNDS`, etc. directly from `@constants`.
 
-Внутрішні допоміжні типи utils, що не є доменними сутностями, можуть залишатися поруч із модулем; доменні типи — у `src/types/`.
+Module-local helper types that are not domain entities may live next to their module; domain types belong in `src/types/`.
 
 ### `src/shaders/` (`@shaders`)
 
-Усі GLSL-фрагменти та vertex-шейдери:
+GLSL vertex and fragment shaders:
 
-- `garmentShaders` — UV, normal, roughness, gizmo lights (патчі MeshStandardMaterial);
-- `garmentPrintShaders`, `garmentLogoShaders`, `garmentNameShaders`, `garmentNumberShaders` — шари друку;
-- `garmentGradientShaders` — градієнт частин;
-- `printAtlasTintShaders` — FBO-тінтування атласу.
+| Module                   | Purpose                                                            |
+| ------------------------ | ------------------------------------------------------------------ |
+| `garmentShaders`         | UV, normal, roughness, gizmo lights (MeshStandardMaterial patches) |
+| `garmentPrintShaders`    | Print layer shaders                                                |
+| `garmentLogoShaders`     | Logo layer shaders                                                 |
+| `garmentNameShaders`     | Name text shaders                                                  |
+| `garmentNumberShaders`   | Number text shaders                                                |
+| `garmentGradientShaders` | Part gradient shaders                                              |
+| `printAtlasTintShaders`  | FBO atlas tinting                                                  |
 
-Структура: `moduleName/moduleName.ts` + `index.ts`, barrel — `src/shaders/index.ts`.
+Structure: `moduleName/moduleName.ts` + `index.ts`; barrel export at `src/shaders/index.ts`.
 
 ### `src/gizmo/` (`@gizmo`)
 
-Логіка 3D gizmo без React: hit-test, drag, побудова mesh-елементів. React-хуки gizmo — у `@hooks`.
+Framework-agnostic 3D gizmo logic: hit-testing, drag handling, mesh element construction. React-facing gizmo hooks live in `@hooks`.
 
 ### `src/constants/` (`@constants`)
 
-Константи: кроки конфігурації, палітра, розмір print-atlas, шрифти.
+Configuration constants: wizard steps, color palette, print-atlas dimensions, fonts.
 
 ### `src/providers/` (`@providers`)
 
-React Context: `GarmentMaterialRegistry`, `PbrMapsProvider`.
+React Context providers: `GarmentMaterialRegistry`, `PbrMapsProvider`.
 
 ### `src/fonts/` (`@fonts`)
 
-Завантаження шрифтів для UI (`inter`) і спортивних шрифтів для друку.
+Font loading for UI (`inter`) and sport fonts used for garment printing.
 
 ---
 
-## Next.js (`app/`)
+## Next.js routing
 
 ```
 app/
-├── layout.tsx                          # Кореневий layout
+├── layout.tsx                          # Root layout
 └── (application)/
-    ├── layout.tsx                      # Layout застосунку
+    ├── layout.tsx                      # Application shell layout
     ├── (default_pages)/
-    │   ├── page.tsx                    # Головна
-    │   └── uv-debug/page.tsx           # Debug UV
+    │   ├── page.tsx                    # Home
+    │   └── uv-debug/page.tsx           # UV debug (development)
     └── configurator/
         ├── layout.tsx
-        └── page.tsx                    # → ConfiguratorPage з @pages
+        └── page.tsx                    # → ConfiguratorPage from @pages
 ```
 
-Маршрути **тонкі**: імпортують page-компонент з `@pages`.
+Routes remain **thin**: they import page components from `@pages` and contain no domain logic.
 
 ---
 
-## Головні бібліотеки
+## Technology stack
 
-| Бібліотека                                                        | Роль                                     |
-| ----------------------------------------------------------------- | ---------------------------------------- |
-| **Next.js 16**                                                    | SSR/SSG, App Router, маршрутизація       |
-| **React 19**                                                      | UI                                       |
-| **TypeScript 5**                                                  | Типізація                                |
-| **Tailwind CSS 4**                                                | Стилі                                    |
-| **Zustand**                                                       | Глобальний стан                          |
-| **React Three Fiber + drei**                                      | 3D canvas, GLTF, controls                |
-| **Three.js**                                                      | Рендер, текстури, шейдери                |
-| **Radix UI / Base UI**                                            | Доступні примітиви (shadcn)              |
-| **Motion**                                                        | Анімації                                 |
-| **@uiw/react-color**                                              | Color picker                             |
-| **pdfjs-dist, @okathira/ghostpdl-wasm, @imagemagick/magick-wasm** | Конвертація PDF/EPS логотипів у браузері |
-| **sharp** (dev)                                                   | Обробка зображень у Node-скриптах        |
-| **Playwright** (dev)                                              | E2E-тести                                |
-| **ESLint + Prettier + Husky**                                     | Лінт, форматування, pre-commit           |
-
----
-
-## Скрипти (`package.json`)
-
-| Скрипт                            | Призначення                                                                   |
-| --------------------------------- | ----------------------------------------------------------------------------- |
-| `dev`                             | Локальний dev-сервер Next.js                                                  |
-| `build`                           | Production-збірка                                                             |
-| `start`                           | Запуск production-сервера                                                     |
-| `lint` / `lint:fix`               | ESLint для `src/` і `scripts/`                                                |
-| `format` / `format:check`         | Prettier                                                                      |
-| `validate`                        | `format:check` + `lint` + `verify:design-assets` — перевірка перед CI/комітом |
-| `verify:design-assets`            | Перевіряє наявність файлів дизайнів і thumbnails згідно з `crewneck.json`     |
-| `convert:design-assets`           | Конвертує важкі SVG-дизайни (base64 PNG) у WebP 4096px для runtime            |
-| `generate:design-thumbnails`      | Генерує WebP-превʼю (~100px) для UI вибору патернів                           |
-| `copy:logo-assets`                | Копіює WASM/pdf.worker/ghostscript і логотипи в `public/`                     |
-| `postinstall`                     | Автоматично викликає `copy:logo-assets` після `pnpm install`                  |
-| `prepare`                         | Ініціалізує Husky git-hooks                                                   |
-| `test:e2e` / `test:e2e:skeletons` | Playwright E2E-тести                                                          |
-
-### Node-скрипти (`scripts/`)
-
-| Файл                             | Що робить                                                                                                 |
-| -------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| `copy-logo-assets.mjs`           | Копіює `magick.wasm`, `pdf.worker`, `gs.js/wasm` і PNG-логотипи в `public/ghostscript/` та `public/logo/` |
-| `verify-design-assets.mjs`       | Валідує, що кожен `path_name` з JSON має файл дизайну і thumbnail                                         |
-| `convert-design-assets.mjs`      | Растеризує design SVG → WebP (4096px) через sharp; зберігає оригінали для export                          |
-| `generate-design-thumbnails.mjs` | Створює `designs/thumbs/*.webp` з повнорозмірних WebP                                                     |
+| Library                                                           | Role                                   |
+| ----------------------------------------------------------------- | -------------------------------------- |
+| **Next.js 16**                                                    | SSR/SSG, App Router, routing           |
+| **React 19**                                                      | UI runtime                             |
+| **TypeScript 5**                                                  | Static typing                          |
+| **Tailwind CSS 4**                                                | Styling                                |
+| **Zustand**                                                       | Global client state                    |
+| **React Three Fiber + drei**                                      | 3D canvas, GLTF loading, controls      |
+| **Three.js**                                                      | Rendering, textures, custom shaders    |
+| **Radix UI / Base UI**                                            | Accessible primitives (shadcn)         |
+| **Motion**                                                        | UI animations                          |
+| **@uiw/react-color**                                              | Color picker                           |
+| **pdfjs-dist, @okathira/ghostpdl-wasm, @imagemagick/magick-wasm** | In-browser PDF/EPS logo conversion     |
+| **sharp** (dev)                                                   | Image processing in Node asset scripts |
+| **Playwright** (dev)                                              | End-to-end tests                       |
+| **ESLint + Prettier + Husky**                                     | Linting, formatting, pre-commit hooks  |
 
 ---
 
-## Alias-и (`tsconfig.json`)
+## Scripts & tooling
 
-| Alias        | Шлях                                 |
+### `package.json` scripts
+
+| Script                            | Description                                                             |
+| --------------------------------- | ----------------------------------------------------------------------- |
+| `dev`                             | Local Next.js dev server                                                |
+| `build`                           | Production build                                                        |
+| `start`                           | Run production server                                                   |
+| `lint` / `lint:fix`               | ESLint over `src/` and `scripts/`                                       |
+| `format` / `format:check`         | Prettier                                                                |
+| `validate`                        | `format:check` + `lint` + `verify:design-assets` — CI / pre-commit gate |
+| `verify:design-assets`            | Ensures design files and thumbnails exist per `crewneck.json`           |
+| `convert:design-assets`           | Converts heavy SVG designs (base64 PNG) to 4096px WebP for runtime      |
+| `generate:design-thumbnails`      | Generates ~100px WebP previews for pattern picker UI                    |
+| `copy:logo-assets`                | Copies WASM, pdf.worker, Ghostscript, and logos into `public/`          |
+| `postinstall`                     | Runs `copy:logo-assets` after `pnpm install`                            |
+| `prepare`                         | Initializes Husky git hooks                                             |
+| `test:e2e` / `test:e2e:skeletons` | Playwright E2E tests                                                    |
+
+### Node scripts (`scripts/`)
+
+| File                             | Description                                                                     |
+| -------------------------------- | ------------------------------------------------------------------------------- |
+| `copy-logo-assets.mjs`           | Copies `magick.wasm`, `pdf.worker`, `gs.js/wasm`, and PNG logos to `public/`    |
+| `verify-design-assets.mjs`       | Validates every `path_name` in JSON has a design file and thumbnail             |
+| `convert-design-assets.mjs`      | Rasterizes design SVG → WebP (4096px) via sharp; preserves originals for export |
+| `generate-design-thumbnails.mjs` | Creates `designs/thumbs/*.webp` from full-size WebP assets                      |
+
+---
+
+## Path aliases
+
+Defined in `tsconfig.json`:
+
+| Alias        | Path                                 |
 | ------------ | ------------------------------------ |
 | `@styles`    | `src/ui/styles/globals.css`          |
 | `@atoms`     | `src/ui/components/atomic/atoms`     |
@@ -249,137 +321,3 @@ app/
 | `@providers` | `src/providers`                      |
 | `@fonts`     | `src/fonts`                          |
 | `@shaders`   | `src/shaders`                        |
-
-Усі alias-и — **плоскі** (`@hooks`, `@types`…), без `/*`. Імпорти лише з barrel-файлів сутності (`index.ts`), не з вкладених шляхів (`@constants/printAtlas` — заборонено).
-
-### Структура модуля (folder / file / index)
-
-Кожен модуль — **папка з тією ж назвою**, що й головний файл, плюс barrel:
-
-```
-featureName/
-├── featureName.ts    # реалізація, типи або константи
-└── index.ts          # export * from './featureName'
-```
-
-**Іменування:** папки й файли — **camelCase** (`atomTabsProps`, `useStepLogo`). Виняток — **React-компоненти** (PascalCase) і **`@constants`**: папки/файли та ідентифікатори констант — **SCREAMING_SNAKE_CASE** (`PALETTE_COLORS/PALETTE_COLORS.ts`, `LOGO_SLOT_COUNT`). Функції-утиліти — camelCase (`activateCartItem.ts`).
-
-Приклади: `useStepLogo/useStepLogo.ts`, `PALETTE_COLORS/PALETTE_COLORS.ts`, `cart/cart/cart.ts`, `logoUploadProps/logoUploadProps.ts`.
-
-**Заборонено** «гуляючі» файли поруч із `index.ts` без вкладеної папки (`FONT_FAMILY_BY_NAME.ts` біля `constants/index.ts` — ні; лише `FONT_FAMILY_BY_NAME/FONT_FAMILY_BY_NAME.ts`). Усі конфігураційні константи — лише в `@constants`.
-
-Barrel `index.ts` на рівні шару (`src/types/ui/index.ts`, `src/constants/index.ts`) лише реекспортує дочірні модулі.
-
-### Barrel-и та React Server Components (Next.js)
-
-Server Components (`app/**/layout.tsx`, server pages) **не повинні** через barrel підвантажувати client-граф:
-
-| Модуль                      | Server-safe barrel                                              | Client-only (імпорт напряму, без barrel)                                    |
-| --------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------- |
-| `@constants`                | `STEPS_CONFIGURATION`, `FONT_FAMILY_BY_NAME`, `PALETTE_COLORS`… | —                                                                           |
-| `@fonts`                    | `inter`, `anton`, `oswald`… (next/font instances)               | `src/fonts/fontsConfiguration/` (`'use client'`, залежить від `sportFonts`) |
-| `@hooks`                    | —                                                               | увесь barrel лише для Client Components                                     |
-| `@organisms` / `@molecules` | лише top-level експорти                                         | внутрішні Configurator-частини — відносні імпорти всередині папки           |
-
-Правила:
-
-1. **Не реекспортувати** client-модулі (`'use client'`, хуки, `next/font` UI-конфіги) з server-safe barrel (`@constants`, `@fonts/index.ts`).
-2. **Хуки не через component-barrel** — `useLogoFileHandler` імпортується з `@hooks`, не з `LogoUpload/index.ts`.
-3. **`FONT_FAMILY_BY_NAME`** (`@constants`) — CSS-рядки для canvas/utils на сервері; **`FONTS_CONFIGURATION`** (`src/fonts/`) — список для UI-селекту з реальними `fontFamily` з `next/font`.
-4. Barrel `@organisms` і `@molecules` — **вузькі**: без внутрішніх Configurator-модулів і без re-export хуків.
-
----
-
-## Потік даних конфігуратора
-
-```
-crewneck.json (entities)
-       ↓
-@data → getProduct()
-       ↓
-@store (useGarment*) ← initForProduct()
-       ↓
-@hooks (useGarmentTextures) → compose atlases
-       ↓
-@shaders + @utils (createGarmentMaterial) → патчі шейдера на mesh
-       ↓
-@organisms/Configurator (R3F)
-       ↑
-@molecules (UI кроки) → actions у store
-```
-
----
-
-## Чеклист відповідності архітектурі
-
-- [x] Custom React-хуки лише в `src/hooks/` (`useGizmoIconAtlas`, `useLogoFileHandler` перенесено)
-- [x] Zustand-стори лише в `src/store/`
-- [x] Entity- і garment-типи в `src/types/`; UI-типи в `src/types/ui/`
-- [x] Runtime garment-типи (`namePositionType`, `logoInstanceType`, `partGradientType`…) компонують entity-типи
-- [x] `app/` — тонкі маршрути
-- [x] Skeletons відповідають layout реальних компонентів
-- [x] Atoms без store (перевірено: жоден atom не імпортує `@store`)
-- [x] Props-типи доменних компонентів у `src/types/ui/` (винятки: `AtomInput`, `AtomSelect`, `Range`, `AtomDialog`, `AtomPopover`, `@shared` Dialog/Popover/Input — тісно зв'язані з Radix/Base UI + cva)
-- [x] Gizmo runtime-типи (`PrintDragMoveState`, `GizmoButtonHit`…) — у `src/types/gizmo/runtime.ts`
-- [x] Типи імпортуються з `@types`, не з `@store` / `@data`
-- [x] У `gizmo/` і `hooks/` немає відносних імпортів у `utils/` — лише `@utils`
-- [x] Utils-типи (`PbrMaps`, `GarmentPrintState`, `PatternMaskPair`…) — у `src/types/utils/`
-- [x] `useStepLogo` — перенесено в `@hooks`
-- [x] Entity-типи, FAQ і `CatalogProductRef` — у `src/types/entities/`; `@data` не реекспортує типи
-- [x] RSC: client-only модулі не в server-safe barrel (`FONTS_CONFIGURATION` → `src/fonts/`, не `@constants`)
-- [x] `pnpm build`, `tsc --noEmit`, `lint` проходять
-- [x] Playwright skeleton E2E (`test:e2e:skeletons`) — 2/2
-- [x] Прибрано мертвий `DEFAULT_TEXT_CONFIGURATION`, зайвий re-export `useConfiguratorProduct` з `@hooks`
-- [x] `@gizmo` не реекспортує `useGizmoIconAtlas`; `PALETTE_COLORS` — server-safe (без `'use client'`)
-- [x] `cartItemType`, `cartItemConfigurationType`, snapshot-типи — у `src/types/cart/`
-- [x] Props-типи винесено в `src/types/ui/` (layout, atoms, molecules, organisms, skeletons, configuration tools/steps)
-- [x] `@store/index.ts` не реекспортує типи — лише `@types`
-- [x] GLSL-шейдери в `src/shaders/` (`@shaders`), не в `@utils`
-- [x] `@utils` не реекспортує константи з `@constants`
-- [x] Self-import через barrel усунено в `utils/`, `gizmo/`, `store/` (лише relative всередині шару)
-- [x] `useStepLogo` — у `@hooks`, не в `@store`
-- [x] Усі модулі `@utils` (garmentPrint, logoFile, compose\*, drawNameOnAtlas…) — `folder/file/index`
-- [x] UI typo виправлено: `AtomDialog`, `FooterConfiguration`, `ShadingControl`
-- [x] Доменні inline-типи винесено: `filePickContextType`, `colorTabType`, `garmentMaterialRegistryValueType` → `@types`
-- [x] Усі типи `@types`: camelCase + суфікс `Type`; object shape — `interface`
-
-### Результати аудиту (черговий прохід)
-
-**Пройдено без зауважень**
-
-| Перевірка                                                        | Результат          |
-| ---------------------------------------------------------------- | ------------------ |
-| Вкладені alias (`@hooks/foo`, `@types/*`)                        | не знайдено        |
-| `import type` з `@store` / `@data` у `src/`                      | не знайдено        |
-| Atoms імпортують `@store`                                        | ні                 |
-| `app/**` — тонкі маршрути (`@pages`)                             | так                |
-| `@data` експортує лише дані/функції                              | так                |
-| `hooks/` і `gizmo/` → `@utils` (не відносні `../utils`)          | так                |
-| Self-import `@utils` / `@gizmo` / `@store` всередині того ж шару | ні (лише relative) |
-| Константи імпортуються з `@constants`, не через `@utils`         | так                |
-
-**Свідомі винятки (допустимо)**
-
-| Пункт                                       | Деталі                                                                                                                         |
-| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| Props у `@shared` / cva-atoms               | `Dialog`, `Popover`, `Input`, `AtomInput`, `AtomSelect`, `Range`, `AtomDialog` — типи залишаються поруч із Radix/Base UI + cva |
-| `STEPS_CONFIGURATION`                       | імпортує molecules відносним шляхом `../../ui/...` — уникає циклу `@constants` ↔ `@molecules`                                  |
-| Store submodules                            | окремі `export type` у `useGarment*` — re-export з `@types` для внутрішнього використання                                      |
-| Molecules → `createNameInstance` з `@store` | map-фабрики експортуються з `@store` barrel за доменом garment                                                                 |
-
-**Dev-зауваження (не prod)**
-
-- `THREE.Clock` deprecated — попередження з drei/three, не критично
-- `allowedDevOrigins: ['127.0.0.1']` у `next.config.ts` — для HMR при доступі через IP
-
-### Правило композиції типів (приклад)
-
-```ts
-// entity (з JSON)
-interface textPositionConfigType { label: string; uv: uvPointType; rotation: number; fontSize: number; ... }
-
-// runtime — не дублює поля, а компонує
-type textPrintPositionType = { key: string; partId: string; uv: uvPointType }
-  & Pick<textPositionConfigType, 'label' | 'rotation' | 'fontSize'>
-  & mappedGizmoFlagsType;
-```
